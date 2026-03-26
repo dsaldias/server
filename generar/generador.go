@@ -12,8 +12,9 @@ func Init() {
 package main
 
 import (
-	"net/http"
+	"%s/app"
 	"%s/graph"
+	"net/http"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -25,7 +26,6 @@ import (
 
 	"github.com/dsaldias/server/dataauth"
 	"github.com/dsaldias/server/dataauth/utils"
-	"app"
 )
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 	dataauth.Iniciar(srv, &schema, db)
 }
 
-`, module)
+`, module, module)
 
 	contentenv := `
 PORT=8038
