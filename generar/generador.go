@@ -74,4 +74,15 @@ func main() {
 	}
 
 	fmt.Println("✅ serverx.go creado correctamente")
+
+	oldFile := "server.go"
+	backupFile := "server.txt"
+
+	if _, err := os.Stat(oldFile); err == nil {
+		err := os.Rename(oldFile, backupFile)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("📦 server.go renombrado a server.txt")
+	}
 }
