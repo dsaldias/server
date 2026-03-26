@@ -145,10 +145,10 @@ func LoadCustomEvents() {
 	fmt.Println("✅ .env creado correctamente")
 	//
 
-	/* err = os.MkdirAll("app", 0755)
+	err = os.MkdirAll("app", 0755)
 	if err != nil {
 		panic(err)
-	} */
+	}
 
 	path := "app/onevents.go"
 
