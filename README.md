@@ -27,6 +27,12 @@ Inicializar un nuevo archivo de servidor:
 go tool generar init
 ```
 
+Y luego:
+
+```bash
+go mod tidy
+```
+
 Esto generará automáticamente un archivo:
 
 ```bash
@@ -53,8 +59,15 @@ El comando `init`:
 ## 📁 Ejemplo de flujo
 
 ```bash
+mkdir my_server
+cd my_server
+go mod init my_server_app
+go get -tool github.com/99designs/gqlgen
+go tool gqlgen init
+
 go get -tool github.com/dsaldias/server/generar
 go tool generar init
+go mod tidy
 go run serverx.go
 ```
 
