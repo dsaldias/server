@@ -1,0 +1,65 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+# TODO:
+# probar simulando el uso en una app por ejemplo usarlo pa wapito
+# ver si es posible mandar los header en la nueva app
+# porque antes no se podia, parecia que el auth principal los interceptaba
+# testear en un caso real, solo auth permisos en varias unidades
+# implemenyar un dashboar que muestre cantidad de usaurios, uniddaes, roles, etc
+
+
+# # # go run github.com/99designs/gqlgen generate
+# go run github.com/99designs/gqlgen generate --config gqlgen_auth.yml
+# CGO_ENABLED=0 go build -ldflags="-s -w" -o auth server.go 
+# CGO_ENABLED=0 go build -a -ldflags '-s -w' -o auth server.go
+# scp auth root@185.203.216.16:/root/apps/auth/
+type Query {
+  me(input:InputMe!): ResponseMe!
+  roles: [ResponseRoles!]!
+  permisos: [Permiso!]!
+  usuarios(query:QueryUsuarios!): [Usuario!]!
+  usuarios_conectados: [Usuario!]!
+  usuario_by_id(id:ID!): ResponseUsuario!
+  rol_by_id(id:ID!): Rol!
+  menus: [Menus!]!
+  unidades: [Unidad!]!
+  get_imagen(url:String!): String! 
+  conexiones_ws: String!
+  notificaciones: [Notificacion!]!
+  reporte1: [ResponseReporte1!]!
+  reporte2: [ResponseReporte2!]!
+  reporte2b: [ResponseReporte2b!]!
+  all_tickets(q:QueryTickets!): [RespTickets!]!
+  mis_tickets: [RespTickets!]!
+  ver_ticket(id:ID!): Ticket!
+}
+
+
+type Mutation {
+  login(input:NewLogin!): ResponseLogin!
+  login_v2(input:NewLogin2!): ResponseLogin!
+  create_rol(input:NewRol!): Rol!
+  update_rol(input:UpdateRol!): Rol!
+  create_usuario(input: NewUsuario!): Usuario!
+  update_usuario(input:UpdateUsuario!): Usuario!
+  update_perfil(input:UpdatePerfil!): Usuario!
+  create_unidad(input:NewUnidad!): Unidad!
+  update_unidad(input:UpdUnidad!): Unidad!
+  createOauth(input:NewUsuarioOauth!): Usuario!
+  """ envia una notificacion websocket """
+  enviar_notificacion(titulo:String!): Boolean!
+  """ crea un aviso para visualizar al iniciar session """
+  crear_notificacion(input:NewNotificacion!): Notificacion!
+  update_notificacion(input:UpdNotificacion!): Notificacion!
+  create_ticket(input:NewTicket!): Ticket!
+  update_ticket(input:NewTicketRespuesta!): Ticket!
+  cerrar_ticket(id:ID!): Ticket!
+}
+
+
+type Subscription {
+  notificaciones_subs: XNotificacion!
+}
+

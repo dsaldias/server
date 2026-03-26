@@ -1,0 +1,380 @@
+scalar Time
+
+type Usuario {
+  id: ID!
+  nombres: String!
+  apellido1: String!
+  apellido2: String
+  documento: String
+  celular: String
+  correo: String
+  sexo: String
+  direccion: String
+  username: String!
+  fecha_registro: Time! 
+  fecha_update: Time! 
+  estado: Boolean! 
+  last_login: Time
+  oauth_id: String
+  foto_url: String
+  latitud: Float
+  longitud: Float
+  conexiones: Int!
+} 
+
+type Rol { 
+  id: ID!
+  nombre: String!
+  descripcion: String
+  jerarquia: Int! 
+  fecha_registro: Time! 
+  permisos: [ResponsePermisoMe]!
+  menus: [Menus!]!
+} 
+
+type Unidad { 
+  id: ID!
+  nombre: String!
+  descripcion: String
+  latitud: Float
+  longitud: Float
+  orden: Int! 
+  fecha_registro: Time!  
+} 
+
+type Menus {
+    id: ID!
+    label: String!
+    path: String!
+    icon: String!
+    color: String!
+    grupo: Int!
+    orden: Int!
+}
+
+type Permiso {
+  metodo: String!
+  nombre: String!
+  descripcion: String
+  grupo: String!
+  fecha_registro: Time! 
+}
+
+type SessionKey {
+  id: ID!
+  usuario_id: ID!
+  key: String!
+  apikey: String!
+  expire: Time!
+  fecha_registro: Time!
+  user_estado: Boolean!
+}
+
+type Notificacion {
+  id: ID!
+  mensaje: String!
+  creado_por_id: ID!
+  desde: Time!
+  hasta: Time!
+  fecha_registro: Time! 
+}
+
+type XNotificacion {
+  title: String!
+  data_json: String!
+}
+
+type Ticket {
+  id: ID!
+  usuario_id: ID!
+  problema: String!
+  estado: String!
+  fecha_registro: Time! 
+  respuestas: [TicketsRespuestas!]!
+}
+
+type TicketsRespuestas {
+  id: ID!
+  tickets_id: ID!
+  usuario_id: ID!
+  respuesta: String!
+  fecha_registro: Time! 
+}
+
+
+# 
+# ===============================================
+# ===============================================
+# ===============================================
+# ===============================================
+# 
+
+type RolMe {
+  id: ID!
+  nombre: String!
+  descripcion: String
+  jerarquia: Int! 
+  fecha_registro: Time! 
+}
+
+type ResponsePermisoMe {
+  metodo: String!
+  nombre: String!
+  descripcion: String
+  grupo: String!
+  fecha_registro: Time! 
+  fecha_asignado: Time!
+} 
+
+type ResponseRoles {
+  id: ID!
+  nombre: String!
+  descripcion: String
+  jerarquia: Int! 
+  fecha_registro: Time! 
+  menus: Int!
+  permisos: Int!
+  usuarios: Int!
+} 
+
+type ResponseRolMe {
+  unidad: Unidad!
+  rol: RolMe!
+}
+
+type ResponseMe {
+  usuario: Usuario!
+  menus: [Menus!]!
+  roles: [ResponseRolMe]!
+  permisos_sueltos: [ResponsePermisoMe]!
+} 
+
+type ResponseRolUnidad {
+  rol_id: ID!
+  unidad_id: ID!
+  rol_name: String!
+  unidad_name: String!
+}
+
+type ResponseUsuario {
+  id: ID!
+  nombres: String!
+  apellido1: String!
+  apellido2: String
+  documento: String
+  celular: String
+  correo: String
+  sexo: String
+  direccion: String
+  username: String!
+  fecha_registro: Time! 
+  fecha_update: Time! 
+  estado: Boolean! 
+  last_login: Time
+  oauth_id: String
+  foto_url: String
+  latitud: Float
+  longitud: Float
+  conexiones: Int!
+  roles: [ResponseRolUnidad!]!
+  permisos_sueltos: [ResponsePermisoMe!]!
+  menus_sueltos: [Menus!]!
+} 
+
+type ResponseLogin {
+  session_key: String!
+  session_time: Int!
+  me: ResponseMe!
+}
+
+type ResponseReporte1 {
+  nombre: String!
+  valor: Int!
+}
+type ResponseReporte2 {
+  fecha: Time!
+  fecha_str: String!
+  valor: Int!
+}
+type ResponseReporte2b {
+  mes: String!
+  valor: Int!
+}
+
+type RespTickets {
+  id: ID!
+  usuario_id: ID!
+  usuario: String!
+  problema: String!
+  estado: String!
+  fecha_registro: Time!
+  respuesta: String
+  soporte: String
+  soporte_id: ID
+  respondido: Time
+}
+
+# 
+# ===============================================
+# ===============================================
+# ===============================================
+# ===============================================
+# 
+input NewRol {
+  nombre: String!
+  descripcion: String
+  jerarquia: Int = 1
+  permisos: [String!]!
+  menus: [Int!]!
+}
+input UpdateRol {
+  id: ID!
+  nombre: String!
+  descripcion: String
+  jerarquia: Int = 1
+  permisos: [String!]!
+  menus: [Int!]!
+}
+
+input NewUsuario { 
+  nombres: String!
+  apellido1: String!
+  apellido2: String
+  documento: String
+  celular: String
+  correo: String
+  sexo: String
+  direccion: String
+  username: String!
+  password: String!
+  foto64: String
+  latitud: Float
+  longitud: Float
+  roles: [RolUnidad!]!
+  permisos_sueltos: [String!]!
+  menus_sueltos: [ID!]!
+}
+
+input UpdateUsuario {
+  id: ID!
+  nombres: String!
+  apellido1: String!
+  apellido2: String
+  documento: String
+  celular: String
+  correo: String
+  sexo: String
+  direccion: String
+  username: String!
+  password: String
+  foto64: String
+  latitud: Float
+  longitud: Float
+  roles: [RolUnidad!]!
+  permisos_sueltos: [String!]!
+  menus_sueltos: [ID!]!
+}
+
+input UpdatePerfil {
+  id: ID!
+  nombres: String!
+  apellido1: String!
+  apellido2: String
+  documento: String
+  celular: String
+  correo: String
+  sexo: String
+  direccion: String
+  username: String
+  password: String 
+  foto64: String
+  latitud: Float
+  longitud: Float
+}
+
+input NewUsuarioOauth { 
+  nombres: String! 
+  celular: String
+  correo: String 
+  username: String!
+  password: String! 
+}
+
+input NewSessionKey { 
+  usuario_id: ID!
+  key: String!
+  apikey: String!
+  expire: Time! 
+}
+
+input NewLogin {
+  username: String!
+  password: String! 
+  iv64: String!
+}
+
+input NewLogin2 {
+  username: String!
+  password: String!  
+}
+
+input NewNotificacion { 
+  mensaje: String! 
+  desde: Time!
+  hasta: Time! 
+}
+
+input UpdNotificacion { 
+  id: ID!
+  mensaje: String! 
+  desde: Time!
+  hasta: Time! 
+}
+
+# input XNotificacionEnvio {
+#   title: String!
+#   data_json: String!
+# }
+
+input InputMe{  
+  unidad_id: ID!
+}
+
+input NewUnidad {  
+  nombre: String!
+  descripcion: String
+  latitud: Float
+  longitud: Float
+  orden: Int!   
+} 
+
+input UpdUnidad {  
+  id: ID!
+  nombre: String!
+  descripcion: String
+  latitud: Float
+  longitud: Float
+  orden: Int!   
+} 
+
+input RolUnidad {
+  rol_id: ID!
+  unidad_id: ID!
+}
+
+input QueryUsuarios {
+  rol: ID
+}
+
+input QueryTickets {
+  estado: String
+}
+
+input NewTicket { 
+  problema: String! 
+}
+
+input NewTicketRespuesta { 
+  tickets_id: ID! 
+  respuesta: String! 
+}
