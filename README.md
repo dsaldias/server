@@ -29,7 +29,7 @@ go tool generar init
 
 Esto generará automáticamente un archivo:
 
-```
+```bash
 serverx.go
 ```
 
