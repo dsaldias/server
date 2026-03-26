@@ -61,10 +61,17 @@ func main() {
 
 `, module)
 
-	err := os.WriteFile("serverx.go", []byte(content), 0644)
+	file := "serverx.go"
+
+	if _, err := os.Stat(file); err == nil {
+		fmt.Printf("⚠️ %s ya existe. \n", file)
+		return
+	}
+
+	err := os.WriteFile(file, []byte(content), 0644)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("serverx.go creado ✨")
+	fmt.Println("✅ serverx.go creado correctamente")
 }
