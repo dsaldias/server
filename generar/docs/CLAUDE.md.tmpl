@@ -1,0 +1,229 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working with code in this repository.
+
+## What this project is
+
+This is a **Go application** that uses `github.com/dsaldias/server` as its RBAC auth backend.
+That server provides: user management, roles, permissions, organizational units, sessions (JWT + SessionKey),
+menus, tickets, notifications (WebSocket/SSE), and file storage.
+
+The module name of this project is `{{MODULE}}`.
+
+## Commands
+
+```bash
+# Run the server
+go run serverx.go
+
+# Install/update dependencies
+go mod tidy
+
+# Apply the base RBAC schema (first time only)
+mysql -u root -p <dbname> < path/to/github.com/dsaldias/server/sqls/database.sql
+
+# Apply your own entity migrations
+mysql -u root -p <dbname> < sqls/<entity>.sql
+
+# Regenerate GraphQL code after schema changes
+go run github.com/99designs/gqlgen generate
+```
+
+**Environment setup:** Edit `.env` with your DB credentials. Key vars: `PORT`, `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`.
+
+## Directory structure
+
+```
+serverx.go          # Entry point — Chi router + GraphQL server (generated, do not delete)
+.env                # Environment config
+go.mod              # Imports github.com/dsaldias/server
+app/
+  onevents.go       # Hooks for auth events (user create, relogin, ticket)
+  <entity>/         # Your entities go here — one folder per DB table
+    crear.go
+    listar.go
+    update.go
+    delete.go
+    utils.go
+graph/
+  schema.graphqls   # Your GraphQL operations (Query, Mutation, Subscription)
+  <entity>.graphqls # Per-entity types and inputs
+  schema.resolvers.go  # Resolver implementations
+  resolver.go       # Resolver struct with DB field
+sqls/
+  <entity>.sql      # DB migrations for your entities
+```
+
+> **`app/`** is the equivalent of `dataauth/` in the auth server — all your business logic and DB access lives here, one package per entity.
+
+## Adding a new entity
+
+Use `/new-entity <entity-name>` to scaffold everything automatically, or follow this pattern manually:
+
+### 1. Create `app/<entity>/` with these files
+
+**`utils.go`** — unexported parse helpers:
+```go
+package <entity>
+
+import (
+    "database/sql"
+    "{{MODULE}}/graph/model"
+)
+
+func parseRow(row *sql.Row, t *model.<Entity>) error {
+    return row.Scan(&t.ID, /* ...fields in SELECT order... */)
+}
+
+func parseRows(rows *sql.Rows, t *model.<Entity>) error {
+    return rows.Scan(&t.ID, /* ...fields in SELECT order... */)
+}
+```
+
+**`listar.go`** — read operations:
+```go
+func Get<Entities>(db *sql.DB) ([]*model.<Entity>, error)
+func GetById(db *sql.DB, id string) (*model.<Entity>, error)
+```
+
+**`crear.go`** — insert:
+```go
+func Crear(db *sql.DB, input model.New<Entity>) (*model.<Entity>, error)
+```
+
+**`update.go`** — update:
+```go
+func Actualizar(db *sql.DB, input model.Update<Entity>) (*model.<Entity>, error)
+```
+
+**`delete.go`** — soft delete:
+```go
+func Eliminar(db *sql.DB, id string) (bool, error)
+// Uses: UPDATE <table> SET activo = 0 WHERE id = ?
+```
+
+### 2. Add GraphQL schema in `graph/<entity>.graphqls`
+
+```graphql
+type <Entity> {
+  id: ID!
+  field1: String!
+  activo: Boolean!
+}
+input New<Entity> { field1: String! }
+input Update<Entity> { id: ID!, field1: String }
+```
+
+### 3. Add operations to `graph/schema.graphqls`
+
+```graphql
+# Query type:
+<entities>: [<Entity>!]!
+# Mutation type:
+create_<entity>(input: New<Entity>!): <Entity>!
+update_<entity>(input: Update<Entity>!): <Entity>!
+delete_<entity>(id: ID!): Boolean!
+```
+
+### 4. Run gqlgen
+
+```bash
+go run github.com/99designs/gqlgen generate
+```
+
+### 5. Implement resolvers in `graph/schema.resolvers.go`
+
+**Every resolver MUST start with the permission check** — no exceptions:
+
+```go
+import (
+    "{{MODULE}}/app/<entity>"
+    "github.com/dsaldias/server/dataauth/utils"
+)
+
+func (r *mutationResolver) Create<Entity>(ctx context.Context, input model.New<Entity>) (*model.<Entity>, error) {
+    _, err := utils.CtxValue(ctx, r.DB, "create_<entity>")  // permission check — ALWAYS first
+    if err != nil {
+        return nil, err
+    }
+    return <entity>.Crear(r.DB, input)
+}
+```
+
+## Permission system
+
+Permissions map 1:1 to GraphQL operation names (e.g., operation `create_producto` → permission named `create_producto`).
+`utils.CtxValue` checks:
+1. Direct `usuario_permiso` (user-specific override)
+2. `rol_permiso` via the user's role in `rol_usuario_unidades`
+
+Permissions are granted in the admin UI at `/auth` (GraphQL playground) or via the auth GraphQL API.
+
+## Auth flow
+
+```
+POST login (username + password)
+  → verify SHA2 hash
+  → generate JWT
+  → create SessionKey row
+  → return: SessionKey.key (session token) + SessionKey.apikey (JWT)
+```
+
+Clients send the session token via `SESSIONKEY` header or `galletita_traviesa` cookie.
+The `UNIDAD` header selects the active organizational unit for permission checks.
+
+## File handling
+
+Use `archivos` from the auth server to upload/download images. Use `/add-file-handling <entity>` for full instructions.
+
+```go
+import "github.com/dsaldias/server/dataauth/archivos"
+
+path, err := archivos.SubirImagen(base64DataURL, "prefix", entityID)  // save → returns "res/prefix-id.webp"
+data, err := archivos.GetImagen(path)                                  // load → returns base64 data URI
+```
+
+- Max 2MB, accepts jpeg/png/bmp/webp, always saves as WebP
+- Store only the path in DB, never the base64
+
+## Custom event hooks (`app/onevents.go`)
+
+```go
+utils.SetOnUserExternalCreate(func(db *sql.DB, id, username, pass string) {
+    // called when a user self-registers (PERM_EXTERNO=1)
+})
+utils.SetOnUserRelogin(func(db *sql.DB, id, username, pass string) {
+    // called on every successful login
+})
+utils.SetOnTicketCreated(func(db *sql.DB, ticketID string) {
+    // called when a support ticket is created
+})
+```
+
+## Key env vars
+
+| Variable | Purpose |
+|----------|---------|
+| `TOKEN_DURATION_MIN` | JWT expiry in minutes (default 60) |
+| `PLAYGROUND` | Enable GraphQL UI at `/auth` and `/app` |
+| `RATE_LIMIT` | Toggle 18 req/sec rate limiter per IP |
+| `DECODE_PASS_KEY` | Key for password hashing |
+| `PERM_EXTERNO` | Allow users to self-register |
+| `EXTERNAL_AUTH` | URL to delegate auth to external service |
+| `ALLOWED_ORIGINS` | CORS whitelist |
+
+## Naming conventions
+
+| Concept | Convention | Example |
+|---------|-----------|---------|
+| Package | lowercase singular | `package productos` |
+| Folder | lowercase, matches table name | `app/productos/` |
+| Create | `Crear` | `func Crear(db, input)` |
+| Update | `Actualizar` | `func Actualizar(db, input)` |
+| List all | `Get<Entities>` | `func GetProductos(db)` |
+| Get one | `GetById` | `func GetById(db, id)` |
+| Delete | `Eliminar` (soft) | `func Eliminar(db, id)` |
+| Parse single row | `parseRow` (unexported) | scan into `*model.T` |
+| Parse multiple rows | `parseRows` (unexported) | scan into `*model.T` |
+| DB queries | raw `database/sql`, no ORM | parameterized with `?` |
+| Permission name | GraphQL operation name | `"create_producto"` |

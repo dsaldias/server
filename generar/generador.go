@@ -12,7 +12,7 @@ import (
 //go:embed skills
 var skillsFS embed.FS
 
-//go:embed docs/CLAUDE.md
+//go:embed docs/CLAUDE.md.tmpl
 var claudeMDTemplate string
 
 func Init() {
