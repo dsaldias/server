@@ -5,12 +5,12 @@ create table `usuarios`(
     `apellido2` varchar(30),
     `documento` varchar(30),
     `celular` varchar(20),
-    `correo` varchar(100),
+    `correo` varchar(120),
     `sexo` enum('M','F'),
     `direccion` varchar(100),
-    `estado` tinyint(1) not null default 1,
+    `estado` tinyint not null default 1,
     `username` varchar(30) unique not null,
-    `password` varchar(64) not null, -- hash
+    `password` varchar(80) not null, -- hash
     `last_login` datetime,
     `oauth_id` varchar(80),
     `foto_url` varchar(90),
@@ -23,7 +23,7 @@ create table `roles`(
     `id` smallint unsigned auto_increment not null primary key,
     `nombre` varchar(50) not null unique,
     `descripcion` varchar(100),
-    `jerarquia` tinyint(1) not null default 0,
+    `jerarquia` tinyint not null default 0,
     `fecha_registro` datetime not null default CURRENT_TIMESTAMP
 );
 
@@ -33,7 +33,7 @@ create table `unidades`(
     `nombre` varchar(70) not null unique,
     `descripcion` varchar(100),
     `ubicacion` point, 
-    `orden` tinyint(1) not null default 0,
+    `orden` tinyint not null default 0,
     `fecha_registro` datetime not null default CURRENT_TIMESTAMP
 );
 
@@ -85,12 +85,14 @@ create table `menus`(
     `path` varchar(40) not null,
     `icon` varchar(40) not null,
     `color` varchar(40) not null,
-    `grupo` tinyint(1) unsigned not null default 1,
-    `orden` tinyint(1) unsigned not null default 1
+    `grupo` tinyint unsigned not null default 1,
+    `orden` tinyint unsigned not null default 1,
+    `padre_id` tinyint unsigned null,
+    foreign key(`padre_id`) references `menus`(`id`)
 );
 
 create table `menus_usuario`(
-    `id` tinyint unsigned auto_increment not null primary key,
+    `id` smallint unsigned auto_increment not null primary key,
     `usuario_id` integer unsigned not null,
     `menu_id` tinyint unsigned not null,
     `fecha_registro` datetime not null default CURRENT_TIMESTAMP,
@@ -99,7 +101,7 @@ create table `menus_usuario`(
 );
 
 create table `rol_menus`(
-    `id` tinyint unsigned auto_increment not null primary key,
+    `id` smallint unsigned auto_increment not null primary key,
     `rol_id` smallint unsigned not null,
     `menu_id` tinyint unsigned not null,
     `fecha_registro` datetime not null default CURRENT_TIMESTAMP,
@@ -148,7 +150,7 @@ create table `tickets_respuestas`(
 
 
 -- indice para optimizar la busqueda 
-CREATE INDEX idx_username ON usuarios (username);
+-- CREATE INDEX idx_username ON usuarios (username);
 CREATE INDEX idx_rol_usuario_unidades ON rol_usuario_unidades(usuario_id, rol_id, unidad_id);
 CREATE INDEX idx_rol_permiso ON rol_permiso(rol_id, metodo);
 ALTER TABLE tickets AUTO_INCREMENT = 100;
@@ -156,6 +158,8 @@ ALTER TABLE tickets AUTO_INCREMENT = 100;
 insert into `unidades`(`nombre`) values('principal');
 insert into `unidades`(`nombre`) values('secundaria');
 
+-- los id de menus estan reservados hasta el 10
+-- en tu app debes crearlas desde el 10 o superior
 insert into `menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`) 
 values 
 (1,'Usuarios','/usuarios','group',1,'primary',1),
@@ -197,7 +201,7 @@ values
 (3,'Externo','Bienvenido',2);
 
 insert into `rol_menus`(`rol_id`,`menu_id`)
-values (1,1), (1,2), (1,3), (1,4), (1,5), (2,1);
+values (1,1), (1,2), (1,3), (1,4), (1,5), (2,5), (3,5);
 
 insert into `usuarios`(`nombres`,`apellido1`,`username`,`password`)
 values ('admin','','admin',SHA2('admin', 256));

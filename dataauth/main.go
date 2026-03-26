@@ -93,8 +93,6 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) 
 	router.Post("/rest_auth/mutation/{operationName}", utils.RestToGraphQlHandler(schema2))
 	router.Get("/rest_auth/query/{operationName}", utils.RestToGraphQlHandler(schema2))
 
-	// dataauthevents.LoadCustomEvents()
-
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
