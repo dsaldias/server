@@ -31,7 +31,8 @@ import (
 func main() {
 
 	db := utils.Conexion()
-	schema := graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}})
+	resolver := graph.Resolver{DB: db}
+	schema := graph.NewExecutableSchema(graph.Config{Resolvers: &resolver})
 	srv := handler.New(schema)
 
 	srv.AddTransport(transport.Options{})
