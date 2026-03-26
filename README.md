@@ -9,6 +9,11 @@ Inspirado en el flujo de herramientas como gqlgen, pero enfocado en simplificar 
 ## 🚀 Instalación
 
 ```bash
+go get -tool github.com/99designs/gqlgen
+go tool gqlgen init
+```
+
+```bash
 go get -tool github.com/dsaldias/server/generar
 ```
 
