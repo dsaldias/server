@@ -19,8 +19,8 @@ go run serverx.go
 # Install/update dependencies
 go mod tidy
 
-# Apply the base RBAC schema (first time only)
-mysql -u root -p <dbname> < path/to/github.com/dsaldias/server/sqls/database.sql
+# Crear la base de datos y tablas RBAC (primera vez, después de configurar .env)
+go tool generar db
 
 # Apply your own entity migrations
 mysql -u root -p <dbname> < sqls/<entity>.sql

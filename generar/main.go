@@ -14,6 +14,8 @@ func main() {
 	switch os.Args[1] {
 	case "init":
 		Init()
+	case "db":
+		SetupDB()
 	default:
 		fmt.Println("unknown command")
 	}
