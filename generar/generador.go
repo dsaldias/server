@@ -25,6 +25,7 @@ import (
 
 	"github.com/dsaldias/server/dataauth"
 	"github.com/dsaldias/server/dataauth/utils"
+	"app"
 )
 
 func main() {
@@ -56,6 +57,7 @@ func main() {
 		Cache: lru.New[string](100),
 	})
 
+	app.LoadCustomEvents()
 	dataauth.Iniciar(srv, &schema, db)
 }
 
@@ -90,6 +92,29 @@ ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
 
 `
 
+	contentone := `
+package app
+
+import (
+	"database/sql"
+
+	"github.com/dsaldias/server/dataauth/utils"
+)
+
+/*
+Aqui puedes setear sus funciones cuando ocurre alguna accion
+por ejemplo cuando se registra un usuario externo
+defina su escuchador
+*/
+func LoadCustomEvents() {
+	// EDIT THIS FILE IN YOUR APP
+	utils.SetOnUserExternalCreate(func(db *sql.DB, id, u, p string) {})
+	utils.SetOnUserRelogin(func(db *sql.DB, id, u, p string) {})
+	utils.SetOnTicketCreated(func(db *sql.DB, id string) {})
+}
+
+	`
+
 	file := "serverx.go"
 
 	if _, err := os.Stat(file); err == nil {
@@ -118,8 +143,28 @@ ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
 	}
 
 	fmt.Println("✅ .env creado correctamente")
-
 	//
+
+	/* err = os.MkdirAll("app", 0755)
+	if err != nil {
+		panic(err)
+	} */
+
+	path := "app/onevents.go"
+
+	if _, err := os.Stat(path); err == nil {
+		fmt.Println("⚠️ onevents.go ya existe, no se sobrescribe")
+		return
+	}
+
+	err = os.WriteFile(path, []byte(contentone), 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("📄 onevents.go creado")
+	//
+
 	oldFile := "server.go"
 	backupFile := "server.txt"
 
