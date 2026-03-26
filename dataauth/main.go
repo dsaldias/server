@@ -21,14 +21,12 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/websocket"
-	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
 func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) {
-	utils.VerificarEnv()
-	godotenv.Load()
+
 	port := os.Getenv("PORT")
 	rate := os.Getenv("RATE_LIMIT")
 

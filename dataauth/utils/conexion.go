@@ -6,9 +6,14 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func Conexion() *sql.DB {
+	VerificarEnv()
+	godotenv.Load()
+
 	dbuser := os.Getenv("DB_USER")
 	dbpass := os.Getenv("DB_PASS")
 	dbhost := os.Getenv("DB_HOST")
