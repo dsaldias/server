@@ -1,9 +1,15 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
 )
+
+//go:embed skills
+var skillsFS embed.FS
 
 func Init() {
 	module := getModuleName()
@@ -176,4 +182,27 @@ func LoadCustomEvents() {
 		}
 		fmt.Println("📦 server.go renombrado a server.txt")
 	}
+
+	copiarSkills()
+}
+
+func copiarSkills() {
+	fs.WalkDir(skillsFS, "skills", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		destPath := filepath.Join(".claude", path)
+		if d.IsDir() {
+			return os.MkdirAll(destPath, 0755)
+		}
+		data, err := skillsFS.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(destPath, data, 0644); err != nil {
+			return err
+		}
+		fmt.Printf("📋 %s creado\n", destPath)
+		return nil
+	})
 }
