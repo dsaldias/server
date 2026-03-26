@@ -15,7 +15,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
-	dataauthevents "github.com/dsaldias/server/dataauth_events"
 	"github.com/dsaldias/server/graph_auth"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
@@ -94,7 +93,7 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) 
 	router.Post("/rest_auth/mutation/{operationName}", utils.RestToGraphQlHandler(schema2))
 	router.Get("/rest_auth/query/{operationName}", utils.RestToGraphQlHandler(schema2))
 
-	dataauthevents.LoadCustomEvents()
+	// dataauthevents.LoadCustomEvents()
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
