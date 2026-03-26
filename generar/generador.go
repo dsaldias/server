@@ -6,10 +6,14 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 //go:embed skills
 var skillsFS embed.FS
+
+//go:embed docs/CLAUDE.md
+var claudeMDTemplate string
 
 func Init() {
 	module := getModuleName()
@@ -122,68 +126,50 @@ func LoadCustomEvents() {
 
 	`
 
-	file := "serverx.go"
+	escribirArchivo("serverx.go", []byte(contentx))
+	escribirArchivo(".env", []byte(contentenv))
 
-	if _, err := os.Stat(file); err == nil {
-		fmt.Printf("⚠️ %s ya existe. \n", file)
-		return
+	if err := os.MkdirAll("app", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/: %v\n", err)
+	} else {
+		escribirArchivo("app/onevents.go", []byte(contentone))
 	}
 
-	err := os.WriteFile(file, []byte(contentx), 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("✅ serverx.go creado correctamente")
-	//
-
-	fileenv := ".env"
-
-	if _, err := os.Stat(fileenv); err == nil {
-		fmt.Printf("⚠️ %s ya existe. \n", fileenv)
-		return
-	}
-
-	err = os.WriteFile(fileenv, []byte(contentenv), 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("✅ .env creado correctamente")
-	//
-
-	err = os.MkdirAll("app", 0755)
-	if err != nil {
-		panic(err)
-	}
-
-	path := "app/onevents.go"
-
-	if _, err := os.Stat(path); err == nil {
-		fmt.Println("⚠️ onevents.go ya existe, no se sobrescribe")
-		return
-	}
-
-	err = os.WriteFile(path, []byte(contentone), 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("📄 onevents.go creado")
-	//
-
-	oldFile := "server.go"
-	backupFile := "server.txt"
-
-	if _, err := os.Stat(oldFile); err == nil {
-		err := os.Rename(oldFile, backupFile)
-		if err != nil {
-			panic(err)
+	if _, err := os.Stat("server.go"); err == nil {
+		if err := os.Rename("server.go", "server.txt"); err != nil {
+			fmt.Fprintf(os.Stderr, "❌ error renombrando server.go: %v\n", err)
+		} else {
+			fmt.Println("📦 server.go renombrado a server.txt")
 		}
-		fmt.Println("📦 server.go renombrado a server.txt")
 	}
 
 	copiarSkills()
+	generarClaudeMD(module)
+}
+
+func escribirArchivo(path string, content []byte) {
+	if _, err := os.Stat(path); err == nil {
+		fmt.Printf("⚠️  %s ya existe, no se sobrescribe\n", path)
+		return
+	}
+	if err := os.WriteFile(path, content, 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando %s: %v\n", path, err)
+		return
+	}
+	fmt.Printf("✅ %s creado\n", path)
+}
+
+func generarClaudeMD(module string) {
+	const dest = "CLAUDE.md"
+	if _, err := os.Stat(dest); err == nil {
+		fmt.Printf("⚠️ %s ya existe, no se sobrescribe\n", dest)
+		return
+	}
+	content := strings.ReplaceAll(claudeMDTemplate, "{{MODULE}}", module)
+	if err := os.WriteFile(dest, []byte(content), 0644); err != nil {
+		panic(err)
+	}
+	fmt.Println("📚 CLAUDE.md creado")
 }
 
 func copiarSkills() {
