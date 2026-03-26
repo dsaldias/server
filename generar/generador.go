@@ -74,12 +74,12 @@ func main() {
 
 `, module, module)
 
-	contentenv := `
+	contentenv := fmt.Sprintf(`
 PORT=8038
 DB_USER=root
 DB_PASS=S1nclave
 DB_HOST=127.0.0.1
-DB_NAME=auth
+DB_NAME=%s
 # EXTERNO
 PERM_EXTERNO=0
 EXTERNAL_AUTH=
@@ -101,7 +101,7 @@ DB_MAX_OPEN=20
 DB_MAX_IDLE=5
 ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
 
-`
+`, module)
 
 	contentone := `
 package app
