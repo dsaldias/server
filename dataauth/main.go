@@ -1,6 +1,7 @@
 package dataauth
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -25,13 +26,12 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema) {
+func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) {
 	utils.VerificarEnv()
 	godotenv.Load()
 	port := os.Getenv("PORT")
 	rate := os.Getenv("RATE_LIMIT")
 
-	db := utils.Conexion()
 	router := chi.NewRouter()
 	router.Use(middleware.Compress(5, "application/json", "application/graphql+json"))
 	router.Use(cors.New(cors.Options{
