@@ -1,3 +1,4 @@
 .env
 server.go
 tools.go
+CLAUDE.md
