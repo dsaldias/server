@@ -8,7 +8,7 @@ import (
 func Init() {
 	module := getModuleName()
 
-	content := fmt.Sprintf(`
+	contentx := fmt.Sprintf(`
 package main
 
 import (
@@ -61,6 +61,35 @@ func main() {
 
 `, module)
 
+	contentenv := `
+PORT=8038
+DB_USER=root
+DB_PASS=S1nclave
+DB_HOST=127.0.0.1
+DB_NAME=auth
+# EXTERNO
+PERM_EXTERNO=0
+EXTERNAL_AUTH=
+EXTERNAL_ME=
+# 
+
+PLAYGROUND=1
+RATE_LIMIT=1
+DECODE_PASS_KEY=Lf5puh9aSuWEmh9Hx1ctoGSn8Qb5kYnn5lM+RBi7e3c=
+TOKEN_DURATION_MIN=60
+AUTH_SHOW_NAME_PERMISO=1
+SEND_NOTI_LOGIN=1
+DEFAULT_UNIDAD_OAUTH=1
+DEFAULT_ROL_OAUTH=2
+DEFAULT_ROL_EXTER=3
+OAUTH_EMAILS_PERM=
+DB_CONN_LIFETIME_MIN=5
+DB_MAX_OPEN=20
+DB_MAX_IDLE=5
+ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
+
+`
+
 	file := "serverx.go"
 
 	if _, err := os.Stat(file); err == nil {
@@ -68,13 +97,29 @@ func main() {
 		return
 	}
 
-	err := os.WriteFile(file, []byte(content), 0644)
+	err := os.WriteFile(file, []byte(contentx), 0644)
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("✅ serverx.go creado correctamente")
+	//
 
+	fileenv := ".env"
+
+	if _, err := os.Stat(fileenv); err == nil {
+		fmt.Printf("⚠️ %s ya existe. \n", fileenv)
+		return
+	}
+
+	err = os.WriteFile(fileenv, []byte(contentenv), 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("✅ .env creado correctamente")
+
+	//
 	oldFile := "server.go"
 	backupFile := "server.txt"
 
