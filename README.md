@@ -68,14 +68,12 @@ go tool gqlgen init
 go get -tool github.com/dsaldias/server/generar
 go tool generar init
 go mod tidy
+go tool generar db
 go run serverx.go
 
 playgrounds:
 http://localhost:8038/auth
 http://localhost:8038/app
-
-db firts step:
-go tool generar db
 ```
 
 ---
