@@ -7,7 +7,7 @@ import (
 )
 
 func Get(db *sql.DB, id string) (*model.Notificacion, error) {
-	sql := `select id, mensaje,creado_por_id,desde,hasta,fecha_registro from notificaciones where id=?`
+	sql := `select id, mensaje,creado_por_id,desde,hasta,fecha_registro from rbac_notificaciones where id=?`
 	row := db.QueryRow(sql, id)
 	r := model.Notificacion{}
 	err := parseRow(row, &r)
@@ -19,7 +19,7 @@ func Get(db *sql.DB, id string) (*model.Notificacion, error) {
 }
 
 func GetNotificacionesActivas(db *sql.DB) ([]*model.Notificacion, error) {
-	sql := `select id, mensaje,creado_por_id,desde,hasta,fecha_registro from notificaciones where now() between desde and hasta`
+	sql := `select id, mensaje,creado_por_id,desde,hasta,fecha_registro from rbac_notificaciones where now() between desde and hasta`
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, err

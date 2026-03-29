@@ -31,7 +31,7 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 	}
 
 	sql := `
-	update usuarios set 
+	update rbac_usuarios set 
 	nombres=?, 
 	apellido1=?, 
 	apellido2=?, 
@@ -62,7 +62,7 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 	}
 
 	if input.Password != nil && len(*input.Password) > 0 && (us.OauthID == nil || len(*us.OauthID) == 0) {
-		_, err = tx.Exec("update usuarios set password=SHA2(?, 256) where id = ?", input.Password, input.ID)
+		_, err = tx.Exec("update rbac_usuarios set password=SHA2(?, 256) where id = ?", input.Password, input.ID)
 		if err != nil {
 			tx.Rollback()
 			return nil, err
@@ -70,41 +70,41 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 	}
 
 	if len(input.Username) > 0 && (us.OauthID == nil || len(*us.OauthID) == 0) {
-		_, err = tx.Exec("update usuarios set username=? where id = ?", input.Username, input.ID)
+		_, err = tx.Exec("update rbac_usuarios set username=? where id = ?", input.Username, input.ID)
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
 	}
 
-	_, err = tx.Exec("delete from rol_usuario_unidades where usuario_id = ?", input.ID)
+	_, err = tx.Exec("delete from rbac_rol_usuario_unidades where usuario_id = ?", input.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	_, err = tx.Exec("delete from usuario_permiso where usuario_id = ?", input.ID)
+	_, err = tx.Exec("delete from rbac_usuario_permiso where usuario_id = ?", input.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	_, err = tx.Exec("delete from menus_usuario where usuario_id = ?", input.ID)
+	_, err = tx.Exec("delete from rbac_menus_usuario where usuario_id = ?", input.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 	id, _ := strconv.ParseInt(input.ID, 10, 64)
 
-	// asignar roles
+	// asignar rbac_roles
 	err = asignarRoles(tx, input.Roles, id)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
-	// fi asignar roles
+	// fi asignar rbac_roles
 
-	// asignar permisos sueltos
+	// asignar rbac_permisos sueltos
 	if len(input.PermisosSueltos) > 0 {
 		err = asignarPermisos(tx, input.PermisosSueltos, id)
 		if err != nil {
@@ -112,9 +112,9 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 			return nil, err
 		}
 	}
-	// fin permisos sueltos
+	// fin rbac_permisos sueltos
 
-	// asignar menus sueltos
+	// asignar rbac_menus sueltos
 	if len(input.MenusSueltos) > 0 {
 		err = asignarMenus(tx, input.MenusSueltos, id)
 		if err != nil {
@@ -122,7 +122,7 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 			return nil, err
 		}
 	}
-	// fin menus sueltos
+	// fin rbac_menus sueltos
 
 	// subir foto perfil
 	if input.Foto64 != nil && len(*input.Foto64) > 0 {
@@ -132,7 +132,7 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 			return nil, err
 		}
 
-		sql = `update usuarios set foto_url=? where id=?`
+		sql = `update rbac_usuarios set foto_url=? where id=?`
 		_, err = tx.Exec(sql, foto_url, id)
 		if err != nil {
 			tx.Rollback()
@@ -150,7 +150,7 @@ func Actualizar(db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
 }
 
 func UpdatePassword(db *sql.DB, id, pass string) (*model.Usuario, error) {
-	sql := `update usuarios set password=SHA2(?, 256) where id = ?`
+	sql := `update rbac_usuarios set password=SHA2(?, 256) where id = ?`
 	_, err := db.Exec(sql, pass, id)
 	if err != nil {
 		return nil, err
@@ -159,6 +159,6 @@ func UpdatePassword(db *sql.DB, id, pass string) (*model.Usuario, error) {
 }
 
 func SetLastLogin(db *sql.DB, userid string) {
-	sql := "update usuarios set last_login=CURRENT_TIMESTAMP where id = ?"
+	sql := "update rbac_usuarios set last_login=CURRENT_TIMESTAMP where id = ?"
 	db.Exec(sql, userid)
 }

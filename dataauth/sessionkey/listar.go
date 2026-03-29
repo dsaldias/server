@@ -9,8 +9,8 @@ import (
 func GetyKey(db *sql.DB, key string) (*model.SessionKey, error) {
 	sql := `
 	select sk.id, sk.usuario_id,sk.key,sk.apikey,sk.expire,sk.fecha_registro, u.estado 
-	from session_keys sk 
-	inner join usuarios u on u.id = sk.usuario_id 
+	from rbac_session_keys sk 
+	inner join rbac_usuarios u on u.id = sk.usuario_id 
 	where sk.key= ?
 	`
 	row := db.QueryRow(sql, key)

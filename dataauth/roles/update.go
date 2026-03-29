@@ -9,7 +9,7 @@ import (
 )
 
 func Actualizar(db *sql.DB, input model.UpdateRol) (*model.Rol, error) {
-	sql := `update roles set nombre=?, descripcion=?,jerarquia=? where id=?`
+	sql := `update rbac_roles set nombre=?, descripcion=?,jerarquia=? where id=?`
 	tx, err := db.Begin()
 	if err != nil {
 		return nil, err
@@ -21,13 +21,13 @@ func Actualizar(db *sql.DB, input model.UpdateRol) (*model.Rol, error) {
 		return nil, err
 	}
 
-	_, err = tx.Exec("delete from rol_permiso where rol_id = ?", input.ID)
+	_, err = tx.Exec("delete from rbac_rol_permiso where rol_id = ?", input.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	sql = "replace into rol_permiso(rol_id, metodo) values %s"
+	sql = "replace into rbac_rol_permiso(rol_id, metodo) values %s"
 	places := make([]string, len(input.Permisos))
 	args := make([]interface{}, len(input.Permisos)*2)
 
@@ -46,13 +46,13 @@ func Actualizar(db *sql.DB, input model.UpdateRol) (*model.Rol, error) {
 
 	// ====
 
-	_, err = tx.Exec("delete from rol_menus where rol_id = ?", input.ID)
+	_, err = tx.Exec("delete from rbac_rol_menus where rol_id = ?", input.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	sql = "replace into rol_menus(rol_id, menu_id) values %s"
+	sql = "replace into rbac_rol_menus(rol_id, menu_id) values %s"
 	places = make([]string, len(input.Menus))
 	args = make([]interface{}, len(input.Menus)*2)
 

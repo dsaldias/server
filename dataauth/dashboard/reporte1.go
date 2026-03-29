@@ -11,39 +11,39 @@ func Reporte1(db *sql.DB) ([]*model.ResponseReporte1, error) {
 	select 
 	'usuarios' as nombre,
 	count(u.id) as valor
-	from usuarios u 
+	from rbac_usuarios u 
 	union all
 	select
 	'roles' as nombre,
 	count(r.id) as valor
-	from roles r
+	from rbac_roles r
 	union all 
 	select 
 	'menus' as nombre,
 	count(m.id) as valor
-	from menus m 
+	from rbac_menus m 
 	union all
 	select 
 	'unidades' as nombre,
 	count(un.id) as valor
-	from unidades un
+	from rbac_unidades un
 	union all
 	SELECT 
 	'usuarios diarios' as nombre,
 	COUNT(u.id) AS valor
-	FROM usuarios u 
+	FROM rbac_usuarios u 
 	WHERE u.last_login >= CURDATE()
 	union all
 	SELECT 
 	'usuarios mensual' as nombre,
 	COUNT(u.id) AS valor
-	FROM usuarios u 
+	FROM rbac_usuarios u 
 	WHERE u.last_login >= NOW() - INTERVAL 1 MONTH
 	union all
 	SELECT 
 	'tickets pendientes' as nombre,
 	COUNT(t.id) AS valor
-	FROM tickets t 
+	FROM rbac_tickets t 
 	WHERE t.estado != "cerrado"
 	`
 	rows, err := db.Query(sql)

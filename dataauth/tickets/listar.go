@@ -22,8 +22,8 @@ func AllTickets(db *sql.DB, q model.QueryTickets) ([]*model.RespTickets, error) 
 		CONCAT(u2.nombres, ' ', u2.apellido1, ' ', IFNULL(u2.apellido2, '')) AS soporte,
 		u2.id AS soporte_id,
 		tr.fecha_registro AS respondido
-	FROM tickets t
-	INNER JOIN usuarios u ON u.id = t.usuario_id
+	FROM rbac_tickets t
+	INNER JOIN rbac_usuarios u ON u.id = t.usuario_id
 	LEFT JOIN (
 		-- Subconsulta para obtener la última respuesta por ticket
 		SELECT 
@@ -31,18 +31,18 @@ func AllTickets(db *sql.DB, q model.QueryTickets) ([]*model.RespTickets, error) 
 			tr1.respuesta,
 			tr1.usuario_id,
 			tr1.fecha_registro
-		FROM tickets_respuestas tr1
+		FROM rbac_tickets_respuestas tr1
 		INNER JOIN (
 			-- Identifica el último registro por tickets_id
 			SELECT 
 				tickets_id,
 				MAX(fecha_registro) AS ultima_fecha
-			FROM tickets_respuestas
+			FROM rbac_tickets_respuestas
 			GROUP BY tickets_id
 		) tr2 ON tr1.tickets_id = tr2.tickets_id 
 			AND tr1.fecha_registro = tr2.ultima_fecha
 	) tr ON t.id = tr.tickets_id
-	LEFT JOIN usuarios u2 ON u2.id = tr.usuario_id 
+	LEFT JOIN rbac_usuarios u2 ON u2.id = tr.usuario_id 
 	order by t.id desc
 	`
 	rows, err := db.Query(sql)
@@ -77,8 +77,8 @@ func MisTickets(db *sql.DB, userid string) ([]*model.RespTickets, error) {
 		CONCAT(u2.nombres, ' ', u2.apellido1, ' ', IFNULL(u2.apellido2, '')) AS soporte,
 		u2.id AS soporte_id,
 		tr.fecha_registro AS respondido
-	FROM tickets t
-	INNER JOIN usuarios u ON u.id = t.usuario_id
+	FROM rbac_tickets t
+	INNER JOIN rbac_usuarios u ON u.id = t.usuario_id
 	LEFT JOIN (
 		-- Subconsulta para obtener la última respuesta por ticket
 		SELECT 
@@ -86,18 +86,18 @@ func MisTickets(db *sql.DB, userid string) ([]*model.RespTickets, error) {
 			tr1.respuesta,
 			tr1.usuario_id,
 			tr1.fecha_registro
-		FROM tickets_respuestas tr1
+		FROM rbac_tickets_respuestas tr1
 		INNER JOIN (
 			-- Identifica el último registro por tickets_id
 			SELECT 
 				tickets_id,
 				MAX(fecha_registro) AS ultima_fecha
-			FROM tickets_respuestas
+			FROM rbac_tickets_respuestas
 			GROUP BY tickets_id
 		) tr2 ON tr1.tickets_id = tr2.tickets_id 
 			AND tr1.fecha_registro = tr2.ultima_fecha
 	) tr ON t.id = tr.tickets_id
-	LEFT JOIN usuarios u2 ON u2.id = tr.usuario_id
+	LEFT JOIN rbac_usuarios u2 ON u2.id = tr.usuario_id
 	where t.usuario_id = ?
 	order by t.id desc
 	`
@@ -135,7 +135,7 @@ func Get(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
 	t.problema,
 	t.estado,
 	t.fecha_registro
-	from tickets t 
+	from rbac_tickets t 
 	where t.id = ?
 	`
 	row := db.QueryRow(sql, id)

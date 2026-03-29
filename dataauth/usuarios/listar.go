@@ -19,11 +19,11 @@ var WRONG_PASS = "usuario o clave incorrectos"
 func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error) {
 	filter_by_rol := ""
 	if query.Rol != nil {
-		filter_by_rol = "where id in (select usuario_id from rol_usuario_unidades where rol_id='%s')"
+		filter_by_rol = "where id in (select usuario_id from rbac_rol_usuario_unidades where rol_id='%s')"
 		filter_by_rol = fmt.Sprintf(filter_by_rol, *query.Rol)
 	}
 
-	sql := `select id, nombres,apellido1,apellido2,documento,celular,correo,sexo,direccion,estado,username,last_login,oauth_id,foto_url,ST_X(ubicacion) AS latitud,ST_Y(ubicacion) AS longitud,fecha_registro,fecha_update from usuarios %s`
+	sql := `select id, nombres,apellido1,apellido2,documento,celular,correo,sexo,direccion,estado,username,last_login,oauth_id,foto_url,ST_X(ubicacion) AS latitud,ST_Y(ubicacion) AS longitud,fecha_registro,fecha_update from rbac_usuarios %s`
 	sql = fmt.Sprintf(sql, filter_by_rol)
 	rows, err := db.Query(sql)
 	if err != nil {
@@ -33,7 +33,7 @@ func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error
 
 	cha := xnotificaciones.GetGlobal()
 
-	usuarios := []*model.Usuario{}
+	us := []*model.Usuario{}
 	for rows.Next() {
 		u := model.Usuario{}
 		er := parseRows(rows, &u)
@@ -43,10 +43,10 @@ func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error
 
 		cons := len(cha.GetSubsByUser(u.ID))
 		u.Conexiones = int32(cons)
-		usuarios = append(usuarios, &u)
+		us = append(us, &u)
 	}
 
-	return usuarios, nil
+	return us, nil
 }
 
 func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {
@@ -65,7 +65,7 @@ func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {
 
 	query := fmt.Sprintf(`
 		select id, nombres,apellido1,apellido2,documento,celular,correo,sexo,direccion,estado,username,last_login,oauth_id,foto_url,ST_X(ubicacion) AS latitud,ST_Y(ubicacion) AS longitud,fecha_registro,fecha_update 
-		from usuarios
+		from rbac_usuarios
 		where id in (%s)
 		order by last_login desc
 	`, strings.Join(placeholders, ","))
@@ -76,7 +76,7 @@ func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {
 	}
 	defer rows.Close()
 
-	usuarios := []*model.Usuario{}
+	us := []*model.Usuario{}
 	for rows.Next() {
 		u := model.Usuario{}
 		er := parseRows(rows, &u)
@@ -86,10 +86,10 @@ func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {
 
 		cons := len(cha.GetSubsByUser(u.ID))
 		u.Conexiones = int32(cons)
-		usuarios = append(usuarios, &u)
+		us = append(us, &u)
 	}
 
-	return usuarios, nil
+	return us, nil
 }
 
 func GetById(db *sql.DB, id string) (*model.Usuario, error) {
@@ -113,7 +113,7 @@ func GetById(db *sql.DB, id string) (*model.Usuario, error) {
 		ST_Y(u.ubicacion) AS longitud,  
 		u.fecha_registro,
 		u.fecha_update
-		from usuarios u 
+		from rbac_usuarios u 
 		where u.id = ?`
 
 	row := db.QueryRow(sq, id)
@@ -152,7 +152,7 @@ func GetBy(db *sql.DB, id string) (*model.ResponseUsuario, error) {
 		ST_Y(u.ubicacion) AS longitud,  
 		u.fecha_registro,
 		u.fecha_update
-		from usuarios u 
+		from rbac_usuarios u 
 		where u.id = ?`
 
 	row := db.QueryRow(sq, id)
@@ -206,7 +206,7 @@ func GetByUserPass(db *sql.DB, user, pass string) (*model.Usuario, error) {
 		ST_Y(u.ubicacion) AS longitud,  
 		u.fecha_registro,
 		u.fecha_update
-		from usuarios u 
+		from rbac_usuarios u 
 		where u.username = ? 
 		and u.password = SHA2( ?, 256)`
 
@@ -226,7 +226,7 @@ func GetByUserPass(db *sql.DB, user, pass string) (*model.Usuario, error) {
 }
 
 func GetIdByUsernamePortal(db *sql.DB, username string) (string, error) {
-	xsql := `select id from usuarios where username=?`
+	xsql := `select id from rbac_usuarios where username=?`
 	id := ""
 	err := db.QueryRow(xsql, username).Scan(&id)
 	if err != nil {

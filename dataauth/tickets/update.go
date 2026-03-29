@@ -30,14 +30,14 @@ func Update(ctx context.Context, db *sql.DB, input model.NewTicketRespuesta, use
 		return nil, err
 	}
 
-	sql := `insert into tickets_respuestas(tickets_id,usuario_id,respuesta) values(?,?,?)`
+	sql := `insert into rbac_tickets_respuestas(tickets_id,usuario_id,respuesta) values(?,?,?)`
 	_, err = tx.Exec(sql, input.TicketsID, userid, input.Respuesta)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	sql = `update tickets set estado=? where id=?`
+	sql = `update rbac_tickets set estado=? where id=?`
 	_, err = tx.Exec(sql, estado, input.TicketsID)
 	if err != nil {
 		tx.Rollback()

@@ -23,7 +23,7 @@ func UpdatePerfil(db *sql.DB, input model.UpdatePerfil) (*model.Usuario, error) 
 	}
 
 	sql := `
-	update usuarios set 
+	update rbac_usuarios set 
 	nombres=?, 
 	apellido1=?, 
 	apellido2=?, 
@@ -55,7 +55,7 @@ func UpdatePerfil(db *sql.DB, input model.UpdatePerfil) (*model.Usuario, error) 
 
 	if user.OauthID == nil {
 		if input.Username != nil && len(*input.Username) > 0 {
-			_, err = tx.Exec("update usuarios set username=? where id=?", input.Username, input.ID)
+			_, err = tx.Exec("update rbac_usuarios set username=? where id=?", input.Username, input.ID)
 			if err != nil {
 				tx.Rollback()
 				return nil, err
@@ -63,7 +63,7 @@ func UpdatePerfil(db *sql.DB, input model.UpdatePerfil) (*model.Usuario, error) 
 		}
 
 		if input.Password != nil && len(*input.Password) > 0 {
-			_, err = tx.Exec("update usuarios set password=SHA2(?, 256) where id = ?", input.Password, input.ID)
+			_, err = tx.Exec("update rbac_usuarios set password=SHA2(?, 256) where id = ?", input.Password, input.ID)
 			if err != nil {
 				tx.Rollback()
 				return nil, err
@@ -79,7 +79,7 @@ func UpdatePerfil(db *sql.DB, input model.UpdatePerfil) (*model.Usuario, error) 
 			return nil, err
 		}
 
-		sql = `update usuarios set foto_url=? where id=?`
+		sql = `update rbac_usuarios set foto_url=? where id=?`
 		_, err = tx.Exec(sql, foto_url, input.ID)
 		if err != nil {
 			tx.Rollback()

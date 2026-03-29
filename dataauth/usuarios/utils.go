@@ -142,8 +142,8 @@ func validarCadena(cadena, field string) error {
 	return nil
 }
 
-func permisos_obligatorios(roles []*model.RolUnidad, permisosueltos []string) error {
-	if len(roles) == 0 && len(permisosueltos) == 0 {
+func permisos_obligatorios(rbac_roles []*model.RolUnidad, permisosueltos []string) error {
+	if len(rbac_roles) == 0 && len(permisosueltos) == 0 {
 		return errors.New("selecciona al menos un rol o un permiso")
 	}
 	return nil
@@ -209,12 +209,12 @@ func Ubicacion(lat, lon *float64) (*string, error) {
 	}
 	return nil, nil
 }
-func asignarRoles(tx *sql.Tx, roles []*model.RolUnidad, userid int64) error {
-	user_rols := "replace into `rol_usuario_unidades`(`rol_id`,`unidad_id`,`usuario_id`) values %s"
-	places := make([]string, len(roles))
-	args := make([]interface{}, len(roles)*3)
+func asignarRoles(tx *sql.Tx, rbac_roles []*model.RolUnidad, userid int64) error {
+	user_rols := "replace into `rbac_rol_usuario_unidades`(`rol_id`,`unidad_id`,`usuario_id`) values %s"
+	places := make([]string, len(rbac_roles))
+	args := make([]interface{}, len(rbac_roles)*3)
 
-	for i, r := range roles {
+	for i, r := range rbac_roles {
 		places[i] = "(?,?,?)"
 		args[i*3] = r.RolID
 		args[i*3+1] = r.UnidadID
@@ -227,7 +227,7 @@ func asignarRoles(tx *sql.Tx, roles []*model.RolUnidad, userid int64) error {
 }
 
 func asignarPermisos(tx *sql.Tx, permisosSueltos []string, userid int64) error {
-	user_perms := "replace into `usuario_permiso`(`usuario_id`,`metodo`) values %s"
+	user_perms := "replace into `rbac_usuario_permiso`(`usuario_id`,`metodo`) values %s"
 	places2 := make([]string, len(permisosSueltos))
 	args2 := make([]interface{}, len(permisosSueltos)*2)
 
@@ -243,7 +243,7 @@ func asignarPermisos(tx *sql.Tx, permisosSueltos []string, userid int64) error {
 }
 
 func asignarMenus(tx *sql.Tx, menus_sueltos []string, userid int64) error {
-	user_perms := "replace into `menus_usuario`(`usuario_id`,`menu_id`) values %s"
+	user_perms := "replace into `rbac_menus_usuario`(`usuario_id`,`menu_id`) values %s"
 	places2 := make([]string, len(menus_sueltos))
 	args2 := make([]any, len(menus_sueltos)*2)
 

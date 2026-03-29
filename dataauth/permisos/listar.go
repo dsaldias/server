@@ -9,14 +9,14 @@ import (
 )
 
 func GetPermisos(db *sql.DB) ([]*model.Permiso, error) {
-	sql := `select metodo,nombre, descripcion,grupo,fecha_registro from permisos order by grupo,fecha_registro asc`
+	sql := `select metodo,nombre, descripcion,grupo,fecha_registro from rbac_permisos order by grupo,fecha_registro asc`
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	permisos := []*model.Permiso{}
+	ps := []*model.Permiso{}
 	for rows.Next() {
 		p := model.Permiso{}
 		er := parseRows(rows, &p)
@@ -24,17 +24,17 @@ func GetPermisos(db *sql.DB) ([]*model.Permiso, error) {
 			return nil, er
 		}
 		// p.FechaRegistro = utils.ToTZ(p.FechaRegistro)
-		permisos = append(permisos, &p)
+		ps = append(ps, &p)
 	}
 
-	return permisos, nil
+	return ps, nil
 }
 
 func GetPermisosByRol(db *sql.DB, rol_id string) ([]*model.ResponsePermisoMe, error) {
 	sql := `
 	select p.metodo, p.nombre, p.descripcion,p.grupo, p.fecha_registro, rp.fecha_registro as fecha_asignado 
-	from permisos p
-	left join rol_permiso rp on rp.metodo = p.metodo
+	from rbac_permisos p
+	left join rbac_rol_permiso rp on rp.metodo = p.metodo
 	where rp.rol_id = ?;
 	`
 
@@ -60,8 +60,8 @@ func GetPermisosByRol(db *sql.DB, rol_id string) ([]*model.ResponsePermisoMe, er
 func GetPermisosSueltosByUser(db *sql.DB, userid string) ([]*model.ResponsePermisoMe, error) {
 	sql := `
 	select p.metodo, p.nombre, p.descripcion,p.grupo, p.fecha_registro, up.fecha_registro as fecha_asignado 
-	from permisos p
-	inner join usuario_permiso up on up.metodo  = p.metodo 
+	from rbac_permisos p
+	inner join rbac_usuario_permiso up on up.metodo  = p.metodo 
 	where up.usuario_id = ?
 	`
 
@@ -89,12 +89,12 @@ func VerificarPermiso(db *sql.DB, userid, unidadid, metodo string) error {
 	SELECT 
 		CASE 
 			WHEN up.usuario_id IS NOT NULL THEN 'Directo'
-			WHEN rp.rol_id IS NOT NULL THEN 'A través de roles' 
+			WHEN rp.rol_id IS NOT NULL THEN 'A través de rbac_roles' 
 		END AS metodo_de_asignacion
-	FROM usuarios u
-	LEFT JOIN usuario_permiso up ON u.id = up.usuario_id AND up.metodo = ?
-	LEFT JOIN rol_usuario_unidades ruu ON u.id = ruu.usuario_id
-	LEFT JOIN rol_permiso rp ON ruu.rol_id = rp.rol_id AND rp.metodo = ?
+	FROM rbac_usuarios u
+	LEFT JOIN rbac_usuario_permiso up ON u.id = up.usuario_id AND up.metodo = ?
+	LEFT JOIN rbac_rol_usuario_unidades ruu ON u.id = ruu.usuario_id
+	LEFT JOIN rbac_rol_permiso rp ON ruu.rol_id = rp.rol_id AND rp.metodo = ?
 	WHERE u.id = ? and ruu.unidad_id = ? AND (up.usuario_id IS NOT NULL OR rp.rol_id IS NOT NULL);
 	`
 	texto := ""

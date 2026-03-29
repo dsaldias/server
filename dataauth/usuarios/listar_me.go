@@ -22,12 +22,12 @@ func GetMe(db *sql.DB, input model.InputMe, userid string) (*model.ResponseMe, e
 
 	user.Roles, err = roles.GetRolesByUsuario(db, us.ID)
 	if err != nil {
-		return nil, errors.Join(err, errors.New("error al cargar roles al usuario"))
+		return nil, errors.Join(err, errors.New("error al cargar rbac_roles al usuario"))
 	}
 
 	user.PermisosSueltos, err = permisos.GetPermisosSueltosByUser(db, us.ID)
 	if err != nil {
-		return nil, errors.Join(err, errors.New("error al cargar permisos sueltos del usuario"))
+		return nil, errors.Join(err, errors.New("error al cargar rbac_permisos sueltos del usuario"))
 	}
 
 	user.Menus, err = menus.ListarByUserUnidad(db, input, us.ID)

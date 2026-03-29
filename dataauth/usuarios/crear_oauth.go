@@ -16,7 +16,7 @@ func CrearOauth(db *sql.DB, input model.NewUsuarioOauth, isportal bool) (*model.
 	}
 
 	var id, oauth *string
-	xsql := "select id, oauth_id from usuarios where oauth_id=?"
+	xsql := "select id, oauth_id from rbac_usuarios where oauth_id=?"
 	err := db.QueryRow(xsql, input.Username).Scan(&id, &oauth)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
@@ -44,14 +44,14 @@ func CrearOauth(db *sql.DB, input model.NewUsuarioOauth, isportal bool) (*model.
 
 	if isportal {
 		id_existe := ""
-		xsql := "select id from usuarios where username=?"
+		xsql := "select id from rbac_usuarios where username=?"
 		err := db.QueryRow(xsql, input.Username).Scan(&id_existe)
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 
 		if id_existe != "" {
-			sqlx := "update usuarios set password=SHA2(?, 256) where id=?"
+			sqlx := "update rbac_usuarios set password=SHA2(?, 256) where id=?"
 			_, err = db.Exec(sqlx, input.Password, id_existe)
 			if err != nil {
 				return nil, err

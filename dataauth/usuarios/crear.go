@@ -33,7 +33,7 @@ func Crear(db *sql.DB, input model.NewUsuario, oauth_id *string) (*model.Usuario
 	}
 
 	sql := `
-	INSERT INTO usuarios(nombres, apellido1, apellido2, documento, celular, correo, sexo, direccion, username, password,oauth_id,ubicacion)
+	INSERT INTO rbac_usuarios(nombres, apellido1, apellido2, documento, celular, correo, sexo, direccion, username, password,oauth_id,ubicacion)
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SHA2(?, 256),?, ST_GeomFromText(?));
 	`
 	res, err := tx.Exec(sql,
@@ -59,15 +59,15 @@ func Crear(db *sql.DB, input model.NewUsuario, oauth_id *string) (*model.Usuario
 	id, _ := res.LastInsertId()
 	xid := strconv.FormatInt(id, 10)
 
-	// asignar roles
+	// asignar rbac_roles
 	err = asignarRoles(tx, input.Roles, id)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
-	// fin asignar roles
+	// fin asignar rbac_roles
 
-	// asignar permisos sueltos
+	// asignar rbac_permisos sueltos
 	if len(input.PermisosSueltos) > 0 {
 		err = asignarPermisos(tx, input.PermisosSueltos, id)
 		if err != nil {
@@ -75,9 +75,9 @@ func Crear(db *sql.DB, input model.NewUsuario, oauth_id *string) (*model.Usuario
 			return nil, err
 		}
 	}
-	// fin permisos sueltos
+	// fin rbac_permisos sueltos
 
-	// asignar menus sueltos
+	// asignar rbac_menus sueltos
 	if len(input.PermisosSueltos) > 0 {
 		err = asignarMenus(tx, input.MenusSueltos, id)
 		if err != nil {
@@ -85,7 +85,7 @@ func Crear(db *sql.DB, input model.NewUsuario, oauth_id *string) (*model.Usuario
 			return nil, err
 		}
 	}
-	// fin menus sueltos
+	// fin rbac_menus sueltos
 
 	// subir foto perfil
 	if input.Foto64 != nil && len(*input.Foto64) > 0 {
@@ -95,7 +95,7 @@ func Crear(db *sql.DB, input model.NewUsuario, oauth_id *string) (*model.Usuario
 			return nil, err
 		}
 
-		sql = `update usuarios set foto_url=? where id=?`
+		sql = `update rbac_usuarios set foto_url=? where id=?`
 		_, err = tx.Exec(sql, foto_url, id)
 		if err != nil {
 			tx.Rollback()

@@ -7,7 +7,7 @@ import (
 )
 
 func Respuestas(db *sql.DB, idticket string) ([]*model.TicketsRespuestas, error) {
-	sql := `select id, tickets_id,usuario_id,respuesta, fecha_registro from tickets_respuestas where tickets_id=?`
+	sql := `select id, tickets_id,usuario_id,respuesta, fecha_registro from rbac_tickets_respuestas where tickets_id=?`
 	rows, err := db.Query(sql, idticket)
 	if err != nil {
 		return nil, err

@@ -8,8 +8,8 @@ import (
 
 func Reporte2(db *sql.DB) ([]*model.ResponseReporte2, error) {
 	sql := `
-	SELECT DATE(u.last_login) AS fecha, COUNT(u.id) AS usuarios
-	FROM usuarios u 
+	SELECT DATE(u.last_login) AS fecha, COUNT(u.id) AS rbac_usuarios
+	FROM rbac_usuarios u 
 	WHERE u.last_login >= NOW() - INTERVAL 1 MONTH
 	GROUP BY DATE(u.last_login)
 	ORDER BY fecha
@@ -40,8 +40,8 @@ func Reporte2b(db *sql.DB) ([]*model.ResponseReporte2b, error) {
 	sql := `
 	SELECT 
 	DATE_FORMAT(expire, '%Y-%m') AS mes, 
-	COUNT(DISTINCT usuario_id) AS usuarios
-	FROM session_keys
+	COUNT(DISTINCT usuario_id) AS rbac_usuarios
+	FROM rbac_session_keys
 	WHERE expire >= NOW() - INTERVAL 1 YEAR
 	GROUP BY DATE_FORMAT(expire, '%Y-%m')
 	ORDER BY mes

@@ -11,7 +11,7 @@ import (
 )
 
 func Cerrar(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
-	sql := `update tickets set estado='cerrado' where id = ?`
+	sql := `update rbac_tickets set estado='cerrado' where id = ?`
 	_, err := db.Exec(sql, id)
 	if err != nil {
 		return nil, err

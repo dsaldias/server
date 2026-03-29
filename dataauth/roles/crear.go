@@ -13,7 +13,7 @@ func Crear(db *sql.DB, input model.NewRol) (*model.Rol, error) {
 	if err := validar_campos(input); err != nil {
 		return nil, err
 	}
-	sql := `insert into roles(nombre,descripcion,jerarquia) values (?,?,?)`
+	sql := `insert into rbac_roles(nombre,descripcion,jerarquia) values (?,?,?)`
 	tx, err := db.Begin()
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func Crear(db *sql.DB, input model.NewRol) (*model.Rol, error) {
 	idd, _ := res.LastInsertId()
 	id := strconv.FormatInt(idd, 10)
 
-	sql = "insert into rol_permiso(rol_id, metodo) values %s"
+	sql = "insert into rbac_rol_permiso(rol_id, metodo) values %s"
 	places := make([]string, len(input.Permisos))
 	args := make([]interface{}, len(input.Permisos)*2)
 
@@ -46,7 +46,7 @@ func Crear(db *sql.DB, input model.NewRol) (*model.Rol, error) {
 	}
 
 	// ================================================
-	sql = "insert into rol_menus(rol_id, menu_id) values %s"
+	sql = "insert into rbac_rol_menus(rol_id, menu_id) values %s"
 	places = make([]string, len(input.Menus))
 	args = make([]interface{}, len(input.Menus)*2)
 

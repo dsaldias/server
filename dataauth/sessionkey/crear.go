@@ -19,7 +19,7 @@ func CrearApikey(db *sql.DB, userid, apikey string, exp time.Time) (*model.Sessi
 	input.Key = key
 	input.Expire = exp
 
-	sql := "insert into session_keys(`usuario_id`,`key`,`apikey`,`expire`) values(?,?,?,?)"
+	sql := "insert into rbac_session_keys(`usuario_id`,`key`,`apikey`,`expire`) values(?,?,?,?)"
 	_, err = db.Exec(sql, input.UsuarioID, input.Key, input.Apikey, input.Expire)
 	if err != nil {
 		return nil, err

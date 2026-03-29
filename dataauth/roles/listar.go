@@ -18,13 +18,13 @@ func GetRoles(db *sql.DB) ([]*model.ResponseRoles, error) {
 		COUNT(DISTINCT rp.metodo) AS total_permisos,
 		COUNT(DISTINCT ru.usuario_id) AS total_usuarios
 	FROM
-		roles r
+		rbac_roles r
 	LEFT JOIN 
-		rol_menus rm ON r.id = rm.rol_id
+		rbac_rol_menus rm ON r.id = rm.rol_id
 	LEFT JOIN 
-		rol_permiso rp ON r.id = rp.rol_id
+		rbac_rol_permiso rp ON r.id = rp.rol_id
 	LEFT JOIN 
-		rol_usuario_unidades ru ON r.id = ru.rol_id
+		rbac_rol_usuario_unidades ru ON r.id = ru.rol_id
 	GROUP BY 
 		r.id,r.nombre,r.descripcion,r.jerarquia,r.fecha_registro
 	order by r.jerarquia asc, r.id;
@@ -34,7 +34,7 @@ func GetRoles(db *sql.DB) ([]*model.ResponseRoles, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	roles := []*model.ResponseRoles{}
+	rs := []*model.ResponseRoles{}
 
 	for rows.Next() {
 		r := model.ResponseRoles{}
@@ -43,14 +43,14 @@ func GetRoles(db *sql.DB) ([]*model.ResponseRoles, error) {
 			return nil, er
 		}
 		// r.FechaRegistro = utils.ToTZ(r.FechaRegistro)
-		roles = append(roles, &r)
+		rs = append(rs, &r)
 	}
 
-	return roles, nil
+	return rs, nil
 }
 
 func GetRolById(db *sql.DB, id string) (*model.Rol, error) {
-	sq := "select id,nombre,descripcion,jerarquia,fecha_registro from roles where id = ?"
+	sq := "select id,nombre,descripcion,jerarquia,fecha_registro from rbac_roles where id = ?"
 	row := db.QueryRow(sq, id)
 	r := model.Rol{}
 	err := parseRow(row, &r)
@@ -83,9 +83,9 @@ func GetRolesByUsuario(db *sql.DB, userid string) ([]*model.ResponseRolMe, error
 	un.descripcion as unidad_descripcion,
 	un.orden as unidad_orden,
 	un.fecha_registro as unidad_fecha_registro
-	from roles r
-	left join rol_usuario_unidades ruu on ruu.rol_id = r.id
-	inner join unidades un on un.id = ruu.unidad_id 
+	from rbac_roles r
+	left join rbac_rol_usuario_unidades ruu on ruu.rol_id = r.id
+	inner join rbac_unidades un on un.id = ruu.unidad_id 
 	where ruu.usuario_id = ?
 	order by r.jerarquia
 	`
@@ -95,7 +95,7 @@ func GetRolesByUsuario(db *sql.DB, userid string) ([]*model.ResponseRolMe, error
 	}
 	defer rows.Close()
 
-	roles := []*model.ResponseRolMe{}
+	rs := []*model.ResponseRolMe{}
 
 	for rows.Next() {
 		r := model.ResponseRolMe{Rol: &model.RolMe{}, Unidad: &model.Unidad{}}
@@ -103,10 +103,10 @@ func GetRolesByUsuario(db *sql.DB, userid string) ([]*model.ResponseRolMe, error
 		if er != nil {
 			return nil, er
 		}
-		roles = append(roles, &r)
+		rs = append(rs, &r)
 	}
 
-	return roles, nil
+	return rs, nil
 }
 
 func GetRolUnidadesByUser(db *sql.DB, userid string) ([]*model.ResponseRolUnidad, error) {
@@ -116,9 +116,9 @@ func GetRolUnidadesByUser(db *sql.DB, userid string) ([]*model.ResponseRolUnidad
 	r.nombre as rol_nombre,
 	un.id as unidad_id,
 	un.nombre as unidad_nombre
-	from rol_usuario_unidades ruu 
-	inner join roles r on r.id = ruu.rol_id 
-	inner join unidades un on un.id = ruu.unidad_id 
+	from rbac_rol_usuario_unidades ruu 
+	inner join rbac_roles r on r.id = ruu.rol_id 
+	inner join rbac_unidades un on un.id = ruu.unidad_id 
 	where ruu.usuario_id = ?
 	`
 	rows, err := db.Query(sql, userid)

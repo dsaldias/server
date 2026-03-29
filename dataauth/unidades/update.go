@@ -13,7 +13,7 @@ func Actualizar(db *sql.DB, input model.UpdUnidad) (*model.Unidad, error) {
 	if err != nil {
 		return nil, err
 	}
-	sql := `update unidades set nombre=?, descripcion=?, ubicacion=ST_GeomFromText(?), orden=? where id=?`
+	sql := `update rbac_unidades set nombre=?, descripcion=?, ubicacion=ST_GeomFromText(?), orden=? where id=?`
 	_, err = db.Exec(sql, input.Nombre, input.Descripcion, point, input.Orden, input.ID)
 	if err != nil {
 		return nil, err

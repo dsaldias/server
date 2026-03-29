@@ -8,7 +8,7 @@ import (
 )
 
 func Crear(db *sql.DB, input model.NewNotificacion, userid string) (*model.Notificacion, error) {
-	sql := `insert into notificaciones(mensaje,creado_por_id,desde,hasta) values(?,?,?,?)`
+	sql := `insert into rbac_notificaciones(mensaje,creado_por_id,desde,hasta) values(?,?,?,?)`
 	res, err := db.Exec(sql, input.Mensaje, userid, input.Desde, input.Hasta)
 	if err != nil {
 		return nil, err

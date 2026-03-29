@@ -13,7 +13,7 @@ import (
 )
 
 func Crear(ctx context.Context, db *sql.DB, input model.NewTicket, userid string) (*model.Ticket, error) {
-	sql := `insert into tickets(usuario_id,problema) values(?,?)`
+	sql := `insert into rbac_tickets(usuario_id,problema) values(?,?)`
 	res, err := db.Exec(sql, userid, input.Problema)
 	if err != nil {
 		return nil, err
