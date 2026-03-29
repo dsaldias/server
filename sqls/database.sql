@@ -215,9 +215,9 @@ values (1,'roles'),(1,'rol_by_id'),(1,'update_rol'),(1,'permisos'),(1,'menus');
 -- 
 -- ejemplo de menus anidados: 
 -- 
-insert into `rbac_menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`,`padre_id`) 
-values 
-(6,'Menu anidado','/','group',2,'primary',1,null),
-(7,'Rolesx','/roles','local_movies',2,'primary',2, 6),
-(8,'Unidadesx','/unidades','home',2,'primary',3, 6),
-(9,'Notificacionesx','/avisos','campaign',2,'primary',4, 6);
+-- insert into `rbac_menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`,`padre_id`) 
+-- values 
+-- (6,'Menu anidado','/','group',2,'primary',1,null),
+-- (7,'Rolesx','/roles','local_movies',2,'primary',2, 6),
+-- (8,'Unidadesx','/unidades','home',2,'primary',3, 6),
+-- (9,'Notificacionesx','/avisos','campaign',2,'primary',4, 6);
