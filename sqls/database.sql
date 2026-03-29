@@ -212,3 +212,12 @@ values (1,1,1), (2,1,2);
 insert into `rol_permiso`(`rol_id`,`metodo`)
 values (1,'roles'),(1,'rol_by_id'),(1,'update_rol'),(1,'permisos'),(1,'menus');
 
+-- 
+-- ejemplo de menus anidados: 
+-- 
+insert into `menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`,`padre_id`) 
+values 
+(6,'Menu anidado','/','group',2,'primary',1,null),
+(7,'Roles','/roles','local_movies',2,'primary',2, 6),
+(8,'Unidades','/unidades','home',2,'primary',3, 6),
+(9,'Notificaciones','/avisos','campaign',2,'primary',4, 6);

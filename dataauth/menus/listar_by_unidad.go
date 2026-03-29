@@ -8,7 +8,7 @@ import (
 
 func ListarByUserUnidad(db *sql.DB, input model.InputMe, userid string) ([]*model.Menus, error) {
 	xsql := `
-	SELECT distinct m.id, m.label, m.path, m.icon, m.color, m.grupo, m.orden
+	SELECT distinct m.id, m.label, m.path, m.icon, m.color, m.grupo, m.orden, m.padre_id
 	FROM menus m
 	LEFT JOIN menus_usuario mu ON mu.menu_id = m.id
 	LEFT JOIN rol_menus rm ON rm.menu_id = m.id

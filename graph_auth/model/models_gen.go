@@ -11,13 +11,14 @@ type InputMe struct {
 }
 
 type Menus struct {
-	ID    string `json:"id"`
-	Label string `json:"label"`
-	Path  string `json:"path"`
-	Icon  string `json:"icon"`
-	Color string `json:"color"`
-	Grupo int32  `json:"grupo"`
-	Orden int32  `json:"orden"`
+	ID      string  `json:"id"`
+	Label   string  `json:"label"`
+	Path    string  `json:"path"`
+	Icon    string  `json:"icon"`
+	Color   string  `json:"color"`
+	Grupo   int32   `json:"grupo"`
+	Orden   int32   `json:"orden"`
+	PadreID *string `json:"padre_id,omitempty"`
 }
 
 type Mutation struct {

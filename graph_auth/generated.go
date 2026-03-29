@@ -12,10 +12,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/dsaldias/server/graph_auth/model"
-
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/dsaldias/server/graph_auth/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -40,13 +39,14 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Menus struct {
-		Color func(childComplexity int) int
-		Grupo func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Icon  func(childComplexity int) int
-		Label func(childComplexity int) int
-		Orden func(childComplexity int) int
-		Path  func(childComplexity int) int
+		Color   func(childComplexity int) int
+		Grupo   func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Icon    func(childComplexity int) int
+		Label   func(childComplexity int) int
+		Orden   func(childComplexity int) int
+		PadreID func(childComplexity int) int
+		Path    func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -384,6 +384,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Menus.Orden(childComplexity), true
+	case "Menus.padre_id":
+		if e.ComplexityRoot.Menus.PadreID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Menus.PadreID(childComplexity), true
 	case "Menus.path":
 		if e.ComplexityRoot.Menus.Path == nil {
 			break
@@ -1704,7 +1710,7 @@ func (ec *executionContext) field_Mutation_cerrar_ticket_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_crear_notificacion_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewNotificacion2serverᚋgraph_authᚋmodelᚐNewNotificacion)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewNotificacion)
 	if err != nil {
 		return nil, err
 	}
@@ -1715,7 +1721,7 @@ func (ec *executionContext) field_Mutation_crear_notificacion_args(ctx context.C
 func (ec *executionContext) field_Mutation_createOauth_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUsuarioOauth2serverᚋgraph_authᚋmodelᚐNewUsuarioOauth)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUsuarioOauth2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUsuarioOauth)
 	if err != nil {
 		return nil, err
 	}
@@ -1726,7 +1732,7 @@ func (ec *executionContext) field_Mutation_createOauth_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_create_rol_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewRol2serverᚋgraph_authᚋmodelᚐNewRol)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewRol)
 	if err != nil {
 		return nil, err
 	}
@@ -1737,7 +1743,7 @@ func (ec *executionContext) field_Mutation_create_rol_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_create_ticket_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewTicket2serverᚋgraph_authᚋmodelᚐNewTicket)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewTicket2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewTicket)
 	if err != nil {
 		return nil, err
 	}
@@ -1748,7 +1754,7 @@ func (ec *executionContext) field_Mutation_create_ticket_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_create_unidad_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUnidad2serverᚋgraph_authᚋmodelᚐNewUnidad)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUnidad)
 	if err != nil {
 		return nil, err
 	}
@@ -1759,7 +1765,7 @@ func (ec *executionContext) field_Mutation_create_unidad_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_create_usuario_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUsuario2serverᚋgraph_authᚋmodelᚐNewUsuario)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUsuario)
 	if err != nil {
 		return nil, err
 	}
@@ -1781,7 +1787,7 @@ func (ec *executionContext) field_Mutation_enviar_notificacion_args(ctx context.
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewLogin2serverᚋgraph_authᚋmodelᚐNewLogin)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewLogin2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewLogin)
 	if err != nil {
 		return nil, err
 	}
@@ -1792,7 +1798,7 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Mutation_login_v2_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewLogin22serverᚋgraph_authᚋmodelᚐNewLogin2)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewLogin22githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewLogin2)
 	if err != nil {
 		return nil, err
 	}
@@ -1803,7 +1809,7 @@ func (ec *executionContext) field_Mutation_login_v2_args(ctx context.Context, ra
 func (ec *executionContext) field_Mutation_update_notificacion_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdNotificacion2serverᚋgraph_authᚋmodelᚐUpdNotificacion)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdNotificacion)
 	if err != nil {
 		return nil, err
 	}
@@ -1814,7 +1820,7 @@ func (ec *executionContext) field_Mutation_update_notificacion_args(ctx context.
 func (ec *executionContext) field_Mutation_update_perfil_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdatePerfil2serverᚋgraph_authᚋmodelᚐUpdatePerfil)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdatePerfil2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdatePerfil)
 	if err != nil {
 		return nil, err
 	}
@@ -1825,7 +1831,7 @@ func (ec *executionContext) field_Mutation_update_perfil_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_update_rol_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateRol2serverᚋgraph_authᚋmodelᚐUpdateRol)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdateRol)
 	if err != nil {
 		return nil, err
 	}
@@ -1836,7 +1842,7 @@ func (ec *executionContext) field_Mutation_update_rol_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_update_ticket_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewTicketRespuesta2serverᚋgraph_authᚋmodelᚐNewTicketRespuesta)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNNewTicketRespuesta2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewTicketRespuesta)
 	if err != nil {
 		return nil, err
 	}
@@ -1847,7 +1853,7 @@ func (ec *executionContext) field_Mutation_update_ticket_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_update_unidad_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdUnidad2serverᚋgraph_authᚋmodelᚐUpdUnidad)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdUnidad)
 	if err != nil {
 		return nil, err
 	}
@@ -1858,7 +1864,7 @@ func (ec *executionContext) field_Mutation_update_unidad_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_update_usuario_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUsuario2serverᚋgraph_authᚋmodelᚐUpdateUsuario)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdateUsuario)
 	if err != nil {
 		return nil, err
 	}
@@ -1880,7 +1886,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_all_tickets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "q", ec.unmarshalNQueryTickets2serverᚋgraph_authᚋmodelᚐQueryTickets)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "q", ec.unmarshalNQueryTickets2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryTickets)
 	if err != nil {
 		return nil, err
 	}
@@ -1902,7 +1908,7 @@ func (ec *executionContext) field_Query_get_imagen_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_me_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNInputMe2serverᚋgraph_authᚋmodelᚐInputMe)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNInputMe2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐInputMe)
 	if err != nil {
 		return nil, err
 	}
@@ -1935,7 +1941,7 @@ func (ec *executionContext) field_Query_usuario_by_id_args(ctx context.Context, 
 func (ec *executionContext) field_Query_usuarios_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "query", ec.unmarshalNQueryUsuarios2serverᚋgraph_authᚋmodelᚐQueryUsuarios)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "query", ec.unmarshalNQueryUsuarios2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryUsuarios)
 	if err != nil {
 		return nil, err
 	}
@@ -2209,6 +2215,35 @@ func (ec *executionContext) fieldContext_Menus_orden(_ context.Context, field gr
 	return fc, nil
 }
 
+func (ec *executionContext) _Menus_padre_id(ctx context.Context, field graphql.CollectedField, obj *model.Menus) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Menus_padre_id,
+		func(ctx context.Context) (any, error) {
+			return obj.PadreID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Menus_padre_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Menus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -2220,7 +2255,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 			return ec.Resolvers.Mutation().Login(ctx, fc.Args["input"].(model.NewLogin))
 		},
 		nil,
-		ec.marshalNResponseLogin2ᚖserverᚋgraph_authᚋmodelᚐResponseLogin,
+		ec.marshalNResponseLogin2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin,
 		true,
 		true,
 	)
@@ -2269,7 +2304,7 @@ func (ec *executionContext) _Mutation_login_v2(ctx context.Context, field graphq
 			return ec.Resolvers.Mutation().LoginV2(ctx, fc.Args["input"].(model.NewLogin2))
 		},
 		nil,
-		ec.marshalNResponseLogin2ᚖserverᚋgraph_authᚋmodelᚐResponseLogin,
+		ec.marshalNResponseLogin2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin,
 		true,
 		true,
 	)
@@ -2318,7 +2353,7 @@ func (ec *executionContext) _Mutation_create_rol(ctx context.Context, field grap
 			return ec.Resolvers.Mutation().CreateRol(ctx, fc.Args["input"].(model.NewRol))
 		},
 		nil,
-		ec.marshalNRol2ᚖserverᚋgraph_authᚋmodelᚐRol,
+		ec.marshalNRol2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol,
 		true,
 		true,
 	)
@@ -2375,7 +2410,7 @@ func (ec *executionContext) _Mutation_update_rol(ctx context.Context, field grap
 			return ec.Resolvers.Mutation().UpdateRol(ctx, fc.Args["input"].(model.UpdateRol))
 		},
 		nil,
-		ec.marshalNRol2ᚖserverᚋgraph_authᚋmodelᚐRol,
+		ec.marshalNRol2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol,
 		true,
 		true,
 	)
@@ -2432,7 +2467,7 @@ func (ec *executionContext) _Mutation_create_usuario(ctx context.Context, field 
 			return ec.Resolvers.Mutation().CreateUsuario(ctx, fc.Args["input"].(model.NewUsuario))
 		},
 		nil,
-		ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario,
+		ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario,
 		true,
 		true,
 	)
@@ -2513,7 +2548,7 @@ func (ec *executionContext) _Mutation_update_usuario(ctx context.Context, field 
 			return ec.Resolvers.Mutation().UpdateUsuario(ctx, fc.Args["input"].(model.UpdateUsuario))
 		},
 		nil,
-		ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario,
+		ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario,
 		true,
 		true,
 	)
@@ -2594,7 +2629,7 @@ func (ec *executionContext) _Mutation_update_perfil(ctx context.Context, field g
 			return ec.Resolvers.Mutation().UpdatePerfil(ctx, fc.Args["input"].(model.UpdatePerfil))
 		},
 		nil,
-		ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario,
+		ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario,
 		true,
 		true,
 	)
@@ -2675,7 +2710,7 @@ func (ec *executionContext) _Mutation_create_unidad(ctx context.Context, field g
 			return ec.Resolvers.Mutation().CreateUnidad(ctx, fc.Args["input"].(model.NewUnidad))
 		},
 		nil,
-		ec.marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnidad,
+		ec.marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad,
 		true,
 		true,
 	)
@@ -2732,7 +2767,7 @@ func (ec *executionContext) _Mutation_update_unidad(ctx context.Context, field g
 			return ec.Resolvers.Mutation().UpdateUnidad(ctx, fc.Args["input"].(model.UpdUnidad))
 		},
 		nil,
-		ec.marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnidad,
+		ec.marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad,
 		true,
 		true,
 	)
@@ -2789,7 +2824,7 @@ func (ec *executionContext) _Mutation_createOauth(ctx context.Context, field gra
 			return ec.Resolvers.Mutation().CreateOauth(ctx, fc.Args["input"].(model.NewUsuarioOauth))
 		},
 		nil,
-		ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario,
+		ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario,
 		true,
 		true,
 	)
@@ -2911,7 +2946,7 @@ func (ec *executionContext) _Mutation_crear_notificacion(ctx context.Context, fi
 			return ec.Resolvers.Mutation().CrearNotificacion(ctx, fc.Args["input"].(model.NewNotificacion))
 		},
 		nil,
-		ec.marshalNNotificacion2ᚖserverᚋgraph_authᚋmodelᚐNotificacion,
+		ec.marshalNNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion,
 		true,
 		true,
 	)
@@ -2966,7 +3001,7 @@ func (ec *executionContext) _Mutation_update_notificacion(ctx context.Context, f
 			return ec.Resolvers.Mutation().UpdateNotificacion(ctx, fc.Args["input"].(model.UpdNotificacion))
 		},
 		nil,
-		ec.marshalNNotificacion2ᚖserverᚋgraph_authᚋmodelᚐNotificacion,
+		ec.marshalNNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion,
 		true,
 		true,
 	)
@@ -3021,7 +3056,7 @@ func (ec *executionContext) _Mutation_create_ticket(ctx context.Context, field g
 			return ec.Resolvers.Mutation().CreateTicket(ctx, fc.Args["input"].(model.NewTicket))
 		},
 		nil,
-		ec.marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTicket,
+		ec.marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket,
 		true,
 		true,
 	)
@@ -3076,7 +3111,7 @@ func (ec *executionContext) _Mutation_update_ticket(ctx context.Context, field g
 			return ec.Resolvers.Mutation().UpdateTicket(ctx, fc.Args["input"].(model.NewTicketRespuesta))
 		},
 		nil,
-		ec.marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTicket,
+		ec.marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket,
 		true,
 		true,
 	)
@@ -3131,7 +3166,7 @@ func (ec *executionContext) _Mutation_cerrar_ticket(ctx context.Context, field g
 			return ec.Resolvers.Mutation().CerrarTicket(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTicket,
+		ec.marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket,
 		true,
 		true,
 	)
@@ -3505,7 +3540,7 @@ func (ec *executionContext) _Query_me(ctx context.Context, field graphql.Collect
 			return ec.Resolvers.Query().Me(ctx, fc.Args["input"].(model.InputMe))
 		},
 		nil,
-		ec.marshalNResponseMe2ᚖserverᚋgraph_authᚋmodelᚐResponseMe,
+		ec.marshalNResponseMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe,
 		true,
 		true,
 	)
@@ -3555,7 +3590,7 @@ func (ec *executionContext) _Query_roles(ctx context.Context, field graphql.Coll
 			return ec.Resolvers.Query().Roles(ctx)
 		},
 		nil,
-		ec.marshalNResponseRoles2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolesᚄ,
+		ec.marshalNResponseRoles2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolesᚄ,
 		true,
 		true,
 	)
@@ -3602,7 +3637,7 @@ func (ec *executionContext) _Query_permisos(ctx context.Context, field graphql.C
 			return ec.Resolvers.Query().Permisos(ctx)
 		},
 		nil,
-		ec.marshalNPermiso2ᚕᚖserverᚋgraph_authᚋmodelᚐPermisoᚄ,
+		ec.marshalNPermiso2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPermisoᚄ,
 		true,
 		true,
 	)
@@ -3644,7 +3679,7 @@ func (ec *executionContext) _Query_usuarios(ctx context.Context, field graphql.C
 			return ec.Resolvers.Query().Usuarios(ctx, fc.Args["query"].(model.QueryUsuarios))
 		},
 		nil,
-		ec.marshalNUsuario2ᚕᚖserverᚋgraph_authᚋmodelᚐUsuarioᚄ,
+		ec.marshalNUsuario2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuarioᚄ,
 		true,
 		true,
 	)
@@ -3724,7 +3759,7 @@ func (ec *executionContext) _Query_usuarios_conectados(ctx context.Context, fiel
 			return ec.Resolvers.Query().UsuariosConectados(ctx)
 		},
 		nil,
-		ec.marshalNUsuario2ᚕᚖserverᚋgraph_authᚋmodelᚐUsuarioᚄ,
+		ec.marshalNUsuario2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuarioᚄ,
 		true,
 		true,
 	)
@@ -3794,7 +3829,7 @@ func (ec *executionContext) _Query_usuario_by_id(ctx context.Context, field grap
 			return ec.Resolvers.Query().UsuarioByID(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalNResponseUsuario2ᚖserverᚋgraph_authᚋmodelᚐResponseUsuario,
+		ec.marshalNResponseUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseUsuario,
 		true,
 		true,
 	)
@@ -3881,7 +3916,7 @@ func (ec *executionContext) _Query_rol_by_id(ctx context.Context, field graphql.
 			return ec.Resolvers.Query().RolByID(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalNRol2ᚖserverᚋgraph_authᚋmodelᚐRol,
+		ec.marshalNRol2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol,
 		true,
 		true,
 	)
@@ -3937,7 +3972,7 @@ func (ec *executionContext) _Query_menus(ctx context.Context, field graphql.Coll
 			return ec.Resolvers.Query().Menus(ctx)
 		},
 		nil,
-		ec.marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMenusᚄ,
+		ec.marshalNMenus2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenusᚄ,
 		true,
 		true,
 	)
@@ -3965,6 +4000,8 @@ func (ec *executionContext) fieldContext_Query_menus(_ context.Context, field gr
 				return ec.fieldContext_Menus_grupo(ctx, field)
 			case "orden":
 				return ec.fieldContext_Menus_orden(ctx, field)
+			case "padre_id":
+				return ec.fieldContext_Menus_padre_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Menus", field.Name)
 		},
@@ -3982,7 +4019,7 @@ func (ec *executionContext) _Query_unidades(ctx context.Context, field graphql.C
 			return ec.Resolvers.Query().Unidades(ctx)
 		},
 		nil,
-		ec.marshalNUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐUnidadᚄ,
+		ec.marshalNUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadᚄ,
 		true,
 		true,
 	)
@@ -4097,7 +4134,7 @@ func (ec *executionContext) _Query_notificaciones(ctx context.Context, field gra
 			return ec.Resolvers.Query().Notificaciones(ctx)
 		},
 		nil,
-		ec.marshalNNotificacion2ᚕᚖserverᚋgraph_authᚋmodelᚐNotificacionᚄ,
+		ec.marshalNNotificacion2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacionᚄ,
 		true,
 		true,
 	)
@@ -4140,7 +4177,7 @@ func (ec *executionContext) _Query_reporte1(ctx context.Context, field graphql.C
 			return ec.Resolvers.Query().Reporte1(ctx)
 		},
 		nil,
-		ec.marshalNResponseReporte12ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte1ᚄ,
+		ec.marshalNResponseReporte12ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte1ᚄ,
 		true,
 		true,
 	)
@@ -4175,7 +4212,7 @@ func (ec *executionContext) _Query_reporte2(ctx context.Context, field graphql.C
 			return ec.Resolvers.Query().Reporte2(ctx)
 		},
 		nil,
-		ec.marshalNResponseReporte22ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte2ᚄ,
+		ec.marshalNResponseReporte22ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2ᚄ,
 		true,
 		true,
 	)
@@ -4212,7 +4249,7 @@ func (ec *executionContext) _Query_reporte2b(ctx context.Context, field graphql.
 			return ec.Resolvers.Query().Reporte2b(ctx)
 		},
 		nil,
-		ec.marshalNResponseReporte2b2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte2bᚄ,
+		ec.marshalNResponseReporte2b2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2bᚄ,
 		true,
 		true,
 	)
@@ -4248,7 +4285,7 @@ func (ec *executionContext) _Query_all_tickets(ctx context.Context, field graphq
 			return ec.Resolvers.Query().AllTickets(ctx, fc.Args["q"].(model.QueryTickets))
 		},
 		nil,
-		ec.marshalNRespTickets2ᚕᚖserverᚋgraph_authᚋmodelᚐRespTicketsᚄ,
+		ec.marshalNRespTickets2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRespTicketsᚄ,
 		true,
 		true,
 	)
@@ -4310,7 +4347,7 @@ func (ec *executionContext) _Query_mis_tickets(ctx context.Context, field graphq
 			return ec.Resolvers.Query().MisTickets(ctx)
 		},
 		nil,
-		ec.marshalNRespTickets2ᚕᚖserverᚋgraph_authᚋmodelᚐRespTicketsᚄ,
+		ec.marshalNRespTickets2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRespTicketsᚄ,
 		true,
 		true,
 	)
@@ -4362,7 +4399,7 @@ func (ec *executionContext) _Query_ver_ticket(ctx context.Context, field graphql
 			return ec.Resolvers.Query().VerTicket(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTicket,
+		ec.marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket,
 		true,
 		true,
 	)
@@ -4872,7 +4909,7 @@ func (ec *executionContext) _ResponseLogin_me(ctx context.Context, field graphql
 			return obj.Me, nil
 		},
 		nil,
-		ec.marshalNResponseMe2ᚖserverᚋgraph_authᚋmodelᚐResponseMe,
+		ec.marshalNResponseMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe,
 		true,
 		true,
 	)
@@ -4911,7 +4948,7 @@ func (ec *executionContext) _ResponseMe_usuario(ctx context.Context, field graph
 			return obj.Usuario, nil
 		},
 		nil,
-		ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario,
+		ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario,
 		true,
 		true,
 	)
@@ -4980,7 +5017,7 @@ func (ec *executionContext) _ResponseMe_menus(ctx context.Context, field graphql
 			return obj.Menus, nil
 		},
 		nil,
-		ec.marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMenusᚄ,
+		ec.marshalNMenus2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenusᚄ,
 		true,
 		true,
 	)
@@ -5008,6 +5045,8 @@ func (ec *executionContext) fieldContext_ResponseMe_menus(_ context.Context, fie
 				return ec.fieldContext_Menus_grupo(ctx, field)
 			case "orden":
 				return ec.fieldContext_Menus_orden(ctx, field)
+			case "padre_id":
+				return ec.fieldContext_Menus_padre_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Menus", field.Name)
 		},
@@ -5025,7 +5064,7 @@ func (ec *executionContext) _ResponseMe_roles(ctx context.Context, field graphql
 			return obj.Roles, nil
 		},
 		nil,
-		ec.marshalNResponseRolMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolMe,
+		ec.marshalNResponseRolMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolMe,
 		true,
 		true,
 	)
@@ -5060,7 +5099,7 @@ func (ec *executionContext) _ResponseMe_permisos_sueltos(ctx context.Context, fi
 			return obj.PermisosSueltos, nil
 		},
 		nil,
-		ec.marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe,
+		ec.marshalNResponsePermisoMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe,
 		true,
 		true,
 	)
@@ -5480,7 +5519,7 @@ func (ec *executionContext) _ResponseRolMe_unidad(ctx context.Context, field gra
 			return obj.Unidad, nil
 		},
 		nil,
-		ec.marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnidad,
+		ec.marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad,
 		true,
 		true,
 	)
@@ -5525,7 +5564,7 @@ func (ec *executionContext) _ResponseRolMe_rol(ctx context.Context, field graphq
 			return obj.Rol, nil
 		},
 		nil,
-		ec.marshalNRolMe2ᚖserverᚋgraph_authᚋmodelᚐRolMe,
+		ec.marshalNRolMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolMe,
 		true,
 		true,
 	)
@@ -6465,7 +6504,7 @@ func (ec *executionContext) _ResponseUsuario_roles(ctx context.Context, field gr
 			return obj.Roles, nil
 		},
 		nil,
-		ec.marshalNResponseRolUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolUnidadᚄ,
+		ec.marshalNResponseRolUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolUnidadᚄ,
 		true,
 		true,
 	)
@@ -6504,7 +6543,7 @@ func (ec *executionContext) _ResponseUsuario_permisos_sueltos(ctx context.Contex
 			return obj.PermisosSueltos, nil
 		},
 		nil,
-		ec.marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMeᚄ,
+		ec.marshalNResponsePermisoMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMeᚄ,
 		true,
 		true,
 	)
@@ -6547,7 +6586,7 @@ func (ec *executionContext) _ResponseUsuario_menus_sueltos(ctx context.Context, 
 			return obj.MenusSueltos, nil
 		},
 		nil,
-		ec.marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMenusᚄ,
+		ec.marshalNMenus2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenusᚄ,
 		true,
 		true,
 	)
@@ -6575,6 +6614,8 @@ func (ec *executionContext) fieldContext_ResponseUsuario_menus_sueltos(_ context
 				return ec.fieldContext_Menus_grupo(ctx, field)
 			case "orden":
 				return ec.fieldContext_Menus_orden(ctx, field)
+			case "padre_id":
+				return ec.fieldContext_Menus_padre_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Menus", field.Name)
 		},
@@ -6737,7 +6778,7 @@ func (ec *executionContext) _Rol_permisos(ctx context.Context, field graphql.Col
 			return obj.Permisos, nil
 		},
 		nil,
-		ec.marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe,
+		ec.marshalNResponsePermisoMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe,
 		true,
 		true,
 	)
@@ -6780,7 +6821,7 @@ func (ec *executionContext) _Rol_menus(ctx context.Context, field graphql.Collec
 			return obj.Menus, nil
 		},
 		nil,
-		ec.marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMenusᚄ,
+		ec.marshalNMenus2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenusᚄ,
 		true,
 		true,
 	)
@@ -6808,6 +6849,8 @@ func (ec *executionContext) fieldContext_Rol_menus(_ context.Context, field grap
 				return ec.fieldContext_Menus_grupo(ctx, field)
 			case "orden":
 				return ec.fieldContext_Menus_orden(ctx, field)
+			case "padre_id":
+				return ec.fieldContext_Menus_padre_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Menus", field.Name)
 		},
@@ -7173,7 +7216,7 @@ func (ec *executionContext) _Subscription_notificaciones_subs(ctx context.Contex
 			return ec.Resolvers.Subscription().NotificacionesSubs(ctx)
 		},
 		nil,
-		ec.marshalNXNotificacion2ᚖserverᚋgraph_authᚋmodelᚐXNotificacion,
+		ec.marshalNXNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐXNotificacion,
 		true,
 		true,
 	)
@@ -7353,7 +7396,7 @@ func (ec *executionContext) _Ticket_respuestas(ctx context.Context, field graphq
 			return obj.Respuestas, nil
 		},
 		nil,
-		ec.marshalNTicketsRespuestas2ᚕᚖserverᚋgraph_authᚋmodelᚐTicketsRespuestasᚄ,
+		ec.marshalNTicketsRespuestas2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicketsRespuestasᚄ,
 		true,
 		true,
 	)
@@ -9789,6 +9832,10 @@ func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field
 
 func (ec *executionContext) unmarshalInputInputMe(ctx context.Context, obj any) (model.InputMe, error) {
 	var it model.InputMe
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9815,6 +9862,10 @@ func (ec *executionContext) unmarshalInputInputMe(ctx context.Context, obj any) 
 
 func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any) (model.NewLogin, error) {
 	var it model.NewLogin
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9855,6 +9906,10 @@ func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any)
 
 func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any) (model.NewLogin2, error) {
 	var it model.NewLogin2
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9888,6 +9943,10 @@ func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputNewNotificacion(ctx context.Context, obj any) (model.NewNotificacion, error) {
 	var it model.NewNotificacion
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9928,6 +9987,10 @@ func (ec *executionContext) unmarshalInputNewNotificacion(ctx context.Context, o
 
 func (ec *executionContext) unmarshalInputNewRol(ctx context.Context, obj any) (model.NewRol, error) {
 	var it model.NewRol
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9986,6 +10049,10 @@ func (ec *executionContext) unmarshalInputNewRol(ctx context.Context, obj any) (
 
 func (ec *executionContext) unmarshalInputNewSessionKey(ctx context.Context, obj any) (model.NewSessionKey, error) {
 	var it model.NewSessionKey
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10033,6 +10100,10 @@ func (ec *executionContext) unmarshalInputNewSessionKey(ctx context.Context, obj
 
 func (ec *executionContext) unmarshalInputNewTicket(ctx context.Context, obj any) (model.NewTicket, error) {
 	var it model.NewTicket
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10059,6 +10130,10 @@ func (ec *executionContext) unmarshalInputNewTicket(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputNewTicketRespuesta(ctx context.Context, obj any) (model.NewTicketRespuesta, error) {
 	var it model.NewTicketRespuesta
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10092,6 +10167,10 @@ func (ec *executionContext) unmarshalInputNewTicketRespuesta(ctx context.Context
 
 func (ec *executionContext) unmarshalInputNewUnidad(ctx context.Context, obj any) (model.NewUnidad, error) {
 	var it model.NewUnidad
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10146,6 +10225,10 @@ func (ec *executionContext) unmarshalInputNewUnidad(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputNewUsuario(ctx context.Context, obj any) (model.NewUsuario, error) {
 	var it model.NewUsuario
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10251,7 +10334,7 @@ func (ec *executionContext) unmarshalInputNewUsuario(ctx context.Context, obj an
 			it.Longitud = data
 		case "roles":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roles"))
-			data, err := ec.unmarshalNRolUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx, v)
+			data, err := ec.unmarshalNRolUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10277,6 +10360,10 @@ func (ec *executionContext) unmarshalInputNewUsuario(ctx context.Context, obj an
 
 func (ec *executionContext) unmarshalInputNewUsuarioOauth(ctx context.Context, obj any) (model.NewUsuarioOauth, error) {
 	var it model.NewUsuarioOauth
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10331,6 +10418,10 @@ func (ec *executionContext) unmarshalInputNewUsuarioOauth(ctx context.Context, o
 
 func (ec *executionContext) unmarshalInputQueryTickets(ctx context.Context, obj any) (model.QueryTickets, error) {
 	var it model.QueryTickets
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10357,6 +10448,10 @@ func (ec *executionContext) unmarshalInputQueryTickets(ctx context.Context, obj 
 
 func (ec *executionContext) unmarshalInputQueryUsuarios(ctx context.Context, obj any) (model.QueryUsuarios, error) {
 	var it model.QueryUsuarios
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10383,6 +10478,10 @@ func (ec *executionContext) unmarshalInputQueryUsuarios(ctx context.Context, obj
 
 func (ec *executionContext) unmarshalInputRolUnidad(ctx context.Context, obj any) (model.RolUnidad, error) {
 	var it model.RolUnidad
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10416,6 +10515,10 @@ func (ec *executionContext) unmarshalInputRolUnidad(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputUpdNotificacion(ctx context.Context, obj any) (model.UpdNotificacion, error) {
 	var it model.UpdNotificacion
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10463,6 +10566,10 @@ func (ec *executionContext) unmarshalInputUpdNotificacion(ctx context.Context, o
 
 func (ec *executionContext) unmarshalInputUpdUnidad(ctx context.Context, obj any) (model.UpdUnidad, error) {
 	var it model.UpdUnidad
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10524,6 +10631,10 @@ func (ec *executionContext) unmarshalInputUpdUnidad(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputUpdatePerfil(ctx context.Context, obj any) (model.UpdatePerfil, error) {
 	var it model.UpdatePerfil
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10641,6 +10752,10 @@ func (ec *executionContext) unmarshalInputUpdatePerfil(ctx context.Context, obj 
 
 func (ec *executionContext) unmarshalInputUpdateRol(ctx context.Context, obj any) (model.UpdateRol, error) {
 	var it model.UpdateRol
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10706,6 +10821,10 @@ func (ec *executionContext) unmarshalInputUpdateRol(ctx context.Context, obj any
 
 func (ec *executionContext) unmarshalInputUpdateUsuario(ctx context.Context, obj any) (model.UpdateUsuario, error) {
 	var it model.UpdateUsuario
+	if obj == nil {
+		return it, nil
+	}
+
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -10818,7 +10937,7 @@ func (ec *executionContext) unmarshalInputUpdateUsuario(ctx context.Context, obj
 			it.Longitud = data
 		case "roles":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roles"))
-			data, err := ec.unmarshalNRolUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx, v)
+			data, err := ec.unmarshalNRolUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10896,6 +11015,8 @@ func (ec *executionContext) _Menus(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "padre_id":
+			out.Values[i] = ec._Menus_padre_id(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13223,7 +13344,7 @@ func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast
 	return ret
 }
 
-func (ec *executionContext) unmarshalNInputMe2serverᚋgraph_authᚋmodelᚐInputMe(ctx context.Context, v any) (model.InputMe, error) {
+func (ec *executionContext) unmarshalNInputMe2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐInputMe(ctx context.Context, v any) (model.InputMe, error) {
 	res, err := ec.unmarshalInputInputMe(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -13274,11 +13395,11 @@ func (ec *executionContext) marshalNInt2ᚕint32ᚄ(ctx context.Context, sel ast
 	return ret
 }
 
-func (ec *executionContext) marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMenusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Menus) graphql.Marshaler {
+func (ec *executionContext) marshalNMenus2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Menus) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNMenus2ᚖserverᚋgraph_authᚋmodelᚐMenus(ctx, sel, v[i])
+		return ec.marshalNMenus2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenus(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13290,7 +13411,7 @@ func (ec *executionContext) marshalNMenus2ᚕᚖserverᚋgraph_authᚋmodelᚐMe
 	return ret
 }
 
-func (ec *executionContext) marshalNMenus2ᚖserverᚋgraph_authᚋmodelᚐMenus(ctx context.Context, sel ast.SelectionSet, v *model.Menus) graphql.Marshaler {
+func (ec *executionContext) marshalNMenus2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐMenus(ctx context.Context, sel ast.SelectionSet, v *model.Menus) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13300,60 +13421,60 @@ func (ec *executionContext) marshalNMenus2ᚖserverᚋgraph_authᚋmodelᚐMenus
 	return ec._Menus(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNNewLogin22serverᚋgraph_authᚋmodelᚐNewLogin2(ctx context.Context, v any) (model.NewLogin2, error) {
+func (ec *executionContext) unmarshalNNewLogin22githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewLogin2(ctx context.Context, v any) (model.NewLogin2, error) {
 	res, err := ec.unmarshalInputNewLogin2(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewLogin2serverᚋgraph_authᚋmodelᚐNewLogin(ctx context.Context, v any) (model.NewLogin, error) {
+func (ec *executionContext) unmarshalNNewLogin2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewLogin(ctx context.Context, v any) (model.NewLogin, error) {
 	res, err := ec.unmarshalInputNewLogin(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewNotificacion2serverᚋgraph_authᚋmodelᚐNewNotificacion(ctx context.Context, v any) (model.NewNotificacion, error) {
+func (ec *executionContext) unmarshalNNewNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewNotificacion(ctx context.Context, v any) (model.NewNotificacion, error) {
 	res, err := ec.unmarshalInputNewNotificacion(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewRol2serverᚋgraph_authᚋmodelᚐNewRol(ctx context.Context, v any) (model.NewRol, error) {
+func (ec *executionContext) unmarshalNNewRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewRol(ctx context.Context, v any) (model.NewRol, error) {
 	res, err := ec.unmarshalInputNewRol(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewTicket2serverᚋgraph_authᚋmodelᚐNewTicket(ctx context.Context, v any) (model.NewTicket, error) {
+func (ec *executionContext) unmarshalNNewTicket2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewTicket(ctx context.Context, v any) (model.NewTicket, error) {
 	res, err := ec.unmarshalInputNewTicket(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewTicketRespuesta2serverᚋgraph_authᚋmodelᚐNewTicketRespuesta(ctx context.Context, v any) (model.NewTicketRespuesta, error) {
+func (ec *executionContext) unmarshalNNewTicketRespuesta2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewTicketRespuesta(ctx context.Context, v any) (model.NewTicketRespuesta, error) {
 	res, err := ec.unmarshalInputNewTicketRespuesta(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewUnidad2serverᚋgraph_authᚋmodelᚐNewUnidad(ctx context.Context, v any) (model.NewUnidad, error) {
+func (ec *executionContext) unmarshalNNewUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUnidad(ctx context.Context, v any) (model.NewUnidad, error) {
 	res, err := ec.unmarshalInputNewUnidad(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewUsuario2serverᚋgraph_authᚋmodelᚐNewUsuario(ctx context.Context, v any) (model.NewUsuario, error) {
+func (ec *executionContext) unmarshalNNewUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUsuario(ctx context.Context, v any) (model.NewUsuario, error) {
 	res, err := ec.unmarshalInputNewUsuario(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewUsuarioOauth2serverᚋgraph_authᚋmodelᚐNewUsuarioOauth(ctx context.Context, v any) (model.NewUsuarioOauth, error) {
+func (ec *executionContext) unmarshalNNewUsuarioOauth2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNewUsuarioOauth(ctx context.Context, v any) (model.NewUsuarioOauth, error) {
 	res, err := ec.unmarshalInputNewUsuarioOauth(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNNotificacion2serverᚋgraph_authᚋmodelᚐNotificacion(ctx context.Context, sel ast.SelectionSet, v model.Notificacion) graphql.Marshaler {
+func (ec *executionContext) marshalNNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion(ctx context.Context, sel ast.SelectionSet, v model.Notificacion) graphql.Marshaler {
 	return ec._Notificacion(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNNotificacion2ᚕᚖserverᚋgraph_authᚋmodelᚐNotificacionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Notificacion) graphql.Marshaler {
+func (ec *executionContext) marshalNNotificacion2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Notificacion) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNNotificacion2ᚖserverᚋgraph_authᚋmodelᚐNotificacion(ctx, sel, v[i])
+		return ec.marshalNNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13365,7 +13486,7 @@ func (ec *executionContext) marshalNNotificacion2ᚕᚖserverᚋgraph_authᚋmod
 	return ret
 }
 
-func (ec *executionContext) marshalNNotificacion2ᚖserverᚋgraph_authᚋmodelᚐNotificacion(ctx context.Context, sel ast.SelectionSet, v *model.Notificacion) graphql.Marshaler {
+func (ec *executionContext) marshalNNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion(ctx context.Context, sel ast.SelectionSet, v *model.Notificacion) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13375,11 +13496,11 @@ func (ec *executionContext) marshalNNotificacion2ᚖserverᚋgraph_authᚋmodel�
 	return ec._Notificacion(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPermiso2ᚕᚖserverᚋgraph_authᚋmodelᚐPermisoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Permiso) graphql.Marshaler {
+func (ec *executionContext) marshalNPermiso2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPermisoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Permiso) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNPermiso2ᚖserverᚋgraph_authᚋmodelᚐPermiso(ctx, sel, v[i])
+		return ec.marshalNPermiso2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPermiso(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13391,7 +13512,7 @@ func (ec *executionContext) marshalNPermiso2ᚕᚖserverᚋgraph_authᚋmodelᚐ
 	return ret
 }
 
-func (ec *executionContext) marshalNPermiso2ᚖserverᚋgraph_authᚋmodelᚐPermiso(ctx context.Context, sel ast.SelectionSet, v *model.Permiso) graphql.Marshaler {
+func (ec *executionContext) marshalNPermiso2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPermiso(ctx context.Context, sel ast.SelectionSet, v *model.Permiso) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13401,21 +13522,21 @@ func (ec *executionContext) marshalNPermiso2ᚖserverᚋgraph_authᚋmodelᚐPer
 	return ec._Permiso(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNQueryTickets2serverᚋgraph_authᚋmodelᚐQueryTickets(ctx context.Context, v any) (model.QueryTickets, error) {
+func (ec *executionContext) unmarshalNQueryTickets2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryTickets(ctx context.Context, v any) (model.QueryTickets, error) {
 	res, err := ec.unmarshalInputQueryTickets(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNQueryUsuarios2serverᚋgraph_authᚋmodelᚐQueryUsuarios(ctx context.Context, v any) (model.QueryUsuarios, error) {
+func (ec *executionContext) unmarshalNQueryUsuarios2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryUsuarios(ctx context.Context, v any) (model.QueryUsuarios, error) {
 	res, err := ec.unmarshalInputQueryUsuarios(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNRespTickets2ᚕᚖserverᚋgraph_authᚋmodelᚐRespTicketsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.RespTickets) graphql.Marshaler {
+func (ec *executionContext) marshalNRespTickets2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRespTicketsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.RespTickets) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNRespTickets2ᚖserverᚋgraph_authᚋmodelᚐRespTickets(ctx, sel, v[i])
+		return ec.marshalNRespTickets2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRespTickets(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13427,7 +13548,7 @@ func (ec *executionContext) marshalNRespTickets2ᚕᚖserverᚋgraph_authᚋmode
 	return ret
 }
 
-func (ec *executionContext) marshalNRespTickets2ᚖserverᚋgraph_authᚋmodelᚐRespTickets(ctx context.Context, sel ast.SelectionSet, v *model.RespTickets) graphql.Marshaler {
+func (ec *executionContext) marshalNRespTickets2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRespTickets(ctx context.Context, sel ast.SelectionSet, v *model.RespTickets) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13437,11 +13558,11 @@ func (ec *executionContext) marshalNRespTickets2ᚖserverᚋgraph_authᚋmodel�
 	return ec._RespTickets(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseLogin2serverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v model.ResponseLogin) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseLogin2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v model.ResponseLogin) graphql.Marshaler {
 	return ec._ResponseLogin(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNResponseLogin2ᚖserverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v *model.ResponseLogin) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseLogin2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v *model.ResponseLogin) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13451,11 +13572,11 @@ func (ec *executionContext) marshalNResponseLogin2ᚖserverᚋgraph_authᚋmodel
 	return ec._ResponseLogin(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseMe2serverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v model.ResponseMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseMe2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v model.ResponseMe) graphql.Marshaler {
 	return ec._ResponseMe(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNResponseMe2ᚖserverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponseMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponseMe) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13465,21 +13586,21 @@ func (ec *executionContext) marshalNResponseMe2ᚖserverᚋgraph_authᚋmodelᚐ
 	return ec._ResponseMe(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v []*model.ResponsePermisoMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponsePermisoMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v []*model.ResponsePermisoMe) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalOResponsePermisoMe2ᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx, sel, v[i])
+		return ec.marshalOResponsePermisoMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx, sel, v[i])
 	})
 
 	return ret
 }
 
-func (ec *executionContext) marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponsePermisoMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponsePermisoMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponsePermisoMe) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponsePermisoMe2ᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx, sel, v[i])
+		return ec.marshalNResponsePermisoMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13491,7 +13612,7 @@ func (ec *executionContext) marshalNResponsePermisoMe2ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNResponsePermisoMe2ᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponsePermisoMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponsePermisoMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponsePermisoMe) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13501,11 +13622,11 @@ func (ec *executionContext) marshalNResponsePermisoMe2ᚖserverᚋgraph_authᚋm
 	return ec._ResponsePermisoMe(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseReporte12ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte1ᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte1) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte12ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte1ᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte1) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponseReporte12ᚖserverᚋgraph_authᚋmodelᚐResponseReporte1(ctx, sel, v[i])
+		return ec.marshalNResponseReporte12ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte1(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13517,7 +13638,7 @@ func (ec *executionContext) marshalNResponseReporte12ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseReporte12ᚖserverᚋgraph_authᚋmodelᚐResponseReporte1(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte1) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte12ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte1(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte1) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13527,11 +13648,11 @@ func (ec *executionContext) marshalNResponseReporte12ᚖserverᚋgraph_authᚋmo
 	return ec._ResponseReporte1(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseReporte22ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte2ᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte2) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte22ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2ᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte2) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponseReporte22ᚖserverᚋgraph_authᚋmodelᚐResponseReporte2(ctx, sel, v[i])
+		return ec.marshalNResponseReporte22ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13543,7 +13664,7 @@ func (ec *executionContext) marshalNResponseReporte22ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseReporte22ᚖserverᚋgraph_authᚋmodelᚐResponseReporte2(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte2) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte22ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte2) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13553,11 +13674,11 @@ func (ec *executionContext) marshalNResponseReporte22ᚖserverᚋgraph_authᚋmo
 	return ec._ResponseReporte2(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseReporte2b2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseReporte2bᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte2b) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte2b2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2bᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseReporte2b) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponseReporte2b2ᚖserverᚋgraph_authᚋmodelᚐResponseReporte2b(ctx, sel, v[i])
+		return ec.marshalNResponseReporte2b2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2b(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13569,7 +13690,7 @@ func (ec *executionContext) marshalNResponseReporte2b2ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseReporte2b2ᚖserverᚋgraph_authᚋmodelᚐResponseReporte2b(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte2b) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseReporte2b2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseReporte2b(ctx context.Context, sel ast.SelectionSet, v *model.ResponseReporte2b) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13579,21 +13700,21 @@ func (ec *executionContext) marshalNResponseReporte2b2ᚖserverᚋgraph_authᚋm
 	return ec._ResponseReporte2b(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseRolMe2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRolMe) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseRolMe2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRolMe) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalOResponseRolMe2ᚖserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx, sel, v[i])
+		return ec.marshalOResponseRolMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx, sel, v[i])
 	})
 
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseRolUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolUnidadᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRolUnidad) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseRolUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolUnidadᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRolUnidad) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponseRolUnidad2ᚖserverᚋgraph_authᚋmodelᚐResponseRolUnidad(ctx, sel, v[i])
+		return ec.marshalNResponseRolUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolUnidad(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13605,7 +13726,7 @@ func (ec *executionContext) marshalNResponseRolUnidad2ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseRolUnidad2ᚖserverᚋgraph_authᚋmodelᚐResponseRolUnidad(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRolUnidad) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseRolUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolUnidad(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRolUnidad) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13615,11 +13736,11 @@ func (ec *executionContext) marshalNResponseRolUnidad2ᚖserverᚋgraph_authᚋm
 	return ec._ResponseRolUnidad(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseRoles2ᚕᚖserverᚋgraph_authᚋmodelᚐResponseRolesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRoles) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseRoles2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ResponseRoles) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNResponseRoles2ᚖserverᚋgraph_authᚋmodelᚐResponseRoles(ctx, sel, v[i])
+		return ec.marshalNResponseRoles2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRoles(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13631,7 +13752,7 @@ func (ec *executionContext) marshalNResponseRoles2ᚕᚖserverᚋgraph_authᚋmo
 	return ret
 }
 
-func (ec *executionContext) marshalNResponseRoles2ᚖserverᚋgraph_authᚋmodelᚐResponseRoles(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRoles) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseRoles2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRoles(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRoles) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13641,11 +13762,11 @@ func (ec *executionContext) marshalNResponseRoles2ᚖserverᚋgraph_authᚋmodel
 	return ec._ResponseRoles(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseUsuario2serverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v model.ResponseUsuario) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v model.ResponseUsuario) graphql.Marshaler {
 	return ec._ResponseUsuario(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNResponseUsuario2ᚖserverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v *model.ResponseUsuario) graphql.Marshaler {
+func (ec *executionContext) marshalNResponseUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v *model.ResponseUsuario) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13655,11 +13776,11 @@ func (ec *executionContext) marshalNResponseUsuario2ᚖserverᚋgraph_authᚋmod
 	return ec._ResponseUsuario(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRol2serverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v model.Rol) graphql.Marshaler {
+func (ec *executionContext) marshalNRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v model.Rol) graphql.Marshaler {
 	return ec._Rol(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNRol2ᚖserverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v *model.Rol) graphql.Marshaler {
+func (ec *executionContext) marshalNRol2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v *model.Rol) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13669,7 +13790,7 @@ func (ec *executionContext) marshalNRol2ᚖserverᚋgraph_authᚋmodelᚐRol(ctx
 	return ec._Rol(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRolMe2ᚖserverᚋgraph_authᚋmodelᚐRolMe(ctx context.Context, sel ast.SelectionSet, v *model.RolMe) graphql.Marshaler {
+func (ec *executionContext) marshalNRolMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolMe(ctx context.Context, sel ast.SelectionSet, v *model.RolMe) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13679,14 +13800,14 @@ func (ec *executionContext) marshalNRolMe2ᚖserverᚋgraph_authᚋmodelᚐRolMe
 	return ec._RolMe(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNRolUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx context.Context, v any) ([]*model.RolUnidad, error) {
+func (ec *executionContext) unmarshalNRolUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolUnidadᚄ(ctx context.Context, v any) ([]*model.RolUnidad, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*model.RolUnidad, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNRolUnidad2ᚖserverᚋgraph_authᚋmodelᚐRolUnidad(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNRolUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolUnidad(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -13694,7 +13815,7 @@ func (ec *executionContext) unmarshalNRolUnidad2ᚕᚖserverᚋgraph_authᚋmode
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNRolUnidad2ᚖserverᚋgraph_authᚋmodelᚐRolUnidad(ctx context.Context, v any) (*model.RolUnidad, error) {
+func (ec *executionContext) unmarshalNRolUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRolUnidad(ctx context.Context, v any) (*model.RolUnidad, error) {
 	res, err := ec.unmarshalInputRolUnidad(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
@@ -13745,11 +13866,11 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTicket2serverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v model.Ticket) graphql.Marshaler {
+func (ec *executionContext) marshalNTicket2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v model.Ticket) graphql.Marshaler {
 	return ec._Ticket(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v *model.Ticket) graphql.Marshaler {
+func (ec *executionContext) marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v *model.Ticket) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13759,11 +13880,11 @@ func (ec *executionContext) marshalNTicket2ᚖserverᚋgraph_authᚋmodelᚐTick
 	return ec._Ticket(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTicketsRespuestas2ᚕᚖserverᚋgraph_authᚋmodelᚐTicketsRespuestasᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TicketsRespuestas) graphql.Marshaler {
+func (ec *executionContext) marshalNTicketsRespuestas2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicketsRespuestasᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TicketsRespuestas) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNTicketsRespuestas2ᚖserverᚋgraph_authᚋmodelᚐTicketsRespuestas(ctx, sel, v[i])
+		return ec.marshalNTicketsRespuestas2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicketsRespuestas(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13775,7 +13896,7 @@ func (ec *executionContext) marshalNTicketsRespuestas2ᚕᚖserverᚋgraph_auth�
 	return ret
 }
 
-func (ec *executionContext) marshalNTicketsRespuestas2ᚖserverᚋgraph_authᚋmodelᚐTicketsRespuestas(ctx context.Context, sel ast.SelectionSet, v *model.TicketsRespuestas) graphql.Marshaler {
+func (ec *executionContext) marshalNTicketsRespuestas2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicketsRespuestas(ctx context.Context, sel ast.SelectionSet, v *model.TicketsRespuestas) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13801,15 +13922,15 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalNUnidad2serverᚋgraph_authᚋmodelᚐUnidad(ctx context.Context, sel ast.SelectionSet, v model.Unidad) graphql.Marshaler {
+func (ec *executionContext) marshalNUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad(ctx context.Context, sel ast.SelectionSet, v model.Unidad) graphql.Marshaler {
 	return ec._Unidad(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐUnidadᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Unidad) graphql.Marshaler {
+func (ec *executionContext) marshalNUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Unidad) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnidad(ctx, sel, v[i])
+		return ec.marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13821,7 +13942,7 @@ func (ec *executionContext) marshalNUnidad2ᚕᚖserverᚋgraph_authᚋmodelᚐU
 	return ret
 }
 
-func (ec *executionContext) marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnidad(ctx context.Context, sel ast.SelectionSet, v *model.Unidad) graphql.Marshaler {
+func (ec *executionContext) marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad(ctx context.Context, sel ast.SelectionSet, v *model.Unidad) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13831,40 +13952,40 @@ func (ec *executionContext) marshalNUnidad2ᚖserverᚋgraph_authᚋmodelᚐUnid
 	return ec._Unidad(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpdNotificacion2serverᚋgraph_authᚋmodelᚐUpdNotificacion(ctx context.Context, v any) (model.UpdNotificacion, error) {
+func (ec *executionContext) unmarshalNUpdNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdNotificacion(ctx context.Context, v any) (model.UpdNotificacion, error) {
 	res, err := ec.unmarshalInputUpdNotificacion(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdUnidad2serverᚋgraph_authᚋmodelᚐUpdUnidad(ctx context.Context, v any) (model.UpdUnidad, error) {
+func (ec *executionContext) unmarshalNUpdUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdUnidad(ctx context.Context, v any) (model.UpdUnidad, error) {
 	res, err := ec.unmarshalInputUpdUnidad(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdatePerfil2serverᚋgraph_authᚋmodelᚐUpdatePerfil(ctx context.Context, v any) (model.UpdatePerfil, error) {
+func (ec *executionContext) unmarshalNUpdatePerfil2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdatePerfil(ctx context.Context, v any) (model.UpdatePerfil, error) {
 	res, err := ec.unmarshalInputUpdatePerfil(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateRol2serverᚋgraph_authᚋmodelᚐUpdateRol(ctx context.Context, v any) (model.UpdateRol, error) {
+func (ec *executionContext) unmarshalNUpdateRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdateRol(ctx context.Context, v any) (model.UpdateRol, error) {
 	res, err := ec.unmarshalInputUpdateRol(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateUsuario2serverᚋgraph_authᚋmodelᚐUpdateUsuario(ctx context.Context, v any) (model.UpdateUsuario, error) {
+func (ec *executionContext) unmarshalNUpdateUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdateUsuario(ctx context.Context, v any) (model.UpdateUsuario, error) {
 	res, err := ec.unmarshalInputUpdateUsuario(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUsuario2serverᚋgraph_authᚋmodelᚐUsuario(ctx context.Context, sel ast.SelectionSet, v model.Usuario) graphql.Marshaler {
+func (ec *executionContext) marshalNUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario(ctx context.Context, sel ast.SelectionSet, v model.Usuario) graphql.Marshaler {
 	return ec._Usuario(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUsuario2ᚕᚖserverᚋgraph_authᚋmodelᚐUsuarioᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Usuario) graphql.Marshaler {
+func (ec *executionContext) marshalNUsuario2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuarioᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Usuario) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario(ctx, sel, v[i])
+		return ec.marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -13876,7 +13997,7 @@ func (ec *executionContext) marshalNUsuario2ᚕᚖserverᚋgraph_authᚋmodelᚐ
 	return ret
 }
 
-func (ec *executionContext) marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsuario(ctx context.Context, sel ast.SelectionSet, v *model.Usuario) graphql.Marshaler {
+func (ec *executionContext) marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario(ctx context.Context, sel ast.SelectionSet, v *model.Usuario) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -13886,11 +14007,11 @@ func (ec *executionContext) marshalNUsuario2ᚖserverᚋgraph_authᚋmodelᚐUsu
 	return ec._Usuario(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNXNotificacion2serverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v model.XNotificacion) graphql.Marshaler {
+func (ec *executionContext) marshalNXNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v model.XNotificacion) graphql.Marshaler {
 	return ec._XNotificacion(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNXNotificacion2ᚖserverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v *model.XNotificacion) graphql.Marshaler {
+func (ec *executionContext) marshalNXNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v *model.XNotificacion) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -14124,14 +14245,14 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalOResponsePermisoMe2ᚖserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponsePermisoMe) graphql.Marshaler {
+func (ec *executionContext) marshalOResponsePermisoMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponsePermisoMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponsePermisoMe) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._ResponsePermisoMe(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOResponseRolMe2ᚖserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRolMe) graphql.Marshaler {
+func (ec *executionContext) marshalOResponseRolMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseRolMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponseRolMe) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

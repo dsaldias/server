@@ -50,6 +50,7 @@ type Menus {
     color: String!
     grupo: Int!
     orden: Int!
+    padre_id: ID
 }
 
 type Permiso {

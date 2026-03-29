@@ -8,7 +8,7 @@ import (
 
 func GetMenusbyRol(db *sql.DB, rol_id string) ([]*model.Menus, error) {
 	sql := `
-	select m.id,m.label,m.path,m.icon,m.color,m.grupo, m.orden 
+	select m.id,m.label,m.path,m.icon,m.color,m.grupo, m.orden, m.padre_id
 	from menus m
 	inner join rol_menus rm on rm.menu_id = m.id
 	where rm.rol_id = ?
@@ -32,7 +32,7 @@ func GetMenusbyRol(db *sql.DB, rol_id string) ([]*model.Menus, error) {
 }
 
 func Listar(db *sql.DB) ([]*model.Menus, error) {
-	sql := `select id,label,path,icon,color,grupo, orden from menus order by grupo,orden,id`
+	sql := `select id,label,path,icon,color,grupo, orden, padre_id from menus order by grupo,orden,id`
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func Listar(db *sql.DB) ([]*model.Menus, error) {
 
 func MenusSueltos(db *sql.DB, userid string) ([]*model.Menus, error) {
 	xsql := `
-	SELECT m.id, m.label, m.path, m.icon, m.color, m.grupo, m.orden
+	SELECT m.id, m.label, m.path, m.icon, m.color, m.grupo, m.orden, m.padre_id
 	FROM menus m
 	inner JOIN menus_usuario mu ON mu.menu_id = m.id
 	WHERE mu.usuario_id = ?
