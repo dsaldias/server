@@ -160,13 +160,14 @@ insert into `rbac_unidades`(`nombre`) values('secundaria');
 
 -- los id de menus estan reservados hasta el 10
 -- en tu app debes crearlas desde el 10 o superior
-insert into `rbac_menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`) 
+insert into `rbac_menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`,`padre_id`) 
 values 
-(1,'Usuarios','/usuarios','group',1,'primary',1),
-(2,'Roles','/roles','local_movies',1,'primary',2),
-(3,'Unidades','/unidades','home',1,'primary',3),
-(4,'Notificaciones','/avisos','campaign',1,'primary',4),
-(5,'Tickets','/tickets','confirmation_number',1,'primary',5);
+(1,'Sistema','/','manage_accounts',1,'primary',100, null),
+(2,'Usuarios','/usuarios','group',1,'primary',1, 1),
+(3,'Roles','/roles','local_movies',1,'primary',2, 1),
+(4,'Unidades','/unidades','home',1,'primary',3, 1),
+(5,'Notificaciones','/avisos','campaign',1,'primary',4, 1),
+(6,'Tickets','/tickets','confirmation_number',1,'primary',5, 1);
 
 
 INSERT INTO `rbac_permisos` (`metodo`, `nombre`, `grupo`,`descripcion`)
@@ -201,7 +202,7 @@ values
 (3,'Externo','Bienvenido',2);
 
 insert into `rbac_rol_menus`(`rol_id`,`menu_id`)
-values (1,1), (1,2), (1,3), (1,4), (1,5), (2,5), (3,5);
+values (1,1), (1,2), (1,3), (1,4), (1,5),(1,6), (2,6), (3,6);
 
 insert into `rbac_usuarios`(`nombres`,`apellido1`,`username`,`password`)
 values ('admin','','admin',SHA2('admin', 256));
