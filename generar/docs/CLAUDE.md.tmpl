@@ -134,6 +134,8 @@ func Eliminar(db *sql.DB, id string) (bool, error)
 
 ### 2. Add GraphQL schema in `graph/<entity>.graphqls`
 
+> **Rate limit:** el servidor aplica 18 req/seg por IP. Diseña los tipos para que una sola query devuelva toda la información que el cliente necesita — usa JOINs en SQL y tipos anidados en GraphQL en lugar de forzar múltiples llamadas desde el cliente.
+
 ```graphql
 type <Entity> {
   id: ID!

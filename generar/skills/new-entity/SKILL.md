@@ -156,6 +156,11 @@ func Eliminar(db *sql.DB, id string) (bool, error) {
 
 ## Step 3 — Add GraphQL schema
 
+> **Diseño orientado a minimizar peticiones:** el servidor tiene un rate limit de 18 req/seg por IP.
+> Diseña los tipos y queries para que una sola llamada devuelva toda la información necesaria.
+> Prefer tipos anidados con joins en SQL sobre múltiples queries separados desde el cliente.
+> Ejemplo: si una entidad tiene categoría, incluir los campos de categoría dentro del mismo tipo en lugar de forzar al cliente a hacer un segundo query.
+
 ### Agregar tipos en `graph/schema.graphqls` (o un archivo dedicado `graph/<entity>.graphqls`)
 ```graphql
 type <Entity> {

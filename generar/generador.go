@@ -18,6 +18,9 @@ var claudeMDTemplate string
 //go:embed sql/database-app.sql.tmpl
 var sqlAppTemplate string
 
+//go:embed sql/database.sql
+var sqlRBAC string
+
 func Init() {
 	module := getModuleName()
 
@@ -230,6 +233,7 @@ func generarSQLApp(module string) {
 		return
 	}
 
+	escribirArchivo(filepath.Join("sqls", "database.sql"), []byte(sqlRBAC))
 	content := strings.ReplaceAll(sqlAppTemplate, "{{MODULE}}", module)
 	escribirArchivo(dest, []byte(content))
 }
