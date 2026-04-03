@@ -148,7 +148,7 @@ type Resolver struct {
 	if err := os.MkdirAll("graph", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio graph/: %v\n", err)
 	} else {
-		escribirArchivo("graph/resolver.go", []byte(contentresolver))
+		parchearResolver("graph/resolver.go", contentresolver)
 	}
 
 	if err := os.MkdirAll("app", 0755); err != nil {
@@ -193,6 +193,31 @@ func generarClaudeMD(module string) {
 		panic(err)
 	}
 	fmt.Println("📚 CLAUDE.md creado")
+}
+
+func parchearResolver(path, contentresolver string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		// no existe, crearlo
+		escribirArchivo(path, []byte(contentresolver))
+		return
+	}
+	content := string(data)
+	if strings.Contains(content, "DB *sql.DB") {
+		fmt.Printf("⚠️  %s ya tiene DB *sql.DB, no se modifica\n", path)
+		return
+	}
+	// agregar import si no está
+	if !strings.Contains(content, `"database/sql"`) {
+		content = strings.Replace(content, "package graph\n", "package graph\n\nimport \"database/sql\"\n", 1)
+	}
+	// expandir el struct vacío
+	content = strings.ReplaceAll(content, "type Resolver struct{}", "type Resolver struct {\n\tDB *sql.DB\n}")
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error parcheando %s: %v\n", path, err)
+		return
+	}
+	fmt.Printf("✅ %s actualizado con DB *sql.DB\n", path)
 }
 
 func generarSQLApp(module string) {
