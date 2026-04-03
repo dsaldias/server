@@ -15,7 +15,7 @@ Before generating anything:
 1. Read `go.mod` to get this project's module name
 2. Ask the user for the DB table columns if not provided, or make reasonable assumptions and state them
 
-## Step 2 — Create `dataauth/<entity>/` folder with these files
+## Step 2 — Create `app/<entity>/` folder with these files
 
 ### `utils.go`
 ```go
@@ -195,13 +195,15 @@ delete_<entity>(id: ID!): Boolean!
 go run github.com/99designs/gqlgen generate
 ```
 
+> **NUNCA editar `graph/models_gen.go` manualmente** — es auto-generado y se sobreescribe con este comando. Para cambiar tipos, editar los archivos `.graphqls` y regenerar.
+
 ## Step 5 — Agregar resolvers
 
 **REGLA OBLIGATORIA**: todo resolver debe comenzar con el check de permiso.
 
 ```go
 import (
-    "<this-module>/dataauth/<entity>"
+    "<this-module>/app/<entity>"
     "github.com/dsaldias/server/dataauth/utils"
 )
 
@@ -240,7 +242,33 @@ func (r *mutationResolver) Delete<Entity>(ctx context.Context, id string) (bool,
 
 ## Step 6 — Migración SQL
 
-Crear `sqls/<entity>.sql`:
+Agregar la tabla al archivo `sqls/database-<modulo>.sql` del proyecto (hay un único archivo SQL por proyecto). Para determinar el nombre exacto del archivo, leer `go.mod` y tomar el último segmento del módulo.
+
+Convenciones:
+- Nombre de tabla: prefijo `app_` + nombre en español en plural (ej: `app_productos`)
+- Siempre incluir: `id`, `activo`, `fecha_registro`
+- Charset: `utf8mb4 COLLATE utf8mb4_unicode_ci`
+
+```sql
+CREATE TABLE IF NOT EXISTS `app_<entidad>` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `campo1` varchar(255) NOT NULL,
+  `campo2` varchar(255) DEFAULT NULL,
+  `activo` tinyint NOT NULL DEFAULT 1,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+Agregar también los permisos correspondientes:
+```sql
+INSERT INTO `rbac_permisos` (`metodo`, `nombre`, `grupo`, `descripcion`)
+VALUES
+('<entidades>', 'listar <entidades>', '<entidades>', 'Lista todos los <entidades>'),
+('create_<entidad>', 'crear <entidad>', '<entidades>', 'Crea un <entidad>'),
+('update_<entidad>', 'actualizar <entidad>', '<entidades>', 'Actualiza un <entidad>'),
+('delete_<entidad>', 'eliminar <entidad>', '<entidades>', 'Elimina un <entidad>');
+```
 ```sql
 CREATE TABLE IF NOT EXISTS `<table>` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -257,7 +285,9 @@ CREATE TABLE IF NOT EXISTS `<table>` (
 | Concepto | Convención | Ejemplo |
 |----------|-----------|---------|
 | Package | minúsculas, singular | `package productos` |
-| Carpeta | minúsculas, igual que tabla | `dataauth/productos/` |
+| Carpeta | minúsculas, igual que tabla sin prefijo | `app/productos/` |
+| Tabla SQL | prefijo `app_` + plural en español | `app_productos` |
+| Columnas SQL | en español | `nombre`, `descripcion`, `activo` |
 | Crear | `Crear` | `func Crear(db, input)` |
 | Actualizar | `Actualizar` | `func Actualizar(db, input)` |
 | Listar | `Get<Entidades>` | `func GetProductos(db)` |

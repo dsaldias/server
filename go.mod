@@ -4,7 +4,7 @@ module github.com/dsaldias/server
 go 1.25.1
 
 require (
-	github.com/99designs/gqlgen v0.17.88
+	github.com/99designs/gqlgen v0.17.89
 	github.com/HugoSmits86/nativewebp v1.2.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v1.5.5
@@ -26,8 +26,8 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
-	github.com/urfave/cli/v3 v3.7.0 // indirect
-	golang.org/x/image v0.37.0 // indirect
+	github.com/urfave/cli/v3 v3.8.0 // indirect
+	golang.org/x/image v0.38.0 // indirect
 	golang.org/x/mod v0.34.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/text v0.35.0 // indirect

@@ -36,7 +36,7 @@ Restricciones:
 ## Patrón: upload al crear
 
 ```go
-// dataauth/<entity>/crear.go
+// app/<entity>/crear.go
 import "github.com/dsaldias/server/dataauth/archivos"
 
 func Crear(db *sql.DB, input model.New<Entity>) (*model.<Entity>, error) {
@@ -59,7 +59,7 @@ func Crear(db *sql.DB, input model.New<Entity>) (*model.<Entity>, error) {
 ## Patrón: upload al actualizar
 
 ```go
-// dataauth/<entity>/update.go
+// app/<entity>/update.go
 func Actualizar(db *sql.DB, input model.Update<Entity>) (*model.<Entity>, error) {
     if input.Imagen != nil && *input.Imagen != "" {
         path, err := archivos.SubirImagen(*input.Imagen, "<entity>", input.ID)

@@ -15,6 +15,9 @@ var skillsFS embed.FS
 //go:embed docs/CLAUDE.md.tmpl
 var claudeMDTemplate string
 
+//go:embed sql/database-app.sql.tmpl
+var sqlAppTemplate string
+
 func Init() {
 	module := getModuleName()
 
@@ -38,6 +41,10 @@ import (
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
+// # go run github.com/99designs/gqlgen generate
+// # go run github.com/99designs/gqlgen generate --config gqlgen_auth.yml
+// # CGO_ENABLED=0 go build -ldflags="-s -w" -o appname server.go
+// # scp appname root@185.203.216.16:/root/apps/appname/
 func main() {
 
 	db := utils.Conexion()
@@ -145,6 +152,7 @@ func LoadCustomEvents() {
 
 	copiarSkills()
 	generarClaudeMD(module)
+	generarSQLApp(module)
 }
 
 func escribirArchivo(path string, content []byte) {
@@ -170,6 +178,20 @@ func generarClaudeMD(module string) {
 		panic(err)
 	}
 	fmt.Println("📚 CLAUDE.md creado")
+}
+
+func generarSQLApp(module string) {
+	parts := strings.Split(module, "/")
+	shortName := parts[len(parts)-1]
+	dest := filepath.Join("sqls", "database-"+shortName+".sql")
+
+	if err := os.MkdirAll("sqls", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio sqls/: %v\n", err)
+		return
+	}
+
+	content := strings.ReplaceAll(sqlAppTemplate, "{{MODULE}}", module)
+	escribirArchivo(dest, []byte(content))
 }
 
 func copiarSkills() {
