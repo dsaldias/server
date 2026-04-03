@@ -133,8 +133,23 @@ func LoadCustomEvents() {
 
 	`
 
+	contentresolver := `package graph
+
+import "database/sql"
+
+type Resolver struct {
+	DB *sql.DB
+}
+`
+
 	escribirArchivo("serverx.go", []byte(contentx))
 	escribirArchivo(".env", []byte(contentenv))
+
+	if err := os.MkdirAll("graph", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio graph/: %v\n", err)
+	} else {
+		escribirArchivo("graph/resolver.go", []byte(contentresolver))
+	}
 
 	if err := os.MkdirAll("app", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/: %v\n", err)
