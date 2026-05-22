@@ -24,7 +24,7 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) {
+func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, handlers []*utils.Handlers2) {
 
 	port := os.Getenv("PORT")
 	rate := os.Getenv("RATE_LIMIT")
@@ -83,6 +83,13 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB) 
 	router.Handle("/query", srv)
 	router.Handle("/ws_app", srv)
 	router.Get("/sse", xnotificaciones.SSEHandler)
+
+	if len(handlers) > 0 {
+		for _, h := range handlers {
+			router.Handle(h.Path, h.H)
+		}
+	}
+
 	router.Handle("/res/*", http.StripPrefix("/res/", http.FileServer(http.Dir("res"))))
 	// rest to graphql
 	if schema != nil {
