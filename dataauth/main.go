@@ -24,12 +24,15 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, handlers []*utils.Handlers2) {
+func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, handlers []*utils.Handlers2, router *chi.Mux) {
 
 	port := os.Getenv("PORT")
 	rate := os.Getenv("RATE_LIMIT")
 
-	router := chi.NewRouter()
+	if router == nil {
+		router = chi.NewRouter()
+	}
+
 	router.Use(middleware.Compress(5, "application/json", "application/graphql+json"))
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   utils.GetAllowedOrigins(),

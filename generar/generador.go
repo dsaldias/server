@@ -46,7 +46,7 @@ import (
 
 // # go run github.com/99designs/gqlgen generate
 // # go run github.com/99designs/gqlgen generate --config gqlgen_auth.yml
-// # CGO_ENABLED=0 go build -ldflags="-s -w" -o appname server.go
+// # CGO_ENABLED=0 go build -ldflags="-s -w" -o appname serverx.go
 // # scp appname root@185.203.216.16:/root/apps/appname/
 func main() {
 
@@ -79,7 +79,7 @@ func main() {
 	})
 
 	app.LoadCustomEvents()
-	dataauth.Iniciar(srv, &schema, db)
+	dataauth.Iniciar(srv, &schema, db, nil, nil)
 }
 
 `, module, module)
