@@ -13,13 +13,13 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/coder/websocket"
 	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 	"github.com/dsaldias/server/graph_auth"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -59,13 +59,18 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	srv2.AddTransport(&transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		PingPongInterval:      10 * time.Second,
-		Upgrader: websocket.Upgrader{
+		Implementation: transport.CoderWebsocketImplementation{
+			AcceptOptions: websocket.AcceptOptions{
+				OriginPatterns: []string{"*"},
+			},
+		},
+		/* Upgrader: websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
 			CheckOrigin: func(r *http.Request) bool {
 				return true
 			},
-		},
+		}, */
 		InitFunc: utils.UaserIDMiddleware(db),
 	})
 
