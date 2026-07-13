@@ -307,6 +307,11 @@ func (r *queryResolver) ChatMensajes(ctx context.Context, conversacionID string)
 	return chat.MensajesByChat(r.DB, conversacionID)
 }
 
+// ChatsNoLeidos is the resolver for the chats_no_leidos field.
+func (r *queryResolver) ChatsNoLeidos(ctx context.Context, userID string) (int32, error) {
+	return chat.MensajesNoLeidos(r.DB, userID)
+}
+
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
 func (r *subscriptionResolver) NotificacionesSubs(ctx context.Context) (<-chan *model.XNotificacion, error) {
 	userid := utils.CtxUserIDWs(ctx, r.DB, "")

@@ -37,6 +37,7 @@ type Query {
   """ funciones para el chat """
   chats_by_user(user_id:ID!): [ResponseChatConversacion!]!
   chat_mensajes(conversacion_id:ID!): [ChatMensaje!]!
+  chats_no_leidos(user_id:ID!): Int!
 }
 
 
