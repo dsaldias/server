@@ -29,6 +29,28 @@ func EnviarNotificacion(ctx context.Context, titulo string, datos *DataNotify) (
 	return true, nil
 }
 
+func EnviarNotificacionAUsuario(ctx context.Context, userID string, titulo string, datos *DataNotify) (bool, error) {
+	cha := GetGlobal()
+
+	m := ""
+	if datos != nil {
+		if s, err := formatToJson(*datos); err == nil {
+			m = s
+		} else {
+			fmt.Println("ERROR NOTIFY: ", err.Error())
+		}
+	}
+
+	xn := &model.XNotificacion{
+		Title:    titulo,
+		DataJSON: m,
+	}
+
+	cha.SendToUser(userID, xn)
+
+	return true, nil
+}
+
 func EnviarSSENotificacion(ctx context.Context, titulo string, datos *DataNotify) (bool, error) {
 	cha := GetGlobal()
 

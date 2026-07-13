@@ -34,6 +34,9 @@ type Query {
   all_tickets(q:QueryTickets!): [RespTickets!]!
   mis_tickets: [RespTickets!]!
   ver_ticket(id:ID!): Ticket!
+  """ funciones para el chat """
+  chats_by_user(user_id:ID!): [ResponseChatConversacion!]!
+  chat_mensajes(conversacion_id:ID!): [ChatMensaje!]!
 }
 
 
@@ -56,6 +59,9 @@ type Mutation {
   create_ticket(input:NewTicket!): Ticket!
   update_ticket(input:NewTicketRespuesta!): Ticket!
   cerrar_ticket(id:ID!): Ticket!
+
+  """ funciones para el chat """
+  chat_enviar_mensaje(input: ChatEnviarMensajeInput!): ChatMensaje! 
 }
 
 

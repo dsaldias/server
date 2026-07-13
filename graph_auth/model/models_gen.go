@@ -3,8 +3,72 @@
 package model
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 )
+
+type ChatConversacion struct {
+	ID            string               `json:"id"`
+	Tipo          ChatConversacionTipo `json:"tipo"`
+	Nombre        string               `json:"nombre"`
+	FotoURL       *string              `json:"foto_url,omitempty"`
+	CreatedBy     string               `json:"created_by"`
+	FechaRegistro time.Time            `json:"fecha_registro"`
+	FechaUpdate   time.Time            `json:"fecha_update"`
+}
+
+type ChatConversacionMiembro struct {
+	ID                string     `json:"id"`
+	ConversacionID    string     `json:"conversacion_id"`
+	UsuarioID         string     `json:"usuario_id"`
+	IsAdmin           bool       `json:"is_admin"`
+	JoinedAt          time.Time  `json:"joined_at"`
+	LeftAt            *time.Time `json:"left_at,omitempty"`
+	LastReadMessageID *string    `json:"last_read_message_id,omitempty"`
+}
+
+type ChatEnviarMensajeInput struct {
+	SenderID     string            `json:"sender_id"`
+	DestinatorID string            `json:"destinator_id"`
+	Tipo         ChatMensajeTipo   `json:"tipo"`
+	Texto        string            `json:"texto"`
+	Archivos     []*ChatUploadFile `json:"archivos,omitempty"`
+}
+
+type ChatMensaje struct {
+	ID             string          `json:"id"`
+	ConversacionID string          `json:"conversacion_id"`
+	SenderID       string          `json:"sender_id"`
+	Tipo           ChatMensajeTipo `json:"tipo"`
+	Texto          string          `json:"texto"`
+	CreatedAt      time.Time       `json:"created_at"`
+	EditedAt       *time.Time      `json:"edited_at,omitempty"`
+	DeletedAt      *time.Time      `json:"deleted_at,omitempty"`
+}
+
+type ChatMensajeFile struct {
+	ID        string    `json:"id"`
+	MessageID string    `json:"message_id"`
+	Filename  string    `json:"filename"`
+	FilePath  string    `json:"file_path"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type ChatMensajeStatus struct {
+	ID        string                `json:"id"`
+	MessageID string                `json:"message_id"`
+	UsuarioID string                `json:"usuario_id"`
+	Status    ChatMensajeStatusTipo `json:"status"`
+	UpdatedAt time.Time             `json:"updated_at"`
+}
+
+type ChatUploadFile struct {
+	Filename string `json:"filename"`
+	Base64   string `json:"base_64"`
+}
 
 type InputMe struct {
 	UnidadID string `json:"unidad_id"`
@@ -22,6 +86,26 @@ type Menus struct {
 }
 
 type Mutation struct {
+}
+
+type NewChatConversacion struct {
+	Tipo         ChatConversacionTipo `json:"tipo"`
+	Nombre       string               `json:"nombre"`
+	CreatedBy    string               `json:"created_by"`
+	DestinatorID string               `json:"destinator_id"`
+}
+
+type NewChatMensaje struct {
+	SenderID       string          `json:"sender_id"`
+	ConversacionID string          `json:"conversacion_id"`
+	Tipo           ChatMensajeTipo `json:"tipo"`
+	Texto          string          `json:"texto"`
+}
+
+type NewChatMensajeStatus struct {
+	MessageID string                `json:"message_id"`
+	UsuarioID string                `json:"usuario_id"`
+	Status    ChatMensajeStatusTipo `json:"status"`
 }
 
 type NewLogin struct {
@@ -139,6 +223,19 @@ type RespTickets struct {
 	Soporte       *string    `json:"soporte,omitempty"`
 	SoporteID     *string    `json:"soporte_id,omitempty"`
 	Respondido    *time.Time `json:"respondido,omitempty"`
+}
+
+type ResponseChatConversacion struct {
+	ID            string                     `json:"id"`
+	Tipo          ChatConversacionTipo       `json:"tipo"`
+	Nombre        string                     `json:"nombre"`
+	FotoURL       *string                    `json:"foto_url,omitempty"`
+	Miembros      []*ChatConversacionMiembro `json:"miembros"`
+	NoLeidos      int32                      `json:"no_leidos"`
+	UltimoMensaje string                     `json:"ultimo_mensaje"`
+	CreatedBy     string                     `json:"created_by"`
+	FechaRegistro time.Time                  `json:"fecha_registro"`
+	FechaUpdate   time.Time                  `json:"fecha_update"`
 }
 
 type ResponseLogin struct {
@@ -377,4 +474,181 @@ type Usuario struct {
 type XNotificacion struct {
 	Title    string `json:"title"`
 	DataJSON string `json:"data_json"`
+}
+
+type ChatConversacionTipo string
+
+const (
+	ChatConversacionTipoPrivado ChatConversacionTipo = "privado"
+	ChatConversacionTipoGrupo   ChatConversacionTipo = "grupo"
+)
+
+var AllChatConversacionTipo = []ChatConversacionTipo{
+	ChatConversacionTipoPrivado,
+	ChatConversacionTipoGrupo,
+}
+
+func (e ChatConversacionTipo) IsValid() bool {
+	switch e {
+	case ChatConversacionTipoPrivado, ChatConversacionTipoGrupo:
+		return true
+	}
+	return false
+}
+
+func (e ChatConversacionTipo) String() string {
+	return string(e)
+}
+
+func (e *ChatConversacionTipo) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ChatConversacionTipo(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ChatConversacionTipo", str)
+	}
+	return nil
+}
+
+func (e ChatConversacionTipo) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ChatConversacionTipo) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ChatConversacionTipo) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ChatMensajeStatusTipo string
+
+const (
+	ChatMensajeStatusTipoSent      ChatMensajeStatusTipo = "sent"
+	ChatMensajeStatusTipoDelivered ChatMensajeStatusTipo = "delivered"
+	ChatMensajeStatusTipoRead      ChatMensajeStatusTipo = "read"
+)
+
+var AllChatMensajeStatusTipo = []ChatMensajeStatusTipo{
+	ChatMensajeStatusTipoSent,
+	ChatMensajeStatusTipoDelivered,
+	ChatMensajeStatusTipoRead,
+}
+
+func (e ChatMensajeStatusTipo) IsValid() bool {
+	switch e {
+	case ChatMensajeStatusTipoSent, ChatMensajeStatusTipoDelivered, ChatMensajeStatusTipoRead:
+		return true
+	}
+	return false
+}
+
+func (e ChatMensajeStatusTipo) String() string {
+	return string(e)
+}
+
+func (e *ChatMensajeStatusTipo) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ChatMensajeStatusTipo(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ChatMensajeStatusTipo", str)
+	}
+	return nil
+}
+
+func (e ChatMensajeStatusTipo) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ChatMensajeStatusTipo) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ChatMensajeStatusTipo) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ChatMensajeTipo string
+
+const (
+	ChatMensajeTipoText     ChatMensajeTipo = "text"
+	ChatMensajeTipoImage    ChatMensajeTipo = "image"
+	ChatMensajeTipoVideo    ChatMensajeTipo = "video"
+	ChatMensajeTipoAudio    ChatMensajeTipo = "audio"
+	ChatMensajeTipoFile     ChatMensajeTipo = "file"
+	ChatMensajeTipoLocation ChatMensajeTipo = "location"
+	ChatMensajeTipoSystem   ChatMensajeTipo = "system"
+)
+
+var AllChatMensajeTipo = []ChatMensajeTipo{
+	ChatMensajeTipoText,
+	ChatMensajeTipoImage,
+	ChatMensajeTipoVideo,
+	ChatMensajeTipoAudio,
+	ChatMensajeTipoFile,
+	ChatMensajeTipoLocation,
+	ChatMensajeTipoSystem,
+}
+
+func (e ChatMensajeTipo) IsValid() bool {
+	switch e {
+	case ChatMensajeTipoText, ChatMensajeTipoImage, ChatMensajeTipoVideo, ChatMensajeTipoAudio, ChatMensajeTipoFile, ChatMensajeTipoLocation, ChatMensajeTipoSystem:
+		return true
+	}
+	return false
+}
+
+func (e ChatMensajeTipo) String() string {
+	return string(e)
+}
+
+func (e *ChatMensajeTipo) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ChatMensajeTipo(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ChatMensajeTipo", str)
+	}
+	return nil
+}
+
+func (e ChatMensajeTipo) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ChatMensajeTipo) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ChatMensajeTipo) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

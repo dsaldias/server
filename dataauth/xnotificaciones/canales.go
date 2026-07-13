@@ -91,6 +91,16 @@ func (c *Chan) IdsConectados() []string {
 	return conects
 }
 
+func (c *Chan) SendToUser(userID string, xn *model.XNotificacion) {
+	for _, ch := range c.GetSubsByUser(userID) {
+		select {
+		case ch <- xn:
+		default:
+			fmt.Printf("Notification channel for user %s is full.\n", userID)
+		}
+	}
+}
+
 func (c *Chan) Broadcast(xn *model.XNotificacion) {
 	c.mu.RLock()
 	// defer c.mu.RUnlock()

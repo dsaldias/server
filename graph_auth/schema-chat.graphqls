@@ -1,0 +1,118 @@
+
+enum ChatConversacionTipo {
+  privado
+  grupo
+}
+
+enum ChatMensajeTipo {
+  text
+  image
+  video
+  audio
+  file
+  location
+  system
+}
+
+enum ChatMensajeStatusTipo {
+  sent
+  delivered
+  read
+}
+
+type ChatConversacion {
+  id: ID!
+  tipo: ChatConversacionTipo!
+  nombre: String!
+  foto_url: String
+  created_by: ID!
+  fecha_registro: Time!
+  fecha_update: Time!
+}
+
+type ChatMensaje {
+  id: ID!
+  conversacion_id: ID!
+  sender_id: ID!
+  tipo: ChatMensajeTipo!
+  texto: String!
+  created_at: Time!
+  edited_at: Time
+  deleted_at: Time
+}
+
+type ChatConversacionMiembro {
+  id: ID!
+  conversacion_id: ID!
+  usuario_id: ID!
+  is_admin: Boolean!
+  joined_at: Time!
+  left_at: Time
+  last_read_message_id: ID
+}
+
+type ChatMensajeFile {
+  id: ID!
+  message_id: ID!
+  filename: String!
+  file_path: String!
+  created_at: Time!
+}
+
+type ChatMensajeStatus {
+  id: ID!
+  message_id: ID!
+  usuario_id: ID!
+  status: ChatMensajeStatusTipo!
+  updated_at: Time!
+}
+
+# 
+
+type ResponseChatConversacion {
+  id: ID!
+  tipo: ChatConversacionTipo!
+  nombre: String!
+  foto_url: String
+  miembros: [ChatConversacionMiembro]!
+  no_leidos: Int!
+  ultimo_mensaje: String!
+  created_by: ID!
+  fecha_registro: Time!
+  fecha_update: Time!
+}
+
+# 
+
+input NewChatConversacion { 
+  tipo: ChatConversacionTipo!
+  nombre: String!
+  created_by: ID! 
+  destinator_id: ID!
+}
+
+input NewChatMensaje { 
+  sender_id: ID!
+  conversacion_id: ID!
+  tipo: ChatMensajeTipo!
+  texto: String! 
+}
+
+input NewChatMensajeStatus { 
+  message_id: ID!
+  usuario_id: ID!
+  status: ChatMensajeStatusTipo! 
+}
+
+input ChatUploadFile {
+  filename: String!
+  base_64: String!
+}
+
+input ChatEnviarMensajeInput {
+  sender_id: ID!
+  destinator_id: ID! 
+  tipo: ChatMensajeTipo!
+  texto: String!
+  archivos: [ChatUploadFile!]
+}
