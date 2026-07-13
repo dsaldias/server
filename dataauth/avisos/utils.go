@@ -1,4 +1,4 @@
-package notificaciones
+package avisos
 
 import (
 	"database/sql"

@@ -9,13 +9,13 @@ import (
 	"context"
 
 	"github.com/dsaldias/server/dataauth/archivos"
+	"github.com/dsaldias/server/dataauth/avisos"
 	"github.com/dsaldias/server/dataauth/dashboard"
 	"github.com/dsaldias/server/dataauth/login"
 	"github.com/dsaldias/server/dataauth/menus"
-	"github.com/dsaldias/server/dataauth/notificaciones"
 	"github.com/dsaldias/server/dataauth/permisos"
 	"github.com/dsaldias/server/dataauth/roles"
-	"github.com/dsaldias/server/dataauth/tickets"
+	"github.com/dsaldias/server/dataauth/ticketss"
 	"github.com/dsaldias/server/dataauth/unidades"
 	"github.com/dsaldias/server/dataauth/usuarios"
 	"github.com/dsaldias/server/dataauth/utils"
@@ -113,7 +113,7 @@ func (r *mutationResolver) CrearNotificacion(ctx context.Context, input model.Ne
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return notificaciones.Crear(r.DB, input, userid)
+	return avisos.Crear(r.DB, input, userid)
 }
 
 // UpdateNotificacion is the resolver for the update_notificacion field.
@@ -123,7 +123,7 @@ func (r *mutationResolver) UpdateNotificacion(ctx context.Context, input model.U
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return notificaciones.Actualizar(r.DB, input, userid)
+	return avisos.Actualizar(r.DB, input, userid)
 }
 
 // CreateTicket is the resolver for the create_ticket field.
@@ -133,7 +133,7 @@ func (r *mutationResolver) CreateTicket(ctx context.Context, input model.NewTick
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return tickets.Crear(ctx, r.DB, input, userid)
+	return ticketss.Crear(ctx, r.DB, input, userid)
 }
 
 // UpdateTicket is the resolver for the update_ticket field.
@@ -143,7 +143,7 @@ func (r *mutationResolver) UpdateTicket(ctx context.Context, input model.NewTick
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return tickets.Update(ctx, r.DB, input, userid)
+	return ticketss.Update(ctx, r.DB, input, userid)
 }
 
 // CerrarTicket is the resolver for the cerrar_ticket field.
@@ -152,7 +152,7 @@ func (r *mutationResolver) CerrarTicket(ctx context.Context, id string) (*model.
 	if err != nil {
 		return nil, err
 	}
-	return tickets.Cerrar(ctx, r.DB, id)
+	return ticketss.Cerrar(ctx, r.DB, id)
 }
 
 // Me is the resolver for the me field.
@@ -245,7 +245,7 @@ func (r *queryResolver) ConexionesWs(ctx context.Context) (string, error) {
 
 // Notificaciones is the resolver for the notificaciones field.
 func (r *queryResolver) Notificaciones(ctx context.Context) ([]*model.Notificacion, error) {
-	return notificaciones.GetNotificacionesActivas(r.DB)
+	return avisos.GetNotificacionesActivas(r.DB)
 }
 
 // Reporte1 is the resolver for the reporte1 field.
@@ -269,7 +269,7 @@ func (r *queryResolver) AllTickets(ctx context.Context, q model.QueryTickets) ([
 	if err != nil {
 		return nil, err
 	}
-	return tickets.AllTickets(r.DB, q)
+	return ticketss.AllTickets(r.DB, q)
 }
 
 // MisTickets is the resolver for the mis_tickets field.
@@ -279,7 +279,7 @@ func (r *queryResolver) MisTickets(ctx context.Context) ([]*model.RespTickets, e
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return tickets.MisTickets(r.DB, userid)
+	return ticketss.MisTickets(r.DB, userid)
 }
 
 // VerTicket is the resolver for the ver_ticket field.
@@ -288,7 +288,7 @@ func (r *queryResolver) VerTicket(ctx context.Context, id string) (*model.Ticket
 	if err != nil {
 		return nil, err
 	}
-	return tickets.Get(ctx, r.DB, id)
+	return ticketss.Get(ctx, r.DB, id)
 }
 
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
