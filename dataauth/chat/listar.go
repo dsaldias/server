@@ -18,10 +18,21 @@ func MensajesNoLeidos(db *sql.DB, user_id string) (int32, error) {
 	return rbacstatus.NoLeidos(db, user_id)
 }
 
-func MensajesByChat(db *sql.DB, conversacion_id string) ([]*model.ChatMensaje, error) {
+func MensajesByChat(db *sql.DB, conversacion_id, user_id string) ([]*model.ChatMensaje, error) {
 	miembros, err := rbacconversacionesmiembros.ByConversacion(db, conversacion_id)
 	if err != nil {
 		return nil, err
 	}
+
+	var filtrados []*model.ChatConversacionMiembro
+	for _, m := range miembros {
+		if m.UsuarioID == user_id {
+			filtrados = append(filtrados, m)
+			break // porque el usuario debería ser único en la conversación
+		}
+	}
+
+	miembros = filtrados
+
 	return rbacmensajes.ByChat(db, conversacion_id, miembros)
 }

@@ -104,6 +104,12 @@ func validar_campos(input model.NewUsuario) error {
 	if input.Direccion != nil && len(*input.Direccion) > 100 {
 		return errors.New("direccion excede 100 caracteres")
 	}
+	if len(input.Username) == 0 {
+		return errors.New("username es obligatorio")
+	}
+	if len(input.Password) == 0 {
+		return errors.New("password es obligatorio")
+	}
 	if len(input.Username) > 30 {
 		return errors.New("username excede 30 caracteres")
 	}

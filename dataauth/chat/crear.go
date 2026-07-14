@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strconv"
 
 	rbacconversaciones "github.com/dsaldias/server/dataauth/chat/rbac_conversaciones"
@@ -13,6 +14,10 @@ import (
 )
 
 func EnviarChatMensaje(ctx context.Context, db *sql.DB, input model.ChatEnviarMensajeInput) (*model.ChatMensaje, error) {
+
+	if len(input.Texto) > 255 {
+		return nil, errors.New("el texto excede los 255 caracteres")
+	}
 
 	conversacion_id, err := rbacconversaciones.BuscarConversacionPrivada(db, input.SenderID, input.DestinatorID)
 	if err != nil {

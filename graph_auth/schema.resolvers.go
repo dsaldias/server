@@ -304,7 +304,12 @@ func (r *queryResolver) ChatsByUser(ctx context.Context, userID string) ([]*mode
 
 // ChatMensajes is the resolver for the chat_mensajes field.
 func (r *queryResolver) ChatMensajes(ctx context.Context, conversacionID string) ([]*model.ChatMensaje, error) {
-	return chat.MensajesByChat(r.DB, conversacionID)
+	tok, err := utils.CtxValue(ctx, r.DB, "")
+	if err != nil {
+		return nil, err
+	}
+	userid := tok.SessionKey.UsuarioID
+	return chat.MensajesByChat(r.DB, conversacionID, userid)
 }
 
 // ChatsNoLeidos is the resolver for the chats_no_leidos field.
