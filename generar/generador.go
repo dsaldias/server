@@ -37,7 +37,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
-	"github.com/gorilla/websocket"
+	"github.com/coder/websocket"
 	"github.com/vektah/gqlparser/v2/ast"
 
 	"github.com/dsaldias/server/dataauth"
@@ -61,11 +61,9 @@ func main() {
 	srv.AddTransport(&transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		PingPongInterval:      10 * time.Second,
-		Upgrader: websocket.Upgrader{
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
-			CheckOrigin: func(r *http.Request) bool {
-				return true
+		Implementation: transport.CoderWebsocketImplementation{
+			AcceptOptions: websocket.AcceptOptions{
+				OriginPatterns: []string{"*"},
 			},
 		},
 		InitFunc: utils.UaserIDMiddleware(db),
