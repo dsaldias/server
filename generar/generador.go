@@ -29,8 +29,7 @@ package main
 
 import (
 	"%s/app"
-	"%s/graph"
-	"net/http"
+	"%s/graph" 
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
