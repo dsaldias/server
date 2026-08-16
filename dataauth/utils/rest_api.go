@@ -395,7 +395,8 @@ func buildSelectionSet(fields string) string {
 		case ',':
 			if depth == 0 {
 				if token := strings.TrimSpace(current.String()); token != "" {
-					sb.WriteString(token + " ")
+					sb.WriteString(token)
+					sb.WriteString(" ")
 				}
 				current.Reset()
 			} else {
@@ -406,7 +407,8 @@ func buildSelectionSet(fields string) string {
 		}
 	}
 	if token := strings.TrimSpace(current.String()); token != "" {
-		sb.WriteString(token + " ")
+		sb.WriteString(token)
+		sb.WriteString(" ")
 	}
 	sb.WriteString("}")
 	return sb.String()
