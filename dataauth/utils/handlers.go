@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/99designs/gqlgen/graphql/handler"
+	"net/http"
 )
 
 type Handlers2 struct {
 	Path string
-	H    *handler.Server
+	// H    *handler.Server
+	H http.Handler
 }
