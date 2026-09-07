@@ -12,6 +12,7 @@ func GetMenusbyRol(db *sql.DB, rol_id string) ([]*model.Menus, error) {
 	from rbac_menus m
 	inner join rbac_rol_menus rm on rm.menu_id = m.id
 	where rm.rol_id = ?
+	order by m.grupo asc, m.padre_id IS NOT NULL, m.orden asc;
 	`
 	rows, err := db.Query(sql, rol_id)
 	if err != nil {

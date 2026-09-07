@@ -229,12 +229,12 @@ insert into `rbac_unidades`(`nombre`) values('secundaria');
 -- en tu app debes crearlas desde el 10 o superior
 insert into `rbac_menus`(`id`,`label`,`path`,`icon`,`grupo`,`color`,`orden`,`padre_id`) 
 values 
-(1,'Sistema','/','manage_accounts',1,'primary',100, null),
-(2,'Usuarios','/usuarios','group',1,'primary',1, 1),
-(3,'Roles','/roles','local_movies',1,'primary',2, 1),
-(4,'Unidades','/unidades','home',1,'primary',3, 1),
-(5,'Notificaciones','/avisos','campaign',1,'primary',4, 1),
-(6,'Tickets','/tickets','confirmation_number',1,'primary',5, 1);
+(1,'Sistema','/','manage_accounts',100,'primary',100, null),
+(2,'Usuarios','/usuarios','group',100,'primary',1, 1),
+(3,'Roles','/roles','local_movies',100,'primary',2, 1),
+(4,'Unidades','/unidades','home',100,'primary',3, 1),
+(5,'Notificaciones','/avisos','campaign',100,'primary',4, 1),
+(6,'Tickets','/tickets','confirmation_number',100,'primary',5, 1);
 
 
 INSERT INTO `rbac_permisos` (`metodo`, `nombre`, `grupo`,`descripcion`)
