@@ -86,6 +86,13 @@ func AuthMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				}
 			}
 
+			if unidad == "" {
+				cookie, err := r.Cookie("galletita_traviesa_unidad_default")
+				if err == nil {
+					unidad = cookie.Value
+				}
+			}
+
 			sk, er := sessionkey.GetyKey(db, skey)
 			if er != nil {
 				next.ServeHTTP(w, r)
