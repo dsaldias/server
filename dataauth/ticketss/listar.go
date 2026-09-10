@@ -121,11 +121,14 @@ func MisTickets(db *sql.DB, userid string) ([]*model.RespTickets, error) {
 }
 
 func Get(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
-	fields := graphql.CollectFieldsCtx(ctx, nil)
-
 	selectedFields := map[string]bool{}
-	for _, field := range fields {
-		selectedFields[field.Name] = true
+
+	if err := graphql.GetOperationContext(ctx); err == nil {
+		fields := graphql.CollectFieldsCtx(ctx, nil)
+
+		for _, field := range fields {
+			selectedFields[field.Name] = true
+		}
 	}
 
 	sql := `
