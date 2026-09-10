@@ -86,6 +86,7 @@ func AuthMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				}
 			}
 
+			// en el nuevo front ssr por defecto manda la primera unidad, en esta cookie
 			if unidad == "" {
 				cookie, err := r.Cookie("galletita_traviesa_unidad_default")
 				if err == nil {
