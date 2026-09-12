@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/dsaldias/server/dataadmin/admin/utility"
-	"github.com/dsaldias/server/dataadmin/admin/utils"
 	"github.com/dsaldias/server/dataauth/login"
 	"github.com/dsaldias/server/graph_auth/model"
 )
@@ -32,7 +31,7 @@ func (c *Logincontroller) Login() http.Handler {
 				if xis_relogin {
 					http.Error(w, err2.Error(), http.StatusForbidden)
 				} else {
-					utils.ErrorTpl(err2.Error()).Render(r.Context(), w)
+					utility.ErrorTpl(err2.Error()).Render(r.Context(), w)
 				}
 				return
 			}
@@ -42,7 +41,7 @@ func (c *Logincontroller) Login() http.Handler {
 				if xis_relogin {
 					http.Error(w, t, http.StatusForbidden)
 				} else {
-					utils.ErrorTpl(t).Render(r.Context(), w)
+					utility.ErrorTpl(t).Render(r.Context(), w)
 				}
 				return
 			}
@@ -52,7 +51,7 @@ func (c *Logincontroller) Login() http.Handler {
 				if xis_relogin {
 					http.Error(w, err3.Error(), http.StatusForbidden)
 				} else {
-					utils.ErrorTpl(err3.Error()).Render(r.Context(), w)
+					utility.ErrorTpl(err3.Error()).Render(r.Context(), w)
 				}
 				return
 			}
@@ -62,7 +61,7 @@ func (c *Logincontroller) Login() http.Handler {
 				if xis_relogin {
 					http.Error(w, e.Error(), http.StatusForbidden)
 				} else {
-					utils.ErrorTpl(e.Error()).Render(r.Context(), w)
+					utility.ErrorTpl(e.Error()).Render(r.Context(), w)
 				}
 				return
 			}
@@ -72,7 +71,7 @@ func (c *Logincontroller) Login() http.Handler {
 				if xis_relogin {
 					http.Error(w, err4.Error(), http.StatusForbidden)
 				} else {
-					utils.ErrorTpl(err4.Error()).Render(r.Context(), w)
+					utility.ErrorTpl(err4.Error()).Render(r.Context(), w)
 				}
 				return
 			}
@@ -83,7 +82,7 @@ func (c *Logincontroller) Login() http.Handler {
 			if xis_relogin {
 				http.Error(w, "datos sistema y portal incorrectos", http.StatusForbidden)
 			} else {
-				utils.ErrorTpl("datos sistema y portal incorrectos").Render(r.Context(), w)
+				utility.ErrorTpl("datos sistema y portal incorrectos").Render(r.Context(), w)
 			}
 			return
 		}
@@ -92,7 +91,7 @@ func (c *Logincontroller) Login() http.Handler {
 			if xis_relogin {
 				http.Error(w, "datos correctos, pero no tienes ningun rol asignado.", http.StatusForbidden)
 			} else {
-				utils.ErrorTpl("datos correctos, pero no tienes ningun rol asignado.").Render(r.Context(), w)
+				utility.ErrorTpl("datos correctos, pero no tienes ningun rol asignado.").Render(r.Context(), w)
 			}
 			return
 		}
