@@ -1,0 +1,7 @@
+{
+  "componentsDir": "dataadmin/componentes",
+  "utilsDir": "dataadmin/utils",
+  "moduleName": "github.com/dsaldias/serverweb",
+  "jsDir": "dataadmin/assets",
+  "jsPublicPath": "/dataadmin/assets"
+}

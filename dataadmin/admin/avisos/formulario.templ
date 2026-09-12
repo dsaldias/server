@@ -1,0 +1,45 @@
+package avisos
+
+import (
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ Formulario(for_edit model.Notificacion) {
+	<div class="space-y-6">
+  <div class="hidden">
+			@input.Input(input.Props{
+				ID:       "id",
+				Name:     "id",
+				Value:    for_edit.ID,
+				Readonly: true,
+			})
+		</div>
+
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold">Datos del aviso</h3>
+
+			@input.Input(input.Props{
+				ID:          "mensaje",
+				Name:        "mensaje",
+				Placeholder: "Mensaje",
+				Value:       for_edit.Mensaje,
+			})
+
+			@input.Input(input.Props{
+				ID:   "desde",
+				Name: "desde",
+				Type: "datetime-local",
+				Value: for_edit.Desde.Format("2006-01-02T15:04"),
+			})
+
+			@input.Input(input.Props{
+				ID:   "hasta",
+				Name: "hasta",
+				Type: "datetime-local",
+				Value: for_edit.Hasta.Format("2006-01-02T15:04"),
+			})
+		</div>
+
+	</div>
+}

@@ -6,6 +6,8 @@ go 1.26.0
 require (
 	github.com/99designs/gqlgen v0.17.95
 	github.com/HugoSmits86/nativewebp v1.3.0
+	github.com/Oudwins/tailwind-merge-go v0.2.0
+	github.com/a-h/templ v0.3.1020
 	github.com/coder/websocket v1.8.15
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v1.5.5
@@ -14,6 +16,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/rs/cors v1.11.1
+	github.com/templui/templui v1.13.2
 	github.com/vektah/gqlparser/v2 v2.5.37
 	github.com/vincent-petithory/dataurl v1.0.0
 )

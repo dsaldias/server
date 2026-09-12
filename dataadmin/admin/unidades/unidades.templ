@@ -1,0 +1,116 @@
+package unidades 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/selectbox"
+	"github.com/templui/templui/components/table"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+	"time"
+)
+
+templ Unidades(unidades []*model.Unidad, url_refresh string) {
+	@selectbox.Script()
+	@utility.TablaAdmin(utility.MiTablaProps{
+		Titulo:         "Unidades",
+		Descripcion:    "Administración y gestión de unidades del sistema",
+		UrlRefresh:     url_refresh,
+		ListaID:        "lista-unidades",
+		DialogID:       "xdialog-form-unidad",
+		Acciones:       HeaderAcciones(),
+		Busqueda:       true,
+		FilasPorPagina: 16,
+	}) {
+		@ListaUnidades(unidades)
+	}
+}
+
+templ ListaUnidades(unidades []*model.Unidad) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Nombre
+				}
+				@table.Head() {
+					Descripcion
+				}
+				@table.Head() {
+					Orden
+				}
+				@table.Head() {
+					Fecha registro
+				}
+				@table.Head()
+			}
+		}
+		@table.Body() {
+			for _, un := range unidades {
+				@table.Row() {
+					@table.Cell() {
+						{ un.ID }
+					}
+					@table.Cell() {
+						{ un.Nombre }
+					}
+					@table.Cell() {
+						{ parseString(un.Descripcion) }
+					}
+					@table.Cell() {
+						{ un.Orden }
+					}
+					@table.Cell() {
+						{ parseTime(un.FechaRegistro) }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminContextual(
+							un.Nombre,
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Ver unidad",
+								HtmxGet:    fmt.Sprintf("/webx/unidades/%s/ver", un.ID),
+								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID:   "xdialog-form-unidad",
+								Icon:       icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Editar unidad",
+								HtmxGet:    fmt.Sprintf("/webx/unidades/%s/get", un.ID),
+								HtmxPost:   "/webx/unidades/crear",
+								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:   "xdialog-form-unidad",
+								Icon:       icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ HeaderAcciones() {
+	@utility.ModalButton(utility.BtnProps{
+		ModalTitle: "Registrar Nueva unidad",
+		HtmxGet:    "/webx/unidades/formnew",
+		HtmxPost:   "/webx/unidades/crear",
+		BtnText:    "Registrar nueva unidad",
+		DialogID:   "xdialog-form-unidad",
+		Icon:       icon.Newspaper(),
+	})
+}
+
+func parseTime(t time.Time) string {
+	return t.Format("02/01/2006 15:04")
+}
+
+func parseString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

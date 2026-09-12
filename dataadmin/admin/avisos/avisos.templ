@@ -1,0 +1,118 @@
+package avisos 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/table"
+	"time"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+)
+
+templ Avisos(avisos []*model.Notificacion, url_refresh string) {
+	@utility.TablaAdmin(utility.MiTablaProps{
+		Titulo:      "Avisos y notificaciones",
+		Descripcion: "Administración y gestión de avisos y alertas del sistema",
+		UrlRefresh:  url_refresh,
+		ListaID:     "lista-avisos",
+		DialogID:    "xdialog-form-aviso",
+		Acciones:    HeaderAcciones(),
+	}) {
+		@ListaAvisos(avisos)
+	}
+}
+
+templ ListaAvisos(avisos []*model.Notificacion) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Mensaje
+				}
+				@table.Head() {
+					Creado por
+				}
+				@table.Head() {
+					desde
+				}
+				@table.Head() {
+					hasta
+				}
+				@table.Head() {
+					Fecha registro
+				}
+				@table.Head()
+			}
+		}
+		@table.Body() {
+			for _, un := range avisos {
+				@table.Row() {
+					@table.Cell() {
+						{ un.ID }
+					}
+					@table.Cell() {
+						{ un.Mensaje }
+					}
+					@table.Cell() {
+						{ un.CreadoPorID }
+					}
+					@table.Cell() {
+						{ parseTime(un.Desde) }
+					}
+					@table.Cell() {
+						{ parseTime(un.Hasta) }
+					}
+					@table.Cell() {
+						{ parseTime(un.FechaRegistro) }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminAcciones(
+							un.CreadoPorID,
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Ver unidad",
+								HtmxGet:    fmt.Sprintf("/webx/avisos/%s/ver", un.ID),
+								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID:   "xdialog-form-aviso",
+								Icon:       icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Editar unidad",
+								HtmxGet:    fmt.Sprintf("/webx/avisos/%s/get", un.ID),
+								HtmxPost:   "/webx/avisos/crear",
+								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:   "xdialog-form-aviso",
+								Icon:       icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ HeaderAcciones() {
+	@utility.ModalButton(utility.BtnProps{
+		ModalTitle: "Registrar Nueva unidad",
+		HtmxGet:    "/webx/avisos/formnew",
+		HtmxPost:   "/webx/avisos/crear",
+		BtnText:    "Registrar nueva unidad",
+		DialogID:   "xdialog-form-aviso",
+		Icon:       icon.Newspaper(),
+	})
+}
+
+func parseTime(t time.Time) string {
+	return t.Format("02/01/2006 15:04")
+}
+
+func parseString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

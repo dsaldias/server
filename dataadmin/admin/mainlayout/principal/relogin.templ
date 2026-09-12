@@ -1,0 +1,78 @@
+package principal
+
+templ ModalLogin() {
+	<div
+		id="xmodal-relogin"
+		class="fixed inset-0 z-[99999] hidden items-center justify-center bg-black/50 p-4"
+	>
+		<div class="w-full max-w-md rounded-lg border bg-card p-8 shadow-xl">
+			<div class="mb-6 text-center">
+				<h1 class="text-2xl font-semibold">
+					Sesión expirada
+				</h1>
+				<p class="mt-2 text-sm text-muted-foreground">
+					Ingresa nuevamente tus credenciales para continuar
+				</p>
+			</div>
+			<form
+				hx-post="/webx/login"
+				hx-target="#xresultado-login"
+				hx-swap="innerHTML"
+				class="space-y-4"
+				hx-on::before-request="
+				  const d = this;
+          this.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;
+          const button = d.querySelector('button[type=submit]');
+          button.disabled = true;
+          button.innerHTML = '<span class=animate-spin inline-block>↻</span> Verificando...';
+        "
+				hx-on::after-request="
+          const d = this;
+          const button = d.querySelector('button[type=submit]');
+          button.disabled = false;
+          button.innerHTML = this.dataset.submitButton;
+          
+          console.log(event.detail);
+					if (event.detail.successful) {
+						document.getElementById('xmodal-relogin').classList.add('hidden');
+						document.getElementById('xmodal-relogin').classList.remove('flex');
+					}
+				"
+			>
+				<div class="space-y-2">
+					// ESTE CAMPO ES IMPORTANTISIMO PARA NO RECARGAR LA PAGINA 
+					<input type="hidden" name="xis_relogin" value="true"/>
+					<label for="login-usuario" class="text-sm font-medium">
+						Usuario
+					</label>
+					<input
+						id="login-usuario"
+						name="usuario"
+						type="text"
+						placeholder="Ingrese su usuario"
+						class="w-full rounded-md border bg-background px-3 py-2"
+					/>
+				</div>
+				<div class="space-y-2">
+					<label for="login-clave" class="text-sm font-medium">
+						Clave
+					</label>
+					<input
+						id="login-clave"
+						name="clave"
+						type="password"
+						placeholder="Ingrese su clave"
+						class="w-full rounded-md border bg-background px-3 py-2"
+					/>
+				</div>
+				<button
+					type="submit"
+					class="w-full rounded-md bg-primary px-4 py-2 text-primary-foreground"
+				>
+					Iniciar sesión
+				</button>
+			</form>
+			<div id="xresultado-login" class="mt-4"></div>
+		</div>
+	</div>
+}

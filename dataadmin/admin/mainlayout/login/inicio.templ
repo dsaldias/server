@@ -1,0 +1,13 @@
+package xlogin
+
+import "github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
+
+templ Inicio() {
+	@principal.Layout("Iniciar sesión") {
+		<main class="min-h-screen flex items-center justify-center p-6">
+			<div class="w-full max-w-md">
+				@Login()
+			</div>
+		</main>
+	}
+}

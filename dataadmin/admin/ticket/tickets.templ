@@ -1,0 +1,148 @@
+package ticket 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/table"
+	"github.com/templui/templui/components/tabs"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+	"time"
+)
+
+templ Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all string) {
+	@tabs.Script()
+	@tabs.Tabs(tabs.Props{
+		ID:    "account-tabs",
+		Class: "my-0",
+	}) {
+		@tabs.List(tabs.ListProps{
+			Class: "w-full max-w-xs",
+		}) {
+			@tabs.Trigger(tabs.TriggerProps{
+				Value:    "account",
+				IsActive: true,
+			}) {
+				Mis tickets
+			}
+			@tabs.Trigger(tabs.TriggerProps{
+				Value: "password",
+			}) {
+				Todos los tickets
+			}
+		}
+		<div class="w-full max-w mt-0">
+			@tabs.Content(tabs.ContentProps{
+				Value:    "account",
+				IsActive: true,
+			}) {
+				@utility.TablaAdmin(utility.MiTablaProps{
+					Titulo:      "Tickets",
+					Descripcion: "Administración y gestión de tickets de soporte",
+					UrlRefresh:  url_refresh,
+					ListaID:     "lista-tickets",
+					DialogID:    "xdialog-form-ticket",
+					Acciones:    HeaderAcciones(),
+				}) {
+					@ListaTickets(tickets)
+				}
+			}
+			// 
+			@tabs.Content(tabs.ContentProps{
+				Value: "password",
+			}) {
+				@TicketsAll(alls, url_refresh_all)
+			}
+		</div>
+	}
+}
+
+templ ListaTickets(tickets []*model.RespTickets) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Problema
+				}
+				@table.Head() {
+					Respuestas
+				}
+				@table.Head() {
+					Estado
+				}
+				@table.Head() {
+					Fecha registro
+				}
+				@table.Head()
+			}
+		}
+		@table.Body() {
+			for _, ti := range tickets {
+				@table.Row() {
+					@table.Cell() {
+						{ ti.ID }
+					}
+					@table.Cell() {
+						{ ti.Problema }
+					}
+					@table.Cell() {
+						{ parseString(ti.Respuesta) }
+					}
+					@table.Cell() {
+						{ ti.Estado }
+					}
+					@table.Cell() {
+						{ parseTime(ti.FechaRegistro) }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminContextual(
+							ti.Problema,
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								// ModalTitle: "Ver detalles del ticket",
+								HtmxGet:  fmt.Sprintf("/webx/tickets/%s/ver", ti.ID),
+								Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID: "xdialog-form-ticket",
+								Icon:     icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle:    "Responder",
+								HtmxGet:       fmt.Sprintf("/webx/tickets/%s/get", ti.ID),
+								HtmxPost:      "/webx/tickets/responder",
+								BtnSubmitText: "responder",
+								Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:      "xdialog-form-ticket",
+								Icon:          icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ HeaderAcciones() {
+	@utility.ModalButton(utility.BtnProps{
+		ModalTitle: "Registrar algun problema",
+		HtmxGet:    "/webx/tickets/formnew",
+		HtmxPost:   "/webx/tickets/crear",
+		BtnText:    "Sacar ticket",
+		DialogID:   "xdialog-form-ticket",
+		Icon:       icon.Newspaper(),
+	})
+}
+
+func parseTime(t time.Time) string {
+	return t.Format("02/01/2006 15:04")
+}
+
+func parseString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

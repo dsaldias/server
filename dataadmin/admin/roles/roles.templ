@@ -1,0 +1,130 @@
+package roles  
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/table"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+	"time"
+)
+
+templ Roles(roles []*model.ResponseRoles, url_refresh string) {
+	@utility.TablaAdmin(utility.MiTablaProps{
+		Titulo:      "Roles",
+		Descripcion: "Administración y gestión de roles de acceso al sistema",
+		UrlRefresh:  url_refresh,
+		ListaID:     "tabla-roles",
+		DialogID:    "xdialog-form-rol",
+		Acciones:    HeaderAcciones(),
+	}) {
+		@ListaRoles(roles)
+	}
+}
+
+templ ListaRoles(roles []*model.ResponseRoles) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Nombre
+				}
+				@table.Head() {
+					Descripcion
+				}
+				@table.Head() {
+					Jerarquia
+				}
+				@table.Head() {
+					Menus
+				}
+				@table.Head() {
+					Permisos
+				}
+				@table.Head() {
+					Usuarios
+				}
+				@table.Head()
+			}
+		}
+		@table.Body() {
+			for _, rol := range roles {
+				@table.Row() {
+					@table.Cell() {
+						{ rol.ID }
+					}
+					@table.Cell() {
+						{ rol.Nombre }
+					}
+					@table.Cell() {
+						{ parseString(rol.Descripcion) }
+					}
+					@table.Cell() {
+						{ rol.Jerarquia }
+					}
+					@table.Cell() {
+						{ rol.Menus }
+					}
+					@table.Cell() {
+						{ rol.Permisos }
+					}
+					@table.Cell() {
+						{ rol.Usuarios }
+					}
+					@table.Cell() {
+						{ rol.Jerarquia }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminAcciones(
+							rol.Nombre,
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Ver rol",
+								HtmxGet:    fmt.Sprintf("/webx/roles/%s/ver", rol.ID),
+								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID:   "xdialog-form-rol",
+								Icon:       icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Editar rol",
+								HtmxGet:    fmt.Sprintf("/webx/roles/%s/get", rol.ID),
+								HtmxPost:   "/webx/roles/crear",
+								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:   "xdialog-form-rol",
+								Icon:       icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ HeaderAcciones() {
+	@utility.ModalButton(utility.BtnProps{
+		ModalTitle: "Registrar Nuevo rol",
+		HtmxGet:    "/webx/roles/formnew",
+		HtmxPost:   "/webx/roles/crear",
+		BtnText:    "Registrar rol",
+		DialogID:   "xdialog-form-rol",
+		Icon:       icon.Newspaper(),
+	})
+}
+
+func parseTime(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+	return t.Format("02/01/2006 15:04")
+}
+
+func parseString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

@@ -1,0 +1,75 @@
+package xlogin
+
+import (
+	"github.com/templui/templui/components/button"
+	"github.com/templui/templui/components/form"
+	"github.com/templui/templui/components/input"
+)
+
+templ Login() {
+	<div class="rounded-lg border bg-card p-8">
+		<div class="mb-6 text-center">
+			<h1 class="text-2xl font-semibold">
+				Iniciar sesión
+			</h1>
+			<p class="mt-2 text-sm text-muted-foreground">
+				Ingresa tus credenciales para continuar
+			</p>
+		</div>
+
+		<form
+			hx-post="/webx/login"
+			hx-target="#resultado"
+			hx-swap="innerHTML"
+			class="space-y-4"
+			hx-on::before-request="
+				const d = this;
+				this.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;
+				const button = d.querySelector('button[type=submit]');
+				button.disabled = true;
+				button.innerHTML = '<span class=animate-spin inline-block>↻</span> Verificando...';
+			"
+			hx-on::after-request="
+				const d = this;
+				const button = d.querySelector('button[type=submit]');
+				button.disabled = false;
+				button.innerHTML = this.dataset.submitButton;
+			"
+		>
+			<div class="space-y-2">
+				@form.Label(form.LabelProps{
+					For: "usuario",
+				}) {
+					Usuario
+				}
+				@input.Input(input.Props{
+					ID:          "usuario",
+					Name:        "usuario",
+					Placeholder: "Ingrese su usuario",
+					Type:        "text",
+				})
+			</div>
+			<div class="space-y-2">
+				@form.Label(form.LabelProps{
+					For: "clave",
+				}) {
+					Clave
+				}
+				@input.Input(input.Props{
+					ID:          "clave",
+					Name:        "clave",
+					Placeholder: "Ingrese su clave",
+					Type:        "password",
+				})
+			</div>
+			@button.Button(button.Props{
+				Type:  "submit",
+				Class: "w-full",
+			}) {
+				Iniciar sesión
+			}
+		</form>
+
+		<div id="resultado" class="mt-4"></div>
+	</div>
+}

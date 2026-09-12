@@ -1,0 +1,74 @@
+package wizard
+
+templ Wizard(props Props) {
+	<div
+		id={ props.ID }
+		class= {props.ClassName}
+		data-wizard
+	>
+		{ children... }
+		<div class="flex justify-between mt-6">
+			<button
+				type="button"
+				data-wizard-prev
+				class="px-4 py-2 border rounded-md"
+			>
+				Anterior
+			</button>
+			<button
+				type="button"
+				data-wizard-next
+				class="px-4 py-2 rounded-md bg-primary text-white"
+			>
+				Siguiente
+			</button>
+		</div>
+	</div>
+}
+
+templ Steps() {
+	<div
+		data-wizard-steps
+		class="flex items-center w-full mb-6"
+	>
+		{ children... }
+	</div>
+}
+
+templ Step(title string) {
+	<div
+		data-wizard-step
+		class="flex items-center"
+	>
+		<button
+			type="button"
+			data-wizard-trigger
+			class="flex items-center gap-2"
+		>
+			<span
+				data-wizard-number
+				class="flex items-center justify-center w-8 h-8 rounded-full border"
+			></span>
+			<span>{ title }</span>
+		</button>
+	</div>
+}
+
+templ Contents() {
+	<div data-wizard-contents>
+		{ children... }
+	</div>
+}
+
+templ Content() {
+	<div
+		data-wizard-content
+		class="hidden"
+	>
+		{ children... }
+	</div>
+}
+
+templ Script() {
+	<script src="/assets/wizard.js"></script>
+}

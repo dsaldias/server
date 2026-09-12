@@ -1,0 +1,307 @@
+package principal
+
+import (
+	"github.com/templui/templui/components/avatar"
+	"github.com/templui/templui/components/badge"
+	"github.com/templui/templui/components/collapsible"
+	"github.com/templui/templui/components/dropdown"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/sidebar"
+
+	xm "github.com/dsaldias/server/graph_auth/model"
+)
+
+templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.ResponseUsuario) {
+	@dropdown.Script()
+	@sidebar.Script()
+	@collapsible.Script()
+	@sidebar.Sidebar(sidebar.Props{
+		Collapsible: sidebar.CollapsibleIcon,
+		Variant:     sidebar.VariantSidebar,
+		Class:       "text-white z-[100]",
+	}) {
+		@sidebar.Header() {
+			@sidebar.Menu() {
+				@sidebar.MenuItem() {
+					@sidebar.MenuButton(sidebar.MenuButtonProps{
+						Href:    "/webx/main",
+						Tooltip: titulo,
+					}) {
+						@icon.LayoutPanelLeft(icon.Props{Class: "size-4"})
+						<span class="font-semibold">
+							{ titulo }
+						</span>
+					}
+				}
+			}
+			// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
+			@badge.Badge(badge.Props{
+				ID:    "ws_badge_indicator",
+				Class: "bg-[#479066] text-white",
+			}) {
+				<p
+					id="ws_tabs_conectados"
+					title="Conectados: 0"
+				>
+					<span
+						data-ws-status
+						class="size-2 rounded-full bg-green-500"
+					></span>
+					<span id="ws_total_conectados">0</span>
+				</p>
+			}
+			// 
+		}
+		@sidebar.Content() {
+			@sidebar.Group() {
+				@sidebar.GroupLabel() {
+					Menu lateral
+				}
+				@sidebar.Menu() {
+					@MenuItems(menus, nil, current_path)
+				}
+			}
+			@sidebar.Separator()
+		}
+		@sidebar.Footer() {
+			@sidebar.Menu() {
+				@sidebar.MenuItem() {
+					@dropdown.Dropdown() {
+						@dropdown.Trigger() {
+							@sidebar.MenuButton(sidebar.MenuButtonProps{
+								Size: sidebar.MenuButtonSizeLg,
+							}) {
+								@avatar.Avatar(avatar.Props{
+									Class: "size-8 rounded-lg",
+								}) {
+									@avatar.Image(avatar.ImageProps{
+										Src: "https://avatars.githubusercontent.com/u/26936893?v=4",
+									})
+								}
+								<div class="grid flex-1 text-left text-sm leading-tight">
+									<span class="truncate font-medium">
+										{ usuario.Nombres } { usuario.Apellido1 }
+										{ segundoAp(usuario) }
+									</span>
+									<span class="truncate text-xs">
+										{ correo(usuario) }
+									</span>
+								</div>
+								@icon.ChevronsUpDown(icon.Props{
+									Class: "ml-auto size-4",
+								})
+							}
+						}
+						@dropdown.Content(dropdown.ContentProps{
+							Class:     "w-56",
+							Placement: dropdown.PlacementTopStart,
+						}) {
+							@dropdown.Label() {
+								{ usuario.Nombres } { usuario.Apellido1 }
+								{ segundoAp(usuario) }
+							}
+							@dropdown.Separator()
+							@dropdown.Item() {
+								<span class="flex items-center">
+									@icon.User(icon.Props{
+										Class: "size-4 mr-2",
+									})
+									Profile
+								</span>
+							}
+							@dropdown.Item() {
+								<span class="flex items-center">
+									@icon.Settings(icon.Props{
+										Class: "size-4 mr-2",
+									})
+									Settings
+								</span>
+							}
+							@dropdown.Separator()
+							@dropdown.Item() {
+								<span class="flex items-center">
+									@icon.LogOut(icon.Props{
+										Class: "size-4 mr-2",
+									})
+									Log out
+								</span>
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+//
+templ MenuItems(
+	menus []*xm.Menus,
+	padreID *string,
+	current_path string,
+) {
+	for _, m := range menus {
+		if mismoPadre(m.PadreID, padreID) {
+			if tieneHijos(menus, m.ID) {
+				@collapsible.Collapsible(collapsible.Props{
+					Class: "group/collapsible w-full",
+					Open:  tieneRutaActiva(menus, m.ID, current_path),
+				}) {
+					@collapsible.Trigger() {
+						@sidebar.MenuButton(sidebar.MenuButtonProps{
+							Tooltip: m.Label,
+						}) {
+							@icon.FileText(icon.Props{Class: "size-4"})
+							<span>{ m.Label }</span>
+							@icon.ChevronRight(icon.Props{
+								Class: "ml-auto size-4",
+							})
+						}
+					}
+					@collapsible.Content() {
+						@sidebar.MenuSub() {
+							@MenuHijos(menus, m.ID, current_path)
+						}
+					}
+				}
+			} else {
+				@sidebar.MenuItem() {
+					@sidebar.MenuButton(sidebar.MenuButtonProps{
+						Href:     "/webx" + m.Path,
+						Tooltip:  m.Label,
+						IsActive: rutaActiva(current_path, m.Path),
+					}) {
+						@icon.FileText(icon.Props{Class: "size-4"})
+						<span>{ m.Label }</span>
+					}
+				}
+			}
+		}
+	}
+}
+
+templ MenuHijos(menus []*xm.Menus, padreID string, current_path string) {
+	for _, m := range menus {
+		if m.PadreID != nil && *m.PadreID == padreID {
+			@sidebar.MenuSubItem() {
+				@sidebar.MenuSubButton(sidebar.MenuSubButtonProps{
+					Href:     "/webx" + m.Path,
+					IsActive: rutaActiva(current_path, m.Path),
+					Attributes: templ.Attributes{
+						"data-menu-path": "/webx" + m.Path,
+						"hx-get":         "/webx" + m.Path,
+						"hx-target":      "#contenido",
+						"hx-swap":        "innerHTML",
+						"hx-push-url":    "true",
+						"hx-on::before-request": `
+							const loading = this.querySelector('[data-loading]');
+							if (loading) {
+								loading.classList.remove('hidden');
+							}
+							this.style.pointerEvents = 'none';
+						`,
+						"hx-on::after-request": `
+							const loading = this.querySelector('[data-loading]');
+							if (loading) {
+								loading.classList.add('hidden');
+							}
+							this.style.pointerEvents = '';
+						`,
+						"hx-on::send-error": `
+							const loading = this.querySelector('[data-loading]');
+							if (loading) {
+								loading.classList.add('hidden');
+							}
+							this.style.pointerEvents = '';
+
+							Toastify({
+								text: 'No se pudo conectar con el servidor',
+								style: {
+									background: 'red',
+									zIndex: 999999
+								},
+								duration: 5000,
+								close: true,
+								gravity: 'top',
+								position: 'right'
+							}).showToast();
+						`,
+						"hx-on::response-error": `
+							const loading = this.querySelector('[data-loading]');
+							if (loading) {
+								loading.classList.add('hidden');
+							}
+							this.style.pointerEvents = '';
+
+							/*
+							// tal ves no sea necesario
+							Toastify({
+								text: event.detail.xhr.responseText,
+								style: {
+									background: 'purple',
+									zIndex: 999999
+								},
+								duration: 5000,
+								close: true,
+								gravity: 'top',
+								position: 'right'
+							}).showToast();*/
+						`,
+					},
+				}) {
+					<span>{ m.Label }</span>
+					<span data-loading class="hidden ml-auto animate-spin">↻</span>
+				}
+			}
+		}
+	}
+}
+
+func tieneHijos(menus []*xm.Menus, id string) bool {
+	for _, m := range menus {
+		if m.PadreID != nil && *m.PadreID == id {
+			return true
+		}
+	}
+	return false
+}
+
+func mismoPadre(a, b *string) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+	return *a == *b
+}
+
+func segundoAp(usuario *xm.ResponseUsuario) string {
+	if usuario.Apellido2 != nil {
+		return *usuario.Apellido2
+	}
+	return ""
+}
+
+func correo(usuario *xm.ResponseUsuario) string {
+	if usuario.Correo != nil {
+		return *usuario.Correo
+	}
+	return ""
+}
+
+func rutaActiva(currentPath, menuPath string) bool {
+	return currentPath == "/webx"+menuPath
+}
+
+func tieneRutaActiva(menus []*xm.Menus, padreID string, currentPath string) bool {
+	for _, m := range menus {
+		if m.PadreID != nil &&
+			*m.PadreID == padreID &&
+			rutaActiva(currentPath, m.Path) {
+			return true
+		}
+	}
+
+	return false
+}

@@ -1,0 +1,134 @@
+package utility
+
+import "github.com/templui/templui/components/button"
+
+type BtnProps struct {
+	ModalTitle       string
+	ModalDescription string
+	HtmxGet          string
+	HtmxPost         string
+	DialogID         string
+	Class            string
+	Icon             templ.Component
+	BtnText          string
+	BtnSubmitText    string
+	BtnCancelText    string
+}
+
+templ ModalButton(p BtnProps) {
+	@button.Button(button.Props{
+		Class:   classBtn(p),
+		Size:    sizeBtn(p),
+		Variant: button.VariantOutline,
+		Attributes: templ.Attributes{
+			"title":     p.ModalTitle,
+			"hx-get":    p.HtmxGet,
+			"hx-target": "#xcontenido-" + p.DialogID,
+			"hx-swap":   "innerHTML",
+
+			"hx-on::before-request": `
+				this.dataset.originalContent = this.innerHTML;
+				this.disabled = true;
+				this.innerHTML = '<span class="animate-spin inline-block">↻</span>';
+			`,
+			"hx-on::send-error": ` 
+				Toastify({
+					text: 'No se pudo conectar con el servidor',
+					style: {
+						background: 'red',
+						zIndex: 999999
+					},
+					duration: 5000,
+					close: true,
+					gravity: 'top',
+					position: 'right'
+				}).showToast();
+			`,
+			"xxxxxxhx-on::response-error": `
+				Toastify({
+					text: event.detail.xhr.responseText,
+					style: {
+						background: 'red',
+						zIndex: 999999
+					},
+					duration: 5000,
+					close: true,
+					gravity: 'top',
+					position: 'right'
+				}).showToast();
+			`,
+
+			"hx-on::after-request": `
+				this.disabled = false;
+				this.innerHTML = this.dataset.originalContent;
+
+				if (event.detail.successful) {
+					const dialog = document.getElementById("` + p.DialogID + `");
+					const titulo = dialog.querySelector("#titulo-` + p.DialogID + `");
+					const descripcion = dialog.querySelector("#descripcion-` + p.DialogID + `");
+					const btn_submit = dialog.querySelector("#btn-submit-` + p.DialogID + `");
+					const btn_cancel = dialog.querySelector("#btn-cerrar-` + p.DialogID + `");
+					const form = dialog.querySelector("#xform-` + p.DialogID + `");
+
+					if (titulo) {
+            titulo.textContent = "` + p.ModalTitle + `";
+        	}
+					if (descripcion) {
+            descripcion.textContent = "` + p.ModalDescription + `";
+        	}
+					if (btn_submit) {
+            btn_submit.style.display = "` + modalBtnSubmitDisplay(p) + `";
+
+						if ("` + p.BtnSubmitText + `" != "") {
+							const text = btn_submit.querySelector(".btn-submit-text");
+							if (text) {
+								text.textContent = "` + p.BtnSubmitText + `";
+							}
+						}
+        	}
+					if (btn_cancel) {
+						if ("` + p.BtnCancelText + `" != "") {
+							const text = btn_cancel.querySelector(".btn-cerrar-text");
+							if (text) {
+								text.textContent = "` + p.BtnCancelText + `";
+							}
+						}
+        	}
+					if (form) {
+						form.setAttribute("hx-post", "` + p.HtmxPost + `");
+						htmx.process(form);
+					}
+					window.tui.dialog.open("` + p.DialogID + `");
+				}
+			`,
+		},
+	}) {
+		if p.Icon != nil {
+			@p.Icon
+		}
+		if p.BtnText != "" {
+			<span class="btn-text">{ p.BtnText } </span>
+		}
+	}
+}
+
+func modalBtnSubmitDisplay(p BtnProps) string {
+	if p.HtmxPost == "" {
+		return "none"
+	}
+	return "flex"
+}
+
+func sizeBtn(p BtnProps) button.Size {
+	if p.BtnText != "" && len(p.BtnText) > 0 {
+		return button.SizeSm
+	}
+	return button.SizeIcon
+}
+
+func classBtn(p BtnProps) string {
+	if p.Class == "" {
+		return "hover:bg-[#e8f2f1]"
+	}
+	return p.Class
+}

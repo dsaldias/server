@@ -1,0 +1,33 @@
+package principal
+
+import (
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/sidebar"
+)
+
+templ MainPageLayout(
+	titulo string,
+	unidadid string,
+	menus []*model.Menus,
+	roles []*model.ResponseRolMe,
+	usuario *model.ResponseUsuario,
+	contenido templ.Component,
+	current_path string,
+) {
+	@Layout(titulo) {
+		@sidebar.Layout() {
+			@Sidebar(titulo, current_path, menus, usuario)
+			@sidebar.Inset() {
+				<div class="flex h-full min-h-0 flex-col">
+					@Header(roles, unidadid)
+					<main
+						id="contenido"
+						class="min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16"
+					>
+						@contenido
+					</main>
+				</div>
+			}
+		}
+	}
+}

@@ -1,0 +1,630 @@
+package usuarios
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ PanelPermisos(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Permisos globales
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosSeleccionados(permisos, seleccionados) } / { len(permisos) }
+				</span>
+			</div>
+		</summary>
+		<div class="border-t p-2 space-y-1">
+			for _, grupo := range agruparPermisos(permisos) {
+				@PermisoGrupoItem(grupo, seleccionados)
+			}
+		</div>
+	</details>
+}
+
+templ PermisoGrupoItem(
+	grupo *PermisoGrupo,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center">
+				<span class="flex-1 text-sm font-medium">
+					{ grupo.Nombre }
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosGrupo(grupo.Permisos, seleccionados) } / { len(grupo.Permisos) }
+				</span>
+			</div>
+		</summary>
+		<div class="border-t px-2 py-1 space-y-1">
+			for _, permiso := range grupo.Permisos {
+				@PermisoItem(permiso, seleccionados)
+			}
+		</div>
+	</details>
+}
+
+templ PermisoItem(
+	permiso *model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<label class="flex items-start gap-2 rounded-md px-3 py-2 cursor-pointer hover:bg-muted/50">
+		<input
+			type="checkbox"
+			name="permisos_sueltos"
+			value={ permiso.Metodo }
+			if hasPermiso(seleccionados, permiso.Metodo) {
+				checked
+			}
+		/>
+		<div class="flex-1 min-w-0">
+			<div class="text-sm">
+				{ permiso.Nombre }
+			</div>
+			<div class="text-[11px] text-muted-foreground truncate">
+				{ permiso.Metodo }
+			</div>
+			if permiso.Descripcion != nil {
+				<div class="text-xs text-muted-foreground mt-1">
+					{ *permiso.Descripcion }
+				</div>
+			}
+		</div>
+	</label>
+}
+
+templ PanelMenus(
+	menus []*model.Menus,
+	seleccionados []*model.Menus,
+) {
+	<div class="rounded-md border">
+		<details>
+			<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+				Menús
+			</summary>
+			<div class="border-t p-2 space-y-1">
+				for _, item := range construirMenuTree(menus) {
+					@MenuTreeItem(item, seleccionados)
+				}
+			</div>
+		</details>
+	</div>
+}
+
+templ MenuTreeItem(
+	item *MenuTree,
+	seleccionados []*model.Menus,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center gap-2">
+				<input
+					type="checkbox"
+					name="menus_sueltos"
+					value={ item.Menu.ID }
+					if hasMenu(seleccionados, item.Menu.ID) {
+						checked
+					}
+					onclick="event.stopPropagation()"
+				/>
+				<div class="flex-1">
+					<div class="text-sm font-medium">
+						{ item.Menu.Label }
+					</div>
+				</div>
+				<div class="text-xs text-muted-foreground">
+					{ len(item.Hijos) }
+				</div>
+			</div>
+		</summary>
+		if len(item.Hijos) > 0 {
+			<div class="border-t px-2 py-1 space-y-1">
+				for _, hijo := range item.Hijos {
+					@MenuTreeChild(hijo, seleccionados)
+				}
+			</div>
+		}
+	</details>
+}
+
+templ MenuTreeChild(
+	menu *model.Menus,
+	seleccionados []*model.Menus,
+) {
+	<label class="flex items-center gap-2 rounded-md px-3 py-1.5 pl-8 cursor-pointer hover:bg-muted/50">
+		<input
+			type="checkbox"
+			name="menus_sueltos"
+			value={ menu.ID }
+			if hasMenu(seleccionados, menu.ID) {
+				checked
+			}
+		/>
+		<div class="flex-1 min-w-0">
+			<div class="text-sm truncate">
+				{ menu.Label }
+			</div>
+			<div class="text-[11px] text-muted-foreground truncate">
+				{ menu.Path }
+			</div>
+		</div>
+	</label>
+}
+
+templ PanelRoles(
+	roles []*model.ResponseRoles,
+	unidades []*model.Unidad,
+	asignados []*model.ResponseRolUnidad,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Roles y unidades
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ len(asignados) } asignados
+				</span>
+			</div>
+		</summary>
+		<div class="border-t p-2 space-y-2">
+			<div
+				id="roles-container"
+				class="space-y-1"
+			>
+				for _, ru := range asignados {
+					@RolUnidadRow(
+						ru.RolID,
+						ru.UnidadID,
+						ru.RolName,
+						ru.UnidadName,
+					)
+				}
+			</div>
+			<button
+				type="button"
+				id="btn-agregar-rol"
+				class="border rounded-md px-3 py-2 text-sm"
+			>
+				Agregar rol
+			</button>
+			@RolUnidadSelector(roles, unidades)
+		</div>
+	</details>
+}
+
+templ RolUnidadSelector(
+	roles []*model.ResponseRoles,
+	unidades []*model.Unidad,
+) {
+	<div
+		id="rol-selector"
+		class="hidden rounded-md border p-3 space-y-3"
+	>
+		<div>
+			<label class="text-sm">
+				Rol
+			</label>
+			<select
+				id="select-rol"
+				class="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+			>
+				<option value="">
+					Seleccione rol
+				</option>
+				for _, rol := range roles {
+					<option value={ rol.ID }>
+						{ rol.Nombre }
+					</option>
+				}
+			</select>
+		</div>
+		<div>
+			<label class="text-sm">
+				Unidad
+			</label>
+			<select
+				id="select-unidad"
+				class="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+			>
+				<option value="">
+					Seleccione unidad
+				</option>
+				for _, unidad := range unidades {
+					<option value={ unidad.ID }>
+						{ unidad.Nombre }
+					</option>
+				}
+			</select>
+		</div>
+		<div class="flex gap-2">
+			<button
+				type="button"
+				id="btn-confirmar-rol"
+				class="border rounded-md px-3 py-2 text-sm"
+			>
+				Agregar
+			</button>
+			<button
+				type="button"
+				id="btn-cancelar-rol"
+				class="border rounded-md px-3 py-2 text-sm"
+			>
+				Cancelar
+			</button>
+		</div>
+	</div>
+}
+
+templ Formulario(
+	for_edit model.ResponseUsuario,
+	roles []*model.ResponseRoles,
+	unidades []*model.Unidad,
+	permisos []*model.Permiso,
+	menus []*model.Menus,
+) {
+	<div class="hidden">
+		@input.Input(input.Props{
+			ID:       "id",
+			Name:     "id",
+			Value:    fmt.Sprintf("%s", for_edit.ID),
+			Readonly: true,
+		})
+	</div>
+	<div class="space-y-6">
+		<!-- DATOS PERSONALES -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Datos personales
+			</h3>
+			@input.Input(input.Props{
+				ID:          "nombres",
+				Name:        "nombres",
+				Placeholder: "Nombres",
+				Value:       for_edit.Nombres,
+			})
+			@input.Input(input.Props{
+				ID:          "apellido1",
+				Name:        "apellido1",
+				Placeholder: "Apellido 1",
+				Value:       for_edit.Apellido1,
+			})
+			@input.Input(input.Props{
+				ID:          "apellido2",
+				Name:        "apellido2",
+				Placeholder: "Apellido 2",
+				Value:       parseStringx(for_edit.Apellido2),
+			})
+			@input.Input(input.Props{
+				ID:          "documento",
+				Name:        "documento",
+				Placeholder: "Documento",
+				Value:       parseStringx(for_edit.Documento),
+			})
+			@input.Input(input.Props{
+				ID:          "celular",
+				Name:        "celular",
+				Placeholder: "Celular",
+				Value:       parseStringx(for_edit.Celular),
+			})
+			@input.Input(input.Props{
+				ID:          "correo",
+				Name:        "correo",
+				Placeholder: "Correo",
+				Value:       parseStringx(for_edit.Correo),
+			})
+			<select
+				id="sexo"
+				name="sexo"
+				class="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+			>
+				<option value="">Seleccione sexo</option>
+				<option value="F" selected={ parseStringx(for_edit.Sexo) == "F" }>F</option>
+				<option value="M" selected={ parseStringx(for_edit.Sexo) == "M" }>M</option>
+			</select>
+			@input.Input(input.Props{
+				ID:          "direccion",
+				Name:        "direccion",
+				Placeholder: "Dirección",
+				Value:       parseStringx(for_edit.Direccion),
+			})
+		</div>
+		<!-- CUENTA -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Cuenta
+			</h3>
+			@input.Input(input.Props{
+				ID:          "username",
+				Name:        "username",
+				Placeholder: "Username",
+				Value:       for_edit.Username,
+			})
+			@input.Input(input.Props{
+				ID:          "password",
+				Name:        "password",
+				Type:        "password",
+				Placeholder: "Password",
+			})
+			<input
+				id="foto64"
+				name="foto64"
+				type="hidden"
+				value=""
+			/>
+		</div>
+		@PanelRoles(
+			roles,
+			unidades,
+			for_edit.Roles,
+		)
+		@PanelPermisos(
+			permisos,
+			for_edit.PermisosSueltos,
+		)
+		@PanelMenus(
+			menus,
+			for_edit.MenusSueltos,
+		)
+	</div>
+	<script>
+  (function () {
+    const selector = document.getElementById('rol-selector')
+    const container = document.getElementById('roles-container')
+
+    function renumerarRoles() {
+      const filas = container.querySelectorAll('[data-rol-row]')
+
+      filas.forEach((fila, index) => {
+        fila.querySelector('[data-rol-id]').name =
+          `roles[${index}][rol_id]`
+
+        fila.querySelector('[data-unidad-id]').name =
+          `roles[${index}][unidad_id]`
+      })
+    }
+
+    // IMPORTANTE:
+    // numerar los roles que ya vienen del servidor
+    renumerarRoles()
+
+    document.getElementById('btn-agregar-rol').addEventListener('click', function () {
+      selector.classList.remove('hidden')
+    })
+
+    document.getElementById('btn-cancelar-rol').addEventListener('click', function () {
+      selector.classList.add('hidden')
+    })
+
+    document.getElementById('btn-confirmar-rol').addEventListener('click', function () {
+
+      const rol = document.getElementById('select-rol')
+      const unidad = document.getElementById('select-unidad')
+
+      if (!rol.value || !unidad.value) {
+        return
+      }
+
+      const row = document.createElement('div')
+
+      row.setAttribute('data-rol-row', '')
+      row.className = 'flex items-center gap-3 rounded-md border p-3'
+
+      row.innerHTML = `
+        <input
+          type="hidden"
+          data-rol-id
+          value="${rol.value}"
+        >
+
+        <input
+          type="hidden"
+          data-unidad-id
+          value="${unidad.value}"
+        >
+
+        <div class="flex-1">
+          <div class="font-medium text-sm">
+            ${rol.options[rol.selectedIndex].text}
+          </div>
+
+          <div class="text-xs text-muted-foreground">
+            ${unidad.options[unidad.selectedIndex].text}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="text-destructive text-sm"
+          data-eliminar-rol
+        >
+          Eliminar
+        </button>
+      `
+
+      container.appendChild(row)
+
+      renumerarRoles()
+
+      rol.value = ''
+      unidad.value = ''
+
+      selector.classList.add('hidden')
+    })
+
+    container.addEventListener('click', function (evt) {
+
+      const boton = evt.target.closest('[data-eliminar-rol]')
+
+      if (!boton) {
+        return
+      }
+
+      boton.closest('[data-rol-row]').remove()
+
+      renumerarRoles()
+    })
+
+  })()
+  </script>
+}
+
+templ RolUnidadRow(
+	rolID string,
+	unidadID string,
+	rolName string,
+	unidadName string,
+) {
+	<div
+		data-rol-row
+		class="flex items-center gap-3 rounded-md border px-3 py-2"
+	>
+		<input
+			type="hidden"
+			data-rol-id
+			value={ rolID }
+		/>
+		<input
+			type="hidden"
+			data-unidad-id
+			value={ unidadID }
+		/>
+		<div class="flex-1 min-w-0">
+			<div class="text-sm font-medium">
+				{ rolName }
+			</div>
+			<div class="text-xs text-muted-foreground">
+				{ unidadName }
+			</div>
+		</div>
+		<button
+			type="button"
+			class="text-destructive text-xs"
+			data-eliminar-rol
+		>
+			Eliminar
+		</button>
+	</div>
+}
+
+func parseStringx(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func hasPermiso(permisos []*model.ResponsePermisoMe, metodo string) bool {
+	for _, p := range permisos {
+		if p.Metodo == metodo {
+			return true
+		}
+	}
+	return false
+}
+
+func hasMenu(menus []*model.Menus, id string) bool {
+	for _, m := range menus {
+		if m.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
+type MenuTree struct {
+	Menu  *model.Menus
+	Hijos []*model.Menus
+}
+
+func construirMenuTree(menus []*model.Menus) []*MenuTree {
+	padres := make(map[string]*MenuTree)
+	var resultado []*MenuTree
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			item := &MenuTree{
+				Menu: menu,
+			}
+
+			padres[menu.ID] = item
+			resultado = append(resultado, item)
+		}
+	}
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			continue
+		}
+
+		if padre, ok := padres[*menu.PadreID]; ok {
+			padre.Hijos = append(padre.Hijos, menu)
+		}
+	}
+
+	return resultado
+}
+
+type Permiso struct {
+	Metodo      string
+	Nombre      string
+	Descripcion *string
+	Grupo       string
+}
+
+type PermisoGrupo struct {
+	Nombre   string
+	Permisos []*model.Permiso
+}
+
+func agruparPermisos(permisos []*model.Permiso) []*PermisoGrupo {
+	grupos := make(map[string]*PermisoGrupo)
+	var resultado []*PermisoGrupo
+
+	for _, permiso := range permisos {
+		grupo, ok := grupos[permiso.Grupo]
+
+		if !ok {
+			grupo = &PermisoGrupo{
+				Nombre: permiso.Grupo,
+			}
+
+			grupos[permiso.Grupo] = grupo
+			resultado = append(resultado, grupo)
+		}
+
+		grupo.Permisos = append(grupo.Permisos, permiso)
+	}
+
+	return resultado
+}
+
+func contarPermisosGrupo(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) int {
+	total := 0
+
+	for _, permiso := range permisos {
+		if hasPermiso(seleccionados, permiso.Metodo) {
+			total++
+		}
+	}
+
+	return total
+}
+
+func contarPermisosSeleccionados(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) int {
+	return contarPermisosGrupo(permisos, seleccionados)
+}

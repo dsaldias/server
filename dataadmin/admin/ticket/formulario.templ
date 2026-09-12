@@ -1,0 +1,21 @@
+package ticket
+
+import (
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ Formulario(
+	for_edit model.Ticket,
+) {
+	<div class="space-y-6">
+		<div class="space-y-3">
+			@input.Input(input.Props{
+				ID:          "problema",
+				Name:        "problema",
+				Placeholder: "problema", 
+				Value:       for_edit.Problema,
+			})
+		</div>
+	</div>
+}

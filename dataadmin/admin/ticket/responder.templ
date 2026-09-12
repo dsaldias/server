@@ -1,0 +1,36 @@
+package ticket
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ Responder(
+	for_edit model.Ticket,
+	is_from_all bool,
+) {
+	<div class="hidden">
+		@input.Input(input.Props{
+			ID:       "tickets_id",
+			Name:     "tickets_id",
+			Value:    for_edit.ID,
+			Readonly: true,
+		})
+		@input.Input(input.Props{
+			ID:       "is_from_all",
+			Name:     "is_from_all",
+			Value:    fmt.Sprintf("%v", is_from_all),
+			Readonly: true,
+		})
+	</div>
+	<div class="space-y-6">
+		<div class="space-y-3">
+			@input.Input(input.Props{
+				ID:          "respuesta",
+				Name:        "respuesta",
+				Placeholder: "respuesta",
+			})
+		</div>
+	</div>
+}

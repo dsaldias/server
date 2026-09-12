@@ -1,0 +1,96 @@
+package ticket 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/table"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+)
+
+templ TicketsAll(tickets []*model.RespTickets, url_refresh string) {
+	@utility.TablaAdmin(utility.MiTablaProps{
+		Titulo:      "Todos los tickets",
+		Descripcion: "Administración y gestión de todos los tickets de soporte",
+		UrlRefresh:  url_refresh,
+		ListaID:     "lista-tickets-all",
+		DialogID:    "xdialog-form-ticket-all",
+		Acciones:    nil,
+	}) {
+		@ListaTicketsAll(tickets)
+	}
+}
+
+templ ListaTicketsAll(tickets []*model.RespTickets) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Usuario
+				}
+				@table.Head() {
+					Problema
+				}
+				@table.Head() {
+					Respuestas
+				}
+				@table.Head() {
+					Estado
+				}
+				@table.Head() {
+					Fecha registro
+				}
+				@table.Head()
+			}
+		}
+		@table.Body() {
+			for _, ti := range tickets {
+				@table.Row() {
+					@table.Cell() {
+						{ ti.ID }
+					}
+					@table.Cell() {
+						{ ti.Usuario }
+					}
+					@table.Cell() {
+						{ ti.Problema }
+					}
+					@table.Cell() {
+						{ parseString(ti.Respuesta) }
+					}
+					@table.Cell() {
+						{ ti.Estado }
+					}
+					@table.Cell() {
+						{ parseTime(ti.FechaRegistro) }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminAcciones(
+							ti.Problema,
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								// ModalTitle: "Ver detalles del ticket",
+								HtmxGet:  fmt.Sprintf("/webx/tickets/%s/ver", ti.ID),
+								Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID: "xdialog-form-ticket-all",
+								Icon:     icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle:    "Responder",
+								HtmxGet:       fmt.Sprintf("/webx/tickets/%s/get?is_from_all=1", ti.ID),
+								HtmxPost:      "/webx/tickets/responder",
+								BtnSubmitText: "responder",
+								Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:      "xdialog-form-ticket-all",
+								Icon:          icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,126 @@
+package utility
+
+import (
+	"github.com/templui/templui/components/button"
+	"github.com/templui/templui/components/dialog"
+	"github.com/templui/templui/components/icon"
+)
+
+const (
+	ModalSM  = "max-w-sm"
+	ModalMD  = "max-w-md"
+	ModalLG  = "max-w-lg"
+	ModalXL  = "max-w-xl"
+	Modal2XL = "max-w-2xl"
+	Modal3XL = "max-w-3xl"
+	Modal4XL = "max-w-4xl"
+	Modal5XL = "max-w-5xl"
+	Modal6XL = "max-w-6xl"
+	Modal7XL = "max-w-7xl"
+)
+
+type ModalGenericoX struct {
+	DialogID        string
+	TargetRefreshID string
+	DialogSize      string
+}
+
+templ ModalGenerico(p ModalGenericoX) {
+	@dialog.Dialog(dialog.Props{
+		ID:               p.DialogID,
+		DisableClickAway: true,
+		Class:            "z-[99999]",
+	}) {
+		@dialog.Content(dialog.ContentProps{
+			// max-w-2xl, max-w-5xl, max-w-7xl
+			Class:        p.DialogSize + " max-h-[90vh] flex flex-col z-[99999]",
+			DisableModal: false,
+			Attributes: templ.Attributes{
+				"data-mobile-modal": "true",
+			},
+		}) {
+			@dialog.Header() {
+				@dialog.Title() {
+					<span id={ "titulo-" + p.DialogID }></span>
+				}
+				@dialog.Description() {
+					<span id={ "descripcion-" + p.DialogID }></span>
+				}
+			}
+			<div class="overflow-y-auto flex-1 pr-2">
+				<form
+					id={ "xform-" + p.DialogID }
+					hx-post=""
+					hx-target={ p.TargetRefreshID }
+					hx-swap="innerHTML"
+					hx-ext="json-enc-custom"
+					class="space-y-5"
+					hx-on::before-request="
+						const d = this.parentElement.parentElement;
+						this.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;
+						const button = d.querySelector('button[type=submit]');
+						button.disabled = true;
+						button.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';
+					"
+					xxxxxhx-on::response-error={ templ.ComponentScript{
+            Call: "Toastify({ text: 'EN sidebar.js YA CONTROLO ESTOS ERRORES O RELOGIN',style: {background:'red',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()",
+          } }
+					hx-on::after-request="
+						const d = this.parentElement.parentElement;
+						const button = d.querySelector('button[type=submit]');
+						button.disabled = false;
+						button.innerHTML = this.dataset.submitButton;
+
+						if (event.detail.successful) {
+							this.closest('dialog').close();
+							Toastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()
+						}
+					"
+				>
+					// { children... }
+					<div class="xoverflow-y-auto flex-1 pr-2">
+						<div id={ "xcontenido-" + p.DialogID }>
+							{ children... }
+						</div>
+					</div>
+				</form>
+				<div id={ "resultado-" + p.DialogID }></div>
+			</div>
+			@dialog.Footer() {
+				<div id={ "footer-" + p.DialogID } class="flex gap-2">
+					@dialog.Close(dialog.CloseProps{
+						ID: "btn-cerrar-" + p.DialogID,
+					}) {
+						@button.Button(button.Props{
+							Variant: button.VariantOutline,
+							Type:    "button",
+							Class:   "bg-red-100 text-red-700 hover:bg-red-200",
+						}) {
+							@icon.PanelLeftClose()
+							<span class="btn-cerrar-text">Cancelar</span>
+						}
+					}
+					@button.Button(button.Props{
+						ID:      "btn-submit-" + p.DialogID,
+						Variant: button.VariantOutline,
+						Type:    "submit",
+						Class:   "bg-green-100 text-green-700 hover:bg-green-200",
+						Form:    "xform-" + p.DialogID,
+					}) {
+						@icon.Check()
+						<span class="btn-submit-text">Aceptar</span>
+					}
+				</div>
+			}
+		}
+	}
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('[data-mobile-modal]').forEach(dialog => {
+        const mobile = window.matchMedia("(max-width: 767px)").matches;
+
+        dialog.dataset.tuiDialogShowModal = !mobile ? "true" : "false";
+    });
+});
+	</script>
+}

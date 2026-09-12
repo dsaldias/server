@@ -1,0 +1,171 @@
+package utility
+
+import (
+	"fmt"
+	"github.com/templui/templui/components/button"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/popover"
+)
+
+type MiTablaProps struct {
+	Titulo         string
+	Descripcion    string
+	UrlRefresh     string
+	ListaID        string
+	DialogID       string
+	Acciones       templ.Component
+	Busqueda       bool
+	Ordenable      bool
+	FilasPorPagina int
+}
+
+templ TablaAdmin(
+	props MiTablaProps,
+) {
+	<div class="mb-4">
+		<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
+		<p class="text-sm text-muted-foreground">
+			{ props.Descripcion }
+		</p>
+	</div>
+	@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
+		if props.Acciones != nil {
+			@props.Acciones
+		}
+	}
+	if props.Busqueda {
+		@TablaAdminBusqueda(props.ListaID)
+	}
+	@ModalGenerico(ModalGenericoX{
+		DialogID:        props.DialogID,
+		TargetRefreshID: "#" + props.ListaID,
+	}) {
+	}
+	<div
+		id={ props.ListaID }
+		data-tabla-contextual="true"
+		if props.Ordenable {
+			data-tabla-ordenable="true"
+		}
+		if props.FilasPorPagina > 0 {
+			data-tabla-paginable="true"
+			data-filas-por-pagina={ fmt.Sprint(props.FilasPorPagina) }
+		}
+	>
+		@TablaAdminLista() {
+			{ children... }
+		}
+	</div>
+	if props.FilasPorPagina > 0 {
+		@TablaAdminPaginacion(props.ListaID)
+	}
+}
+
+templ TablaAdminBusqueda(lista_id string) {
+	<div class="mb-4">
+		<div class="relative max-w-sm">
+			<input
+				type="text"
+				placeholder="Buscar..."
+				class="w-full rounded-md border border-input z-[1] bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+				data-tabla-busqueda={ lista_id }
+				autocomplete="off"
+			/>
+		</div>
+	</div>
+}
+
+templ TablaAdminHeaderAcciones(
+	url_refresh string,
+	lista_id string,
+) {
+	<div class="flex items-center gap-2 mb-4">
+		@button.Button(button.Props{
+			Variant: button.VariantOutline,
+			Size:    button.SizeSm,
+			Class:   "hover:bg-[#e8f2f1]",
+			Attributes: templ.Attributes{
+				"hx-get":          url_refresh,
+				"hx-disabled-elt": "this",
+				"hx-target":       "#" + lista_id,
+				"hx-swap":         "innerHTML",
+			},
+		}) {
+			@icon.RefreshCw()
+			Refrescar
+		}
+		{ children... }
+	</div>
+}
+
+templ TablaAdminAcciones(
+	nombre string,
+) {
+	@popover.Root() {
+		@popover.Trigger(popover.TriggerProps{
+			TriggerType: popover.TriggerTypeHover,
+		}) {
+			@button.Button(button.Props{
+				Class:   "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200",
+				Variant: button.VariantOutline,
+				Size:    button.SizeIcon,
+			}) {
+				@icon.Menu(icon.Props{})
+			}
+		}
+		@popover.Content(popover.ContentProps{
+			Placement:     popover.PlacementLeft,
+			ShowArrow:     true,
+			HoverOutDelay: 500,
+		}) {
+			<div class="p-4 space-y-4 min-w-56">
+				<div class="border-b pb-3">
+					<h3 class="text-sm font-semibold text-gray-700">
+						Menú de Opciones
+					</h3>
+					<p class="text-sm text-gray-500">
+						{ nombre }
+					</p>
+				</div>
+				<div class="flex items-center gap-2">
+					{ children... }
+				</div>
+			</div>
+		}
+	}
+}
+
+templ TablaAdminContextual(t string) {
+	<div
+		data-contextual-menu
+		class="hidden fixed z-[9999] w-56 rounded-md border bg-background p-2 shadow-lg"
+	>
+		<div class="border-b px-3 py-2">
+			<p class="text-sm font-semibold">
+				Menú de opciones
+			</p>
+			<p class="text-xs text-muted-foreground">
+				{ t }
+			</p>
+		</div>
+		<div class="flex items-center gap-2 mt-2">
+			{ children... }
+		</div>
+	</div>
+}
+
+templ TablaAdminPaginacion(lista_id string) {
+	<div
+		class="flex items-center justify-between mt-4"
+		data-tabla-paginacion={ lista_id }
+	>
+		<div class="text-sm text-muted-foreground" data-paginacion-info></div>
+		<div class="flex items-center gap-1" data-paginacion-controles></div>
+	</div>
+}
+
+templ TablaAdminLista() {
+	<div>
+		{ children... }
+	</div>
+}

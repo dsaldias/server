@@ -1,0 +1,56 @@
+package unidades
+
+import (
+	"fmt"
+
+	"github.com/dsaldias/server/graph_auth/model"
+)
+
+templ Ver(
+	for_edit model.Unidad,
+) {
+	<div class="space-y-6">
+
+		<div class="space-y-4">
+			<h3 class="text-sm font-semibold">Datos de la unidad</h3>
+
+			<div>
+				<div class="text-xs text-muted-foreground">Nombre</div>
+				<div class="text-sm font-medium">
+					{ for_edit.Nombre }
+				</div>
+			</div>
+
+			<div>
+				<div class="text-xs text-muted-foreground">Descripción</div>
+				<div class="text-sm">
+					{ parseStringx(for_edit.Descripcion) }
+				</div>
+			</div>
+
+			<div class="grid grid-cols-2 gap-4">
+				<div>
+					<div class="text-xs text-muted-foreground">Latitud</div>
+					<div class="text-sm font-medium">
+						{ fmt.Sprintf("%f", parseFloatx(for_edit.Latitud)) }
+					</div>
+				</div>
+
+				<div>
+					<div class="text-xs text-muted-foreground">Longitud</div>
+					<div class="text-sm font-medium">
+						{ fmt.Sprintf("%f", parseFloatx(for_edit.Longitud)) }
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<div class="text-xs text-muted-foreground">Orden</div>
+				<div class="text-sm font-medium">
+					{ fmt.Sprintf("%d", for_edit.Orden) }
+				</div>
+			</div>
+		</div>
+
+	</div>
+}

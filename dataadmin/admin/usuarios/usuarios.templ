@@ -1,0 +1,138 @@
+package usuarios 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/selectbox"
+	"github.com/templui/templui/components/table"
+	"github.com/dsaldias/server/dataadmin/admin/utility"
+	"time"
+)
+
+templ Usuarios(usuarios []*model.Usuario, url_refresh string) {
+	@selectbox.Script()
+	@utility.TablaAdmin(utility.MiTablaProps{
+		Titulo:         "Usuarios",
+		Descripcion:    "Administración y gestión de usuarios del sistema",
+		UrlRefresh:     url_refresh,
+		ListaID:        "lista-usuarios",
+		DialogID:       "xdialog-form-usuario",
+		Acciones:       HeaderAcciones(),
+		Busqueda:       true,
+		Ordenable:      true,
+		FilasPorPagina: 5,
+	}) {
+		@ListaUsuarios(usuarios)
+	}
+}
+
+templ ListaUsuarios(usuarios []*model.Usuario) {
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					ID
+				}
+				@table.Head() {
+					Nombre completo
+				}
+				@table.Head() {
+					Conexiones
+				}
+				@table.Head() {
+					Último acceso
+				}
+				@table.Head(table.HeadProps{
+					Attributes: templ.Attributes{
+						"no-ordenar": "",
+					},
+				})
+			}
+		}
+		@table.Body() {
+			for _, us := range usuarios {
+				@table.Row() {
+					@table.Cell() {
+						{ us.ID }
+					}
+					@table.Cell() {
+						{ us.Nombres } { us.Apellido1 }
+						{ parseString(us.Apellido2) }
+					}
+					@table.Cell() {
+						{ us.Conexiones }
+					}
+					@table.Cell() {
+						{ parseTime(us.LastLogin) }
+					}
+					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
+						@utility.TablaAdminAcciones(
+							fmt.Sprintf("%s %s %s", us.Nombres, us.Apellido1, parseString(us.Apellido2)),
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Ver usuario",
+								HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/ver", us.ID),
+								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID:   "xdialog-form-usuario",
+								Icon:       icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Editar Usuario",
+								HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/get", us.ID),
+								HtmxPost:   "/webx/usuarios/crear",
+								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:   "xdialog-form-usuario",
+								Icon:       icon.PenLine(),
+							})
+						}
+						@utility.TablaAdminContextual(
+							fmt.Sprintf("%s %s %s", us.Nombres, us.Apellido1, parseString(us.Apellido2)),
+						) {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Ver usuario",
+								HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/ver", us.ID),
+								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+								DialogID:   "xdialog-form-usuario",
+								Icon:       icon.Eye(),
+							})
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle: "Editar Usuario",
+								HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/get", us.ID),
+								HtmxPost:   "/webx/usuarios/crear",
+								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+								DialogID:   "xdialog-form-usuario",
+								Icon:       icon.PenLine(),
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+templ HeaderAcciones() {
+	@utility.ModalButton(utility.BtnProps{
+		ModalTitle: "Registrar Nuevo usuario",
+		HtmxGet:    "/webx/usuarios/formnew",
+		HtmxPost:   "/webx/usuarios/crear",
+		BtnText:    "Registrar usuario",
+		DialogID:   "xdialog-form-usuario",
+		Icon:       icon.Newspaper(),
+	})
+}
+
+func parseTime(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+	return t.Format("02/01/2006 15:04")
+}
+
+func parseString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

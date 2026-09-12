@@ -1,0 +1,325 @@
+package roles
+
+import (
+	"fmt"
+
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ Formulario(
+	for_edit model.Rol,
+	menus []*model.Menus,
+	permisos []*model.Permiso,
+) {
+	<div class="space-y-6">
+		<div class="hidden">
+			@input.Input(input.Props{
+				ID:       "id",
+				Name:     "id",
+				Value:    fmt.Sprintf("%s", for_edit.ID),
+				Readonly: true,
+			})
+		</div>
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold">Datos del rol</h3>
+			@input.Input(input.Props{
+				ID:          "nombre",
+				Name:        "nombre",
+				Placeholder: "Nombre",
+				Value:       for_edit.Nombre,
+			})
+			@input.Input(input.Props{
+				ID:          "descripcion",
+				Name:        "descripcion",
+				Placeholder: "Descripción",
+				Value:       parseStringx(for_edit.Descripcion),
+			})
+			@input.Input(input.Props{
+				ID:    "jerarquia",
+				Name:  "jerarquia",
+				Type:  "number",
+				Value: fmt.Sprintf("%d", for_edit.Jerarquia),
+			})
+		</div>
+		@PanelPermisos(permisos, for_edit.Permisos)
+		@PanelMenus(menus, for_edit.Menus)
+	</div> 
+}
+
+templ PanelPermisos(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Permisos
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosSeleccionados(permisos, seleccionados) } / { len(permisos) }
+				</span>
+			</div>
+		</summary>
+		<div class="border-t p-2 space-y-1">
+			for _, grupo := range agruparPermisos(permisos) {
+				@PermisoGrupoItem(grupo, seleccionados)
+			}
+		</div>
+	</details>
+}
+
+templ PermisoGrupoItem(
+	grupo *PermisoGrupo,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center">
+				<span class="flex-1 text-sm font-medium">
+					{ grupo.Nombre }
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosGrupo(grupo.Permisos, seleccionados) } / { len(grupo.Permisos) }
+				</span>
+			</div>
+		</summary>
+		<div class="border-t px-2 py-1 space-y-1">
+			for _, permiso := range grupo.Permisos {
+				<label class="flex items-start gap-2 rounded-md px-3 py-2 cursor-pointer hover:bg-muted/50">
+					<input
+						type="checkbox"
+						name="permisos"
+						value={ permiso.Metodo }
+						if hasPermiso(seleccionados, permiso.Metodo) {
+							checked
+						}
+					/>
+					<div class="flex-1 min-w-0">
+						<div class="text-sm">
+							{ permiso.Nombre }
+						</div>
+						<div class="text-[11px] text-muted-foreground truncate">
+							{ permiso.Metodo }
+						</div>
+						if permiso.Descripcion != nil {
+							<div class="text-xs text-muted-foreground mt-1">
+								{ *permiso.Descripcion }
+							</div>
+						}
+					</div>
+				</label>
+			}
+		</div>
+	</details>
+}
+
+templ PanelMenus(
+	menus []*model.Menus,
+	seleccionados []*model.Menus,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Menús
+				</span>
+				<span class="text-xs text-muted-foreground">
+					{ contarMenusSeleccionados(menus, seleccionados) } / { len(menus) }
+				</span>
+			</div>
+		</summary>
+		<div class="border-t p-2 space-y-1">
+			for _, item := range construirMenuTree(menus) {
+				@MenuTreeItem(item, seleccionados)
+			}
+		</div>
+	</details>
+}
+
+templ MenuTreeItem(
+	item *MenuTree,
+	seleccionados []*model.Menus,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center gap-2">
+				<input
+					type="checkbox"
+          x-json-type="number"
+					name="menus"
+					value={ item.Menu.ID }
+					if hasMenu(seleccionados, item.Menu.ID) {
+						checked
+					}
+					onclick="event.stopPropagation()"
+				/>
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium">
+						{ item.Menu.Label }
+					</div>
+					<div class="text-[11px] text-muted-foreground truncate">
+						{ item.Menu.Path }
+					</div>
+				</div>
+				<div class="text-xs text-muted-foreground">
+					{ len(item.Hijos) }
+				</div>
+			</div>
+		</summary>
+		if len(item.Hijos) > 0 {
+			<div class="border-t px-2 py-1 space-y-1">
+				for _, hijo := range item.Hijos {
+					@MenuTreeChild(hijo, seleccionados)
+				}
+			</div>
+		}
+	</details>
+}
+
+templ MenuTreeChild(
+	menu *model.Menus,
+	seleccionados []*model.Menus,
+) {
+	<label class="flex items-center gap-2 rounded-md px-3 py-1.5 pl-8 cursor-pointer hover:bg-muted/50">
+		<input
+			type="checkbox"
+			name="menus"
+			value={ menu.ID }
+			if hasMenu(seleccionados, menu.ID) {
+				checked
+			}
+		/>
+		<div class="flex-1 min-w-0">
+			<div class="text-sm truncate">
+				{ menu.Label }
+			</div>
+			<div class="text-[11px] text-muted-foreground truncate">
+				{ menu.Path }
+			</div>
+		</div>
+	</label>
+}
+
+func parseStringx(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func contarPermisosSeleccionados(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) int {
+	return contarPermisosGrupo(permisos, seleccionados)
+}
+
+func contarPermisosGrupo(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) int {
+	total := 0
+
+	for _, permiso := range permisos {
+		if hasPermiso(seleccionados, permiso.Metodo) {
+			total++
+		}
+	}
+
+	return total
+}
+
+func hasPermiso(permisos []*model.ResponsePermisoMe, metodo string) bool {
+	for _, p := range permisos {
+		if p.Metodo == metodo {
+			return true
+		}
+	}
+	return false
+}
+
+type PermisoGrupo struct {
+	Nombre   string
+	Permisos []*model.Permiso
+}
+
+func agruparPermisos(permisos []*model.Permiso) []*PermisoGrupo {
+	grupos := make(map[string]*PermisoGrupo)
+	var resultado []*PermisoGrupo
+
+	for _, permiso := range permisos {
+		grupo, ok := grupos[permiso.Grupo]
+
+		if !ok {
+			grupo = &PermisoGrupo{
+				Nombre: permiso.Grupo,
+			}
+
+			grupos[permiso.Grupo] = grupo
+			resultado = append(resultado, grupo)
+		}
+
+		grupo.Permisos = append(grupo.Permisos, permiso)
+	}
+
+	return resultado
+}
+
+func contarMenusSeleccionados(
+	menus []*model.Menus,
+	seleccionados []*model.Menus,
+) int {
+	total := 0
+
+	for _, menu := range menus {
+		if hasMenu(seleccionados, menu.ID) {
+			total++
+		}
+	}
+
+	return total
+}
+
+func hasMenu(menus []*model.Menus, id string) bool {
+	for _, m := range menus {
+		if m.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
+type MenuTree struct {
+	Menu  *model.Menus
+	Hijos []*model.Menus
+}
+
+func construirMenuTree(menus []*model.Menus) []*MenuTree {
+	padres := make(map[string]*MenuTree)
+	var resultado []*MenuTree
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			item := &MenuTree{
+				Menu: menu,
+			}
+
+			padres[menu.ID] = item
+			resultado = append(resultado, item)
+		}
+	}
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			continue
+		}
+
+		if padre, ok := padres[*menu.PadreID]; ok {
+			padre.Hijos = append(padre.Hijos, menu)
+		}
+	}
+
+	return resultado
+}

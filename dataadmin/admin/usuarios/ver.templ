@@ -1,0 +1,258 @@
+package usuarios
+
+import (
+	"github.com/dsaldias/server/graph_auth/model"
+)
+
+templ Ver(
+	for_edit model.ResponseUsuario,
+	permisos []*model.Permiso,
+	menus []*model.Menus,
+) {
+	<div class="space-y-6">
+
+		<!-- DATOS PERSONALES -->
+		<div class="space-y-4">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Datos personales
+			</h3>
+
+			@DatoVer("Nombres", for_edit.Nombres)
+			@DatoVer("Primer apellido", for_edit.Apellido1)
+			@DatoVer("Segundo apellido", parseStringx(for_edit.Apellido2))
+			@DatoVer("Documento", parseStringx(for_edit.Documento))
+			@DatoVer("Celular", parseStringx(for_edit.Celular))
+			@DatoVer("Correo", parseStringx(for_edit.Correo))
+			@DatoVer("Sexo", parseStringx(for_edit.Sexo))
+			@DatoVer("Dirección", parseStringx(for_edit.Direccion))
+		</div>
+
+		<!-- CUENTA -->
+		<div class="space-y-4">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Cuenta
+			</h3>
+
+			@DatoVer("Usuario", for_edit.Username)
+		</div>
+
+		@PanelRoles2(for_edit.Roles)
+
+		@PanelPermisos2(
+			permisos,
+			for_edit.PermisosSueltos,
+		)
+
+		@PanelMenus2(
+			menus,
+			for_edit.MenusSueltos,
+		)
+
+	</div>
+}
+
+templ DatoVer(
+	label string,
+	value string,
+) {
+	<div>
+		<div class="text-xs text-muted-foreground">
+			{ label }
+		</div>
+
+		<div class="text-sm font-medium">
+			{ value }
+		</div>
+	</div>
+}
+
+templ PanelRoles2(
+	asignados []*model.ResponseRolUnidad,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Roles y unidades
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ len(asignados) } asignados
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t p-2 space-y-1">
+			for _, ru := range asignados {
+				<div class="flex items-center rounded-md px-3 py-2 hover:bg-muted/50">
+					<div class="flex-1 min-w-0">
+						<div class="text-sm font-medium">
+							{ ru.RolName }
+						</div>
+
+						<div class="text-xs text-muted-foreground">
+							{ ru.UnidadName }
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</details>
+}
+
+templ PanelPermisos2(
+	permisos []*model.Permiso,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Permisos globales
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosSeleccionados(permisos, seleccionados) } / { len(permisos) }
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t p-2 space-y-1">
+			for _, grupo := range agruparPermisos(permisos) {
+				@PermisoGrupoItem2(grupo, seleccionados)
+			}
+		</div>
+	</details>
+}
+
+templ PermisoGrupoItem2(
+	grupo *PermisoGrupo,
+	seleccionados []*model.ResponsePermisoMe,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center">
+				<span class="flex-1 text-sm font-medium">
+					{ grupo.Nombre }
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ contarPermisosGrupo(grupo.Permisos, seleccionados) } / { len(grupo.Permisos) }
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t px-2 py-1 space-y-1">
+			for _, permiso := range grupo.Permisos {
+				if hasPermiso(seleccionados, permiso.Metodo) {
+					<div class="rounded-md px-3 py-2 hover:bg-muted/50">
+						<div class="text-sm">
+							{ permiso.Nombre }
+						</div>
+
+						<div class="text-[11px] text-muted-foreground truncate">
+							{ permiso.Metodo }
+						</div>
+
+						if permiso.Descripcion != nil {
+							<div class="text-xs text-muted-foreground mt-1">
+								{ *permiso.Descripcion }
+							</div>
+						}
+					</div>
+				}
+			}
+		</div>
+	</details>
+}
+
+templ PanelMenus2(
+	menus []*model.Menus,
+	seleccionados []*model.Menus,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Menús
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ contarMenusSeleccionados(menus, seleccionados) } / { len(menus) }
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t p-2 space-y-1">
+			for _, item := range construirMenuTree(menus) {
+				if hasMenu(seleccionados, item.Menu.ID) || len(item.Hijos) > 0 {
+					@MenuTreeItem2(item, seleccionados)
+				}
+			}
+		</div>
+	</details>
+}
+
+templ MenuTreeItem2(
+	item *MenuTree,
+	seleccionados []*model.Menus,
+) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center gap-2">
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium">
+						{ item.Menu.Label }
+					</div>
+
+					<div class="text-[11px] text-muted-foreground truncate">
+						{ item.Menu.Path }
+					</div>
+				</div>
+
+				<div class="text-xs text-muted-foreground">
+					{ len(item.Hijos) }
+				</div>
+			</div>
+		</summary>
+
+		if len(item.Hijos) > 0 {
+			<div class="border-t px-2 py-1 space-y-1">
+				for _, hijo := range item.Hijos {
+					if hasMenu(seleccionados, hijo.ID) {
+						@MenuTreeChild2(hijo)
+					}
+				}
+			</div>
+		}
+	</details>
+}
+
+templ MenuTreeChild2(
+	menu *model.Menus,
+) {
+	<div class="rounded-md px-3 py-1.5 pl-8 hover:bg-muted/50">
+		<div class="text-sm truncate">
+			{ menu.Label }
+		</div>
+
+		<div class="text-[11px] text-muted-foreground truncate">
+			{ menu.Path }
+		</div>
+	</div>
+}
+
+func contarMenusSeleccionados(
+	menus []*model.Menus,
+	seleccionados []*model.Menus,
+) int {
+	total := 0
+
+	for _, menu := range menus {
+		if hasMenu(seleccionados, menu.ID) {
+			total++
+		}
+	}
+
+	return total
+}

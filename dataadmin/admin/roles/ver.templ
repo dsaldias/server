@@ -1,0 +1,219 @@
+package roles 
+
+import (
+	"fmt"
+
+	"github.com/dsaldias/server/graph_auth/model"
+)
+
+templ Ver(rol model.Rol) {
+	<div class="space-y-6">
+		<!-- Datos del rol -->
+		<div class="space-y-4">
+			<div>
+				<div class="text-xs text-muted-foreground">Nombre</div>
+				<div class="text-sm font-medium">{ rol.Nombre }</div>
+			</div>
+			<div>
+				<div class="text-xs text-muted-foreground">Descripción</div>
+				<div class="text-sm">
+					{ parseStringx(rol.Descripcion) }
+				</div>
+			</div>
+			<div class="flex gap-8">
+				<div>
+					<div class="text-xs text-muted-foreground">Jerarquía</div>
+					<div class="text-sm font-medium">
+						{ fmt.Sprintf("%d", rol.Jerarquia) }
+					</div>
+				</div>
+				<div>
+					<div class="text-xs text-muted-foreground">Fecha de registro</div>
+					<div class="text-sm">
+						{ rol.FechaRegistro.Format("02/01/2006 15:04") }
+					</div>
+				</div>
+			</div>
+		</div>
+		@PanelPermisosVer(rol.Permisos)
+		@PanelMenusVer(rol.Menus)
+	</div>
+}
+
+templ PanelPermisosVer(permisos []*model.ResponsePermisoMe) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Permisos
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ len(permisos) }
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t p-2 space-y-1">
+			for _, grupo := range agruparPermisosVer(permisos) {
+				<details class="rounded-md border">
+					<summary class="cursor-pointer px-3 py-2">
+						<div class="flex items-center">
+							<span class="flex-1 text-sm font-medium">
+								{ grupo.Nombre }
+							</span>
+
+							<span class="text-xs text-muted-foreground">
+								{ len(grupo.Permisos) }
+							</span>
+						</div>
+					</summary>
+
+					<div class="border-t px-2 py-1 space-y-1">
+						for _, permiso := range grupo.Permisos {
+							<div class="rounded-md px-3 py-2 hover:bg-muted/50">
+								<div class="text-sm">
+									{ permiso.Nombre }
+								</div>
+
+								<div class="text-[11px] text-muted-foreground truncate">
+									{ permiso.Metodo }
+								</div>
+
+								if permiso.Descripcion != nil {
+									<div class="text-xs text-muted-foreground mt-1">
+										{ *permiso.Descripcion }
+									</div>
+								}
+							</div>
+						}
+					</div>
+				</details>
+			}
+		</div>
+	</details>
+}
+
+templ PanelMenusVer(menus []*model.Menus) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-4 py-3 font-semibold text-sm">
+			<div class="flex items-center">
+				<span class="flex-1">
+					Menús
+				</span>
+
+				<span class="text-xs text-muted-foreground">
+					{ len(menus) }
+				</span>
+			</div>
+		</summary>
+
+		<div class="border-t p-2 space-y-1">
+			for _, item := range construirMenuTreeVer(menus) {
+				@MenuTreeItemVer(item)
+			}
+		</div>
+	</details>
+}
+
+templ MenuTreeItemVer(item *MenuTreeVer) {
+	<details class="rounded-md border">
+		<summary class="cursor-pointer px-3 py-2">
+			<div class="flex items-center gap-2">
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium">
+						{ item.Menu.Label }
+					</div>
+
+					<div class="text-[11px] text-muted-foreground truncate">
+						{ item.Menu.Path }
+					</div>
+				</div>
+
+				<div class="text-xs text-muted-foreground">
+					{ len(item.Hijos) }
+				</div>
+			</div>
+		</summary>
+
+		if len(item.Hijos) > 0 {
+			<div class="border-t px-2 py-1 space-y-1">
+				for _, hijo := range item.Hijos {
+					<div class="rounded-md px-3 py-1.5 pl-8 hover:bg-muted/50">
+						<div class="text-sm truncate">
+							{ hijo.Label }
+						</div>
+
+						<div class="text-[11px] text-muted-foreground truncate">
+							{ hijo.Path }
+						</div>
+					</div>
+				}
+			</div>
+		}
+	</details>
+}
+
+type PermisoGrupoVer struct {
+	Nombre   string
+	Permisos []*model.ResponsePermisoMe
+}
+
+func agruparPermisosVer(
+	permisos []*model.ResponsePermisoMe,
+) []*PermisoGrupoVer {
+	grupos := make(map[string]*PermisoGrupoVer)
+	var resultado []*PermisoGrupoVer
+
+	for _, permiso := range permisos {
+		grupo, ok := grupos[permiso.Grupo]
+
+		if !ok {
+			grupo = &PermisoGrupoVer{
+				Nombre: permiso.Grupo,
+			}
+
+			grupos[permiso.Grupo] = grupo
+			resultado = append(resultado, grupo)
+		}
+
+		grupo.Permisos = append(grupo.Permisos, permiso)
+	}
+
+	return resultado
+}
+
+type MenuTreeVer struct {
+	Menu  *model.Menus
+	Hijos []*model.Menus
+}
+
+func construirMenuTreeVer(
+	menus []*model.Menus,
+) []*MenuTreeVer {
+	padres := make(map[string]*MenuTreeVer)
+	var resultado []*MenuTreeVer
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			item := &MenuTreeVer{
+				Menu: menu,
+			}
+
+			padres[menu.ID] = item
+			resultado = append(resultado, item)
+		}
+	}
+
+	for _, menu := range menus {
+		if menu.PadreID == nil {
+			continue
+		}
+
+		if padre, ok := padres[*menu.PadreID]; ok {
+			padre.Hijos = append(padre.Hijos, menu)
+		}
+	}
+
+	return resultado
+}

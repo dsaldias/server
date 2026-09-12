@@ -1,0 +1,171 @@
+package ticket
+
+import (
+	"fmt"
+
+	"github.com/dsaldias/server/graph_auth/model"
+)
+
+templ Ver(ticket model.Ticket) {
+	<div class="space-y-6">
+
+		<!-- Encabezado -->
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+			<div>
+				<div class="flex items-center gap-2">
+					<h1 class="text-2xl font-semibold tracking-tight">
+						Ticket #{ticket.ID}
+					</h1>
+
+					<span class={estadoClass(ticket.Estado)}>
+						{ticket.Estado}
+					</span>
+				</div>
+
+				<p class="mt-1 text-sm text-muted-foreground">
+					Registrado el {ticket.FechaRegistro.Format("02/01/2006 15:04")}
+				</p>
+			</div>
+		</div>
+
+		<!-- Problema -->
+		<div class="rounded-lg border bg-card">
+			<div class="border-b px-5 py-4">
+				<h2 class="font-semibold">
+					Problema reportado
+				</h2>
+			</div>
+
+			<div class="px-5 py-5">
+				<p class="whitespace-pre-wrap text-sm leading-6">
+					{ticket.Problema}
+				</p>
+			</div>
+		</div>
+
+		<!-- Información del ticket -->
+		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+			<div class="rounded-lg border bg-card p-5">
+				<p class="text-sm text-muted-foreground">
+					ID del ticket
+				</p>
+				<p class="mt-1 font-medium">
+					{ticket.ID}
+				</p>
+			</div>
+
+			<div class="rounded-lg border bg-card p-5">
+				<p class="text-sm text-muted-foreground">
+					Usuario
+				</p>
+				<p class="mt-1 font-medium">
+					{ticket.UsuarioID}
+				</p>
+			</div>
+
+			<div class="rounded-lg border bg-card p-5">
+				<p class="text-sm text-muted-foreground">
+					Fecha de registro
+				</p>
+				<p class="mt-1 font-medium">
+					{ticket.FechaRegistro.Format("02/01/2006 15:04")}
+				</p>
+			</div>
+
+		</div>
+
+		<!-- Respuestas -->
+		<div class="rounded-lg border bg-card">
+
+			<div class="border-b px-5 py-4">
+				<div class="flex items-center justify-between">
+					<div>
+						<h2 class="font-semibold">
+							Conversación
+						</h2>
+
+						<p class="text-sm text-muted-foreground">
+							{fmt.Sprintf("%d respuestas", len(ticket.Respuestas))}
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="divide-y">
+
+				if len(ticket.Respuestas) == 0 {
+					<div class="px-5 py-10 text-center">
+						<p class="text-sm text-muted-foreground">
+							Este ticket todavía no tiene respuestas.
+						</p>
+					</div>
+				} else {
+
+					for _, respuesta := range ticket.Respuestas {
+						<div class="px-5 py-5">
+
+							<div class="flex items-start gap-3">
+
+								<!-- Avatar -->
+								<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
+									<span class="text-sm font-medium">
+										?
+									</span>
+								</div>
+
+								<div class="min-w-0 flex-1">
+
+									<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+
+										<div>
+											<p class="text-sm font-medium">
+												Usuario {respuesta.UsuarioID}
+											</p>
+										</div>
+
+										<p class="text-xs text-muted-foreground">
+											{respuesta.FechaRegistro.Format("02/01/2006 15:04")}
+										</p>
+
+									</div>
+
+									<div class="mt-3 rounded-lg bg-muted/50 px-4 py-3">
+										<p class="whitespace-pre-wrap text-sm leading-6">
+											{respuesta.Respuesta}
+										</p>
+									</div>
+
+								</div>
+
+							</div>
+
+						</div>
+					}
+
+				}
+
+			</div>
+		</div>
+
+	</div>
+}
+
+func estadoClass(estado string) string {
+	switch estado {
+	case "ABIERTO":
+		return "inline-flex items-center rounded-md border border-green-500/30 bg-green-500/10 px-2 py-1 text-xs font-medium text-green-600"
+
+	case "EN PROCESO":
+		return "inline-flex items-center rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-600"
+
+	case "CERRADO":
+		return "inline-flex items-center rounded-md border border-gray-500/30 bg-gray-500/10 px-2 py-1 text-xs font-medium text-gray-600"
+
+	case "CANCELADO":
+		return "inline-flex items-center rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-xs font-medium text-red-600"
+
+	default:
+		return "inline-flex items-center rounded-md border bg-muted px-2 py-1 text-xs font-medium"
+	}
+}

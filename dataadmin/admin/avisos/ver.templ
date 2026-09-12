@@ -1,0 +1,51 @@
+package avisos
+
+import ( 
+	"github.com/dsaldias/server/graph_auth/model"
+)
+
+templ DatoVer(label string, value string) {
+	<div>
+		<div class="text-xs text-muted-foreground">{ label }</div>
+		<div class="text-sm font-medium">{ value }</div>
+	</div>
+}
+
+templ Ver(for_edit model.Notificacion) {
+	<div class="space-y-6">
+
+		<div class="space-y-4">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Datos del aviso
+			</h3>
+
+			@DatoVer("Mensaje", for_edit.Mensaje)
+
+			<div class="grid grid-cols-2 gap-4">
+				@DatoVer(
+					"Desde",
+					for_edit.Desde.Format("02/01/2006 15:04"),
+				)
+
+				@DatoVer(
+					"Hasta",
+					for_edit.Hasta.Format("02/01/2006 15:04"),
+				)
+			</div>
+		</div>
+
+		<div class="space-y-4">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Información del registro
+			</h3>
+
+			@DatoVer("Creado por", for_edit.CreadoPorID)
+
+			@DatoVer(
+				"Fecha de registro",
+				for_edit.FechaRegistro.Format("02/01/2006 15:04"),
+			)
+		</div>
+
+	</div>
+}

@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  templ:
+    desc: Run templ with integrated server and hot reload
+    cmds:
+      - templ generate --watch --proxy="http://localhost:8090" --cmd="go run ./server.go" --open-browser=false
+
+  tailwind:
+    desc: Watch Tailwind CSS changes
+    cmds:
+      - |
+        TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)" && \
+        printf '%s\n' \
+          '@source "./**/*.templ";' \
+          "@source \"$TEMPLUI_PATH/components/**/*.templ\";" \
+          > ./dataadmin/assets/css/sources.generated.css && \
+        tailwindcss -i ./dataadmin/assets/css/input.css -o ./dataadmin/assets/css/output.css --watch
+
+  templui-assets:
+    desc: Copiar JavaScript de TemplUI a los assets
+    cmds:
+      - |
+        set -e
+        TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)"
+        DEST="./dataadmin/assets/templui/js"
+
+        mkdir -p "$DEST"
+
+        for file in popover.min.js dropdown.min.js dialog.min.js sidebar.min.js collapsible.min.js tabs.min.js selectbox.min.js input.min.js; do
+          SOURCE="$(find "$TEMPLUI_PATH/components" -name "$file" -type f | head -n 1)"
+
+          if [ -z "$SOURCE" ]; then
+            echo "ERROR: No se encontró $file en TemplUI"
+            exit 1
+          fi
+
+          rm -f "$DEST/$file"
+          cp "$SOURCE" "$DEST/$file"
+        done
+
+  dev:
+    desc: Iniciar servidor de desarrollo con hot reload
+    cmds:
+      - task templui-assets
+      - task --parallel tailwind templ
+
+  build: 
+    cmds: 
+      - templ generate
+      - task templui-assets
+      - go build -ldflags "-X github.com/dsaldias/server/dataadmin/layouts/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./serverx.go
