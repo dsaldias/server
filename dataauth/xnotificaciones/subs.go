@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
@@ -31,9 +32,10 @@ func notificarConectados(ctx context.Context, cha *Chan) {
 
 	total_conectados, conectados := cha.TotalConectados()
 	tipo := "conectados"
-	mapa := map[string]int{}
+	mapa := map[string]any{}
 	mapa["total_conectados"] = total_conectados
 	mapa["conectados"] = conectados
+	mapa["assets_version"] = principal.AssetVersion
 
 	d := DataNotify{Tipo: &tipo, Datos: mapa}
 	EnviarNotificacion(ctx, fmt.Sprintf("%d", total_conectados), &d)

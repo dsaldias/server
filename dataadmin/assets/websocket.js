@@ -70,6 +70,7 @@ const procesar_mensajes = (data) => {
     if (datos.tipo === "conectados") {
       const total = datos.datos?.total_conectados ?? 0;
       const conectados = datos.datos?.conectados ?? 0;
+      const assets_v = datos.datos?.assets_version ?? "";
 
       const contador = document.getElementById("ws_total_conectados");
       const tooltip = document.getElementById("ws_tabs_conectados");
@@ -81,12 +82,38 @@ const procesar_mensajes = (data) => {
       if (tooltip) {
         tooltip.title = `Conectados: ${total}`;
       }
-    }else if (!datos.tipo){
+
+      verificar_new_version(assets_v);
+    } else if (!datos.tipo) {
       mostrar_notificacion_ws(notificacion.title || "Nueva notificación");
     }
-
   } catch (error) {
     console.error("[WS] Error procesando mensaje:", error);
+  }
+};
+
+let recargando_version = false;
+const verificar_new_version = (assets_version) => {
+  const meta = document.getElementById("x-asset-version");
+  if (!meta) return;
+  const current_version = meta.dataset.value;
+
+  console.log("current_version:", current_version);
+  console.log("server_version:", assets_version);
+
+  if (assets_version !== current_version && !recargando_version) {
+    recargando_version = true;
+    Toastify({
+      text: "Nueva versión disponible. La aplicación se actualizará en 10 segundos...",
+      duration: 10000,
+      gravity: "top",
+      position: "center",
+      close: false,
+    }).showToast();
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 10000);
   }
 };
 
