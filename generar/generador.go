@@ -244,6 +244,12 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 		escribirArchivo("app/front/assets/.kepp", []byte(""))
 	}
 
+	if err := os.MkdirAll("app/front/assets/css", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/assets/: %v\n", err)
+	} else {
+		escribirArchivo("app/front/assets/css/input.css", []byte(inputCcs))
+	}
+
 	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
 	} else {
@@ -322,7 +328,6 @@ func generarSQLApp(module string) {
 	shortName := parts[len(parts)-1]
 	dest := filepath.Join("sqls", "database-"+shortName+".sql")
 	dest2 := "Taskfile.yml"
-	dest3 := filepath.Join("app", "front", "assets", "css", "input.css")
 
 	if err := os.MkdirAll("sqls", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio sqls/: %v\n", err)
@@ -335,9 +340,6 @@ func generarSQLApp(module string) {
 
 	content2 := strings.ReplaceAll(taskFile, "{{MODULE}}", module)
 	escribirArchivo(dest2, []byte(content2))
-
-	content3 := strings.ReplaceAll(inputCcs, "{{MODULE}}", module)
-	escribirArchivo(dest3, []byte(content3))
 }
 
 func copiarSkills() {
