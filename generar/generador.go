@@ -187,6 +187,29 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 `
 
+	content_controller1 := `
+package front
+
+import (
+	"database/sql"
+	"net/http"
+
+	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
+	"github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
+)
+
+type TestController struct {
+	DB *sql.DB
+	C  *mainlayout.MainController
+}
+
+func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
+	ini := principal.Inicio()
+	c.C.RenderPage(w, r, ini)
+}
+
+`
+
 	escribirArchivo("serverx.go", []byte(contentx))
 	escribirArchivo(".env", []byte(contentenv))
 
@@ -214,6 +237,9 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
+	} else {
+		escribirArchivo("app/front/test.go", []byte(content_controller1))
+
 	}
 
 	if err := os.MkdirAll("app/back", 0755); err != nil {
