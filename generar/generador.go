@@ -155,15 +155,16 @@ package front
 
 import (
 	"database/sql"
-	"io/fs"
 	"embed"
+	"io/fs"
 	"net/http"
+
 	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
 
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
-// //go:embed assets/*
+//go:embed assets/*
 var Assets embed.FS
 
 var (
@@ -178,9 +179,10 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	cont_main := mainlayout.MainController{DB: db}
 	ssr := []*utils.Handlers2{}
+	test_controller := TestController{DB: db, C: &cont_main}
 
 	ssr = append(ssr, &utils.Handlers2{Path: "/assets/*", H: http.StripPrefix("/assets/", http.FileServer(http.FS(fs1)))})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: cont_main.Login()})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(test_controller.Listar)})
 
 	return ssr
 }
@@ -233,13 +235,14 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 
 	if err := os.MkdirAll("app/front/assets", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/assets/: %v\n", err)
+	} else {
+		escribirArchivo("app/front/assets/.kepp", []byte(""))
 	}
 
 	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
 	} else {
 		escribirArchivo("app/front/test.go", []byte(content_controller1))
-
 	}
 
 	if err := os.MkdirAll("app/back", 0755); err != nil {
