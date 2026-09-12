@@ -164,7 +164,7 @@ import (
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
-//go:embed assets/*
+// //go:embed assets/*
 var Assets embed.FS
 
 var (
@@ -179,10 +179,11 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	cont_main := mainlayout.MainController{DB: db}
 	ssr := []*utils.Handlers2{}
-	test_controller := TestController{DB: db, C: &cont_main}
+
+	tcontroller := TestController{DB: db, C: &cont_main}
 
 	ssr = append(ssr, &utils.Handlers2{Path: "/assets/*", H: http.StripPrefix("/assets/", http.FileServer(http.FS(fs1)))})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(test_controller.Listar)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(tcontroller.Listar)})
 
 	return ssr
 }
