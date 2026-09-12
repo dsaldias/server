@@ -21,6 +21,9 @@ var sqlAppTemplate string
 //go:embed taskfile/Taskfile.yml
 var taskFile string
 
+//go:embed taskfile/input.css
+var inputCcs string
+
 //go:embed sql/database.sql
 var sqlRBAC string
 
@@ -208,6 +211,7 @@ type TestController struct {
 
 func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	ini := principal.Inicio()
+	// ini.Render(r.Context(), w)
 	c.C.RenderPage(w, r, ini)
 }
 
@@ -318,6 +322,7 @@ func generarSQLApp(module string) {
 	shortName := parts[len(parts)-1]
 	dest := filepath.Join("sqls", "database-"+shortName+".sql")
 	dest2 := "Taskfile.yml"
+	dest3 := filepath.Join("app", "front", "assets", "css", "input.css")
 
 	if err := os.MkdirAll("sqls", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio sqls/: %v\n", err)
@@ -330,6 +335,9 @@ func generarSQLApp(module string) {
 
 	content2 := strings.ReplaceAll(taskFile, "{{MODULE}}", module)
 	escribirArchivo(dest2, []byte(content2))
+
+	content3 := strings.ReplaceAll(inputCcs, "{{MODULE}}", module)
+	escribirArchivo(dest3, []byte(content3))
 }
 
 func copiarSkills() {
