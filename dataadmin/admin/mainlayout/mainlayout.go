@@ -3,6 +3,7 @@ package mainlayout
 import (
 	"database/sql"
 	"net/http"
+	"os"
 
 	"github.com/a-h/templ"
 	"github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
@@ -46,8 +47,9 @@ func (c *MainController) RenderLayout(
 
 	ruta := r.URL.Path
 
+	title := os.Getenv("WEB_SIDEBAR_TITLE")
 	principal.MainPageLayout(
-		"Proyecto academicos",
+		title,
 		unidadid,
 		mens,
 		rols,

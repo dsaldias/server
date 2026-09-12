@@ -18,6 +18,9 @@ var claudeMDTemplate string
 //go:embed sql/database-app.sql.tmpl
 var sqlAppTemplate string
 
+//go:embed taskfile/Taskfile.yml
+var taskFile string
+
 //go:embed sql/database.sql
 var sqlRBAC string
 
@@ -29,6 +32,7 @@ package main
 
 import (
 	"%s/app"
+	"%s/app/front"
 	"%s/graph" 
 	"time"
 
@@ -76,10 +80,13 @@ func main() {
 	})
 
 	app.LoadCustomEvents()
-	dataauth.Iniciar(srv, &schema, db, nil, nil)
+
+	ssr := front.RutasFront(db)
+
+	dataauth.Iniciar(srv, &schema, db, ssr, nil)
 }
 
-`, module, module)
+`, module, module, module)
 
 	contentenv := fmt.Sprintf(`
 PORT=8038
@@ -106,6 +113,7 @@ OAUTH_EMAILS_PERM=
 DB_CONN_LIFETIME_MIN=5
 DB_MAX_OPEN=20
 DB_MAX_IDLE=5
+WEB_SIDEBAR_TITLE=Admin
 ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
 
 `, module)
@@ -142,6 +150,43 @@ type Resolver struct {
 }
 `
 
+	content_rutas_cli := `
+package front
+
+import (
+	"database/sql"
+	"io/fs"
+	"embed"
+	"net/http"
+	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
+
+	"github.com/dsaldias/server/dataauth/utils"
+)
+
+// //go:embed assets/*
+var Assets embed.FS
+
+var (
+	WEB_PATH_BASE = "/webc/"
+)
+
+func RutasFront(db *sql.DB) []*utils.Handlers2 {
+	fs1, err := fs.Sub(Assets, "assets")
+	if err != nil {
+		panic(err)
+	}
+
+	cont_main := mainlayout.MainController{DB: db}
+	ssr := []*utils.Handlers2{}
+
+	ssr = append(ssr, &utils.Handlers2{Path: "/assets/*", H: http.StripPrefix("/assets/", http.FileServer(http.FS(fs1)))})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: cont_main.Login()})
+
+	return ssr
+}
+
+`
+
 	escribirArchivo("serverx.go", []byte(contentx))
 	escribirArchivo(".env", []byte(contentenv))
 
@@ -155,6 +200,24 @@ type Resolver struct {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/: %v\n", err)
 	} else {
 		escribirArchivo("app/onevents.go", []byte(contentone))
+	}
+
+	if err := os.MkdirAll("app/front", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/: %v\n", err)
+	} else {
+		escribirArchivo("app/front/rutas_front.go", []byte(content_rutas_cli))
+	}
+
+	if err := os.MkdirAll("app/front/assets", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/assets/: %v\n", err)
+	}
+
+	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
+	}
+
+	if err := os.MkdirAll("app/back", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/back/: %v\n", err)
 	}
 
 	if _, err := os.Stat("server.go"); err == nil {
@@ -224,6 +287,7 @@ func generarSQLApp(module string) {
 	parts := strings.Split(module, "/")
 	shortName := parts[len(parts)-1]
 	dest := filepath.Join("sqls", "database-"+shortName+".sql")
+	dest2 := "Taskfile.yml"
 
 	if err := os.MkdirAll("sqls", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio sqls/: %v\n", err)
@@ -233,6 +297,9 @@ func generarSQLApp(module string) {
 	escribirArchivo(filepath.Join("sqls", "database.sql"), []byte(sqlRBAC))
 	content := strings.ReplaceAll(sqlAppTemplate, "{{MODULE}}", module)
 	escribirArchivo(dest, []byte(content))
+
+	content2 := strings.ReplaceAll(taskFile, "{{MODULE}}", module)
+	escribirArchivo(dest2, []byte(content2))
 }
 
 func copiarSkills() {

@@ -6,7 +6,7 @@ tasks:
   templ:
     desc: Run templ with integrated server and hot reload
     cmds:
-      - templ generate --watch --proxy="http://localhost:8090" --cmd="go run ./server.go" --open-browser=false
+      - templ generate --watch --proxy="http://localhost:8090" --cmd="go run ./serverx.go" --open-browser=false
 
   tailwind:
     desc: Watch Tailwind CSS changes
@@ -16,8 +16,8 @@ tasks:
         printf '%s\n' \
           '@source "./**/*.templ";' \
           "@source \"$TEMPLUI_PATH/components/**/*.templ\";" \
-          > ./app/front/assets/css/sources.generated.css && \
-        tailwindcss -i ./app/front/assets/css/input.css -o ./app/front/assets/css/output.css --watch
+          > ./dataadmin/assets/css/sources.generated.css && \
+        tailwindcss -i ./dataadmin/assets/css/input.css -o ./dataadmin/assets/css/output.css --watch
 
   templui-assets:
     desc: Copiar JavaScript de TemplUI a los assets
@@ -25,7 +25,7 @@ tasks:
       - |
         set -e
         TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)"
-        DEST="./app/front/assets/templui/js"
+        DEST="./dataadmin/assets/templui/js"
 
         mkdir -p "$DEST"
 
@@ -51,4 +51,4 @@ tasks:
     cmds: 
       - templ generate
       - task templui-assets
-      - go build -ldflags "-X {{MODULE}}/dataadmin/admin/mainlayout/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./server.go
+      - go build -ldflags "-X github.com/dsaldias/server/dataadmin/admin/mainlayout/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./serverx.go
