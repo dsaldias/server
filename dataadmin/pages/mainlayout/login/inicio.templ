@@ -5,12 +5,13 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 )
 
-templ Inicio() {
+templ Inicio(asset_version string) {
 	@principal.Layout("Iniciar sesión", layoutconfig.Default()) {
-		<main class="min-h-screen flex items-center justify-center p-6">
-			<div class="w-full max-w-md">
-				@Login()
-			</div>
-		</main>
+		@Login()
 	}
+	@Script(asset_version)
+}
+
+templ Script(asset_version string) {
+	<script src={ "/assets/websocket_in_login.js?v=" + asset_version }></script>
 }

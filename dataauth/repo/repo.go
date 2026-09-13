@@ -110,7 +110,7 @@ func CrearNotificacion(ctx context.Context, db *sql.DB, input model.NewNotificac
 		return nil, err
 	}
 	userid := tok.SessionKey.UsuarioID
-	return avisos.Crear(db, input, userid)
+	return avisos.Crear(ctx, db, input, userid)
 }
 
 // UpdateNotificacion is the resolver for the update_notificacion field.

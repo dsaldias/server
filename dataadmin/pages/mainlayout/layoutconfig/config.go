@@ -15,6 +15,7 @@ type Config struct {
 
 func Default() Config {
 	return Config{
+		Title:        "Panel Admin",
 		ThemeColor:   "#081027",
 		Stylesheet:   "/assets/css/output.css",
 		BodyClass:    "min-h-screen bg-background text-foreground",

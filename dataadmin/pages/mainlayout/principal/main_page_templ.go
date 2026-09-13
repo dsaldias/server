@@ -68,7 +68,7 @@ func MainPageLayout(
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = Sidebar(titulo, current_path, menus, usuario, config).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = Sidebar(titulo, current_path, menus, usuario, config, AssetVersion).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

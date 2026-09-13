@@ -13,7 +13,7 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.ResponseUsuario, config layoutconfig.Config) {
+templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.ResponseUsuario, config layoutconfig.Config, asset_version string) {
 	@dropdown.Script()
 	@sidebar.Script()
 	@collapsible.Script()
@@ -34,30 +34,33 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 						Href:    "/adminx/main",
 						Tooltip: titulo,
 					}) {
-						@icon.LayoutPanelLeft(icon.Props{Class: "size-4"})
+						// @icon.LayoutPanelLeft(icon.Props{Class: "size-4"})
+						// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
+						@badge.Badge(badge.Props{
+							ID:    "ws_badge_indicator",
+							Class: "bg-[#479066] text-white",
+							Attributes: templ.Attributes{
+								"title":                     "Se pone en el websocket.js",
+								"data-conectados-badge": "true",
+							},
+						}) {
+							<p
+								id="ws_tabs_conectados"
+							>
+								<span
+									data-ws-status
+									class="size-2 rounded-full bg-green-500"
+								></span>
+								<span id="ws_total_conectados" data-conectados-1 >0</span>
+							</p>
+						}
+						// 
 						<span class="font-semibold">
 							{ titulo }
 						</span>
 					}
 				}
 			}
-			// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
-			@badge.Badge(badge.Props{
-				ID:    "ws_badge_indicator",
-				Class: "bg-[#479066] text-white",
-			}) {
-				<p
-					id="ws_tabs_conectados"
-					title="Conectados: 0"
-				>
-					<span
-						data-ws-status
-						class="size-2 rounded-full bg-green-500"
-					></span>
-					<span id="ws_total_conectados">0</span>
-				</p>
-			}
-			// 
 		}
 		@sidebar.Content() {
 			@sidebar.Group() {
@@ -82,7 +85,7 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 									Class: "size-8 rounded-lg",
 								}) {
 									@avatar.Image(avatar.ImageProps{
-										Src: "https://avatars.githubusercontent.com/u/26936893?v=4",
+										Src: foto_url(usuario.FotoURL),
 									})
 								}
 								<div class="grid flex-1 text-left text-sm leading-tight">
@@ -113,7 +116,7 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 									ModalTitle:    "Editar perfil",
 									HtmxGet:       "/adminx/usuarios/getperfil",
 									HtmxPost:      "/adminx/usuarios/setperfil",
-									Class:         "bg-grey-100 text-grey-700 hover:bg-blue-200 w-full",
+									Class:         "bg-grey-100 text-grey-700 hover:bg-blue-200 w-full justify-start text-left",
 									DialogID:      "x-modal-perfil",
 									BtnText:       "Perfil",
 									Icon:          icon.PersonStanding(),
@@ -122,7 +125,6 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 							}
 							@dropdown.Separator()
 							@dropdown.Item(dropdown.ItemProps{
-								// Href: "/adminx/logout",
 								Attributes: templ.Attributes{
 									"href":    "#",
 									"hx-get":  "/adminx/logout",
@@ -145,6 +147,12 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 			}
 		}
 	}
+	// 
+	@Script(asset_version)
+}
+
+templ Script(asset_version string) {
+	<script src={ "/assets/websocket.js?v=" + asset_version }></script>
 }
 
 //
@@ -270,6 +278,13 @@ templ MenuHijos(menus []*xm.Menus, padreID string, current_path string) {
 	}
 }
 
+func foto_url(s *string) string {
+	if s == nil {
+		return "https://avatars.githubusercontent.com/u/26936893?v=4"
+	}
+	return "/" + *s
+}
+
 func tieneHijos(menus []*xm.Menus, id string) bool {
 	for _, m := range menus {
 		if m.PadreID != nil && *m.PadreID == id {
@@ -304,7 +319,7 @@ func correo(usuario *xm.ResponseUsuario) string {
 }
 
 func rutaActiva(currentPath, menuPath string) bool {
-	return currentPath == "/webx"+menuPath
+	return currentPath == menuPath
 }
 
 func tieneRutaActiva(menus []*xm.Menus, padreID string, currentPath string) bool {

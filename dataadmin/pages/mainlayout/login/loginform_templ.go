@@ -35,7 +35,11 @@ func Login() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"rounded-lg border bg-card p-8\"><div class=\"mb-6 text-center\"><h1 class=\"text-2xl font-semibold\">Iniciar sesión</h1><p class=\"mt-2 text-sm text-muted-foreground\">Ingresa tus credenciales para continuar</p></div><form hx-post=\"/adminx/login\" hx-target=\"#resultado\" hx-swap=\"innerHTML\" class=\"space-y-4\" hx-on::before-request=\"\n\t\t\t\tconst d = this;\n\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\tbutton.disabled = true;\n\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Verificando...';\n\t\t\t\" hx-on::after-request=\"\n\t\t\t\tconst d = this;\n\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\tbutton.disabled = false;\n\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\t\t\t\"><div class=\"space-y-2\">")
+		templ_7745c5c3_Err = input.Script().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-background flex items-center justify-center px-4 py-8\"><div class=\"w-full max-w-4xl grid lg:grid-cols-[1fr_420px] overflow-hidden rounded-2xl border bg-card\"><!-- PANEL IZQUIERDO --><div class=\"relative hidden lg:flex flex-col justify-between p-10 bg-[#081027] text-white overflow-hidden\"><!-- Decoración --><div class=\"absolute -right-24 -top-24 h-64 w-64 rounded-full border border-white/5\"></div><div class=\"absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/5\"></div><div class=\"relative\"><div class=\"mb-8 flex items-center gap-3\"><div class=\"flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5\"><div class=\"h-2 w-2 rounded-full bg-[#479066]\"></div></div><div><p class=\"text-sm font-semibold tracking-wide\">SISTEMA ADMINISTRATIVO</p><p class=\"text-[10px] uppercase tracking-[0.2em] text-white/40\">Acceso seguro</p></div></div><div class=\"max-w-md\"><p class=\"mb-4 text-xs font-medium uppercase tracking-[0.25em] text-[#479066]\">Control · Gestión · Evolución</p><h2 class=\"text-4xl font-semibold leading-tight tracking-tight\">Todo gran recorrido<br>comienza con un acceso.</h2><p class=\"mt-5 max-w-sm text-sm leading-6 text-white/50\">Ingresa al entorno administrativo para gestionar las operaciones y continuar con tu trabajo.</p></div></div><div class=\"relative flex items-center gap-3 text-xs text-white/30\"><div class=\"h-px w-8 bg-white/10\"></div><span>Tu próxima operación comienza aquí</span></div></div><!-- LOGIN --><div class=\"flex items-center justify-center p-6 sm:p-8 lg:p-10\"><div class=\"w-full max-w-sm\"><!-- Encabezado móvil / estado --><div class=\"mb-8\"><div class=\"mb-5 flex items-center justify-between\"><div class=\"flex items-center gap-2\"><div class=\"flex h-8 w-8 items-center justify-center rounded-lg border bg-muted\"><div class=\"h-1.5 w-1.5 rounded-full bg-[#479066]\"></div></div><span class=\"text-xs font-medium text-muted-foreground\">Administración</span></div><div class=\"flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground\"><span class=\"h-1.5 w-1.5 rounded-full bg-[#479066]\"></span> Sistema operativo</div></div><h1 class=\"text-2xl font-semibold tracking-tight\">Bienvenido</h1><p class=\"mt-2 text-sm leading-5 text-muted-foreground\">Ingresa tus credenciales para acceder al sistema.</p></div><!-- FORMULARIO --><form hx-post=\"/adminx/login\" hx-target=\"#resultado\" hx-swap=\"innerHTML\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\t\tconst form = this;\n\t\t\t\t\t\t\tconst button = form.querySelector('button[type=submit]');\n\n\t\t\t\t\t\t\tform.dataset.submitButton = button.innerHTML;\n\n\t\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\t\tbutton.innerHTML = `\n\t\t\t\t\t\t\t\t<span class='flex items-center justify-center gap-2'>\n\t\t\t\t\t\t\t\t\t<span class='h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent'></span>\n\t\t\t\t\t\t\t\t\tVerificando...\n\t\t\t\t\t\t\t\t</span>\n\t\t\t\t\t\t\t`;\n\t\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\t\tconst form = this;\n\t\t\t\t\t\t\tconst button = form.querySelector('button[type=submit]');\n\n\t\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\t\tbutton.innerHTML = form.dataset.submitButton;\n\t\t\t\t\t\t\"><!-- USUARIO --><div class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -68,11 +72,16 @@ func Login() templ.Component {
 			Name:        "usuario",
 			Placeholder: "Ingrese su usuario",
 			Type:        "text",
+			Class:       "h-11",
+			Attributes: templ.Attributes{
+				"autocomplete": "username",
+				"required":     "true",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- CLAVE --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -100,16 +109,25 @@ func Login() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"text-[11px] text-muted-foreground\">Acceso protegido</span></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = input.Input(input.Props{
 			ID:          "clave",
 			Name:        "clave",
 			Placeholder: "Ingrese su clave",
 			Type:        "password",
+			Class:       "h-11",
+			Attributes: templ.Attributes{
+				"autocomplete": "current-password",
+				"required":     "true",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- BOTÓN -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,20 +143,29 @@ func Login() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "Iniciar sesión")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span class=\"flex items-center justify-center gap-2\">Ingresar al sistema <span class=\"text-white/50\">→</span></span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Props{
-			Type:  "submit",
-			Class: "w-full",
+			Type: "submit",
+			Class: `
+								h-11 w-full
+								bg-[#081027]
+								text-white
+								border border-[#081027]
+								hover:bg-[#101b38]
+								active:scale-[0.99]
+								transition-all duration-150
+								font-medium
+							`,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</form><div id=\"resultado\" class=\"mt-4\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</form><!-- RESULTADO HTMX --><div id=\"resultado\" class=\"mt-4\"></div><!-- FOOTER --><div class=\"mt-8 flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60\"><span>Acceso administrativo</span> <span>·</span> <span>Sesión segura</span></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

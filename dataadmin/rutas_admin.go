@@ -10,6 +10,7 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/avisos"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	xlogin "github.com/dsaldias/server/dataadmin/pages/mainlayout/login"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataadmin/pages/roles"
 	"github.com/dsaldias/server/dataadmin/pages/ticket"
 	"github.com/dsaldias/server/dataadmin/pages/unidades"
@@ -48,6 +49,7 @@ var (
 	WEB_ADMIN_PATH_UNIDADES_VER     = "/adminx/unidades/{id}/ver"
 
 	WEB_ADMIN_PATH_AVISOS         = "/adminx/avisos"
+	WEB_ADMIN_PATH_AVISOS_MODAL   = "/adminx/avisos/modal"
 	WEB_ADMIN_PATH_AVISOS_FORMNEW = "/adminx/avisos/formnew"
 	WEB_ADMIN_PATH_AVISOS_CREAR   = "/adminx/avisos/crear"
 	WEB_ADMIN_PATH_AVISOS_GET     = "/adminx/avisos/{id}/get"
@@ -86,7 +88,7 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGOUT, H: http.HandlerFunc(cont_login.Logout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGIN, H: cont_login.Login()})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio())})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio(principal.AssetVersion))})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(umain.MainLayout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_SET_COOKIE_UNIDAD, H: http.HandlerFunc(umain.SetCookieUnidadId)})
 
@@ -111,6 +113,7 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_UNIDADES_VER, H: http.HandlerFunc(uncontroller.Ver)})
 
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_AVISOS, H: http.HandlerFunc(acontroller.Listar)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_AVISOS_MODAL, H: http.HandlerFunc(acontroller.ListarParaModal)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_AVISOS_FORMNEW, H: http.HandlerFunc(acontroller.FormNew)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_AVISOS_CREAR, H: http.HandlerFunc(acontroller.Crear)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_AVISOS_GET, H: http.HandlerFunc(acontroller.FormNew)})

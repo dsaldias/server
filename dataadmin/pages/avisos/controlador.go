@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/dataauth/repo"
 
@@ -37,6 +38,21 @@ func (c *AvisosController) Listar(w http.ResponseWriter, r *http.Request) {
 
 	contenido := Avisos(us, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
+}
+
+func (c *AvisosController) ListarParaModal(w http.ResponseWriter, r *http.Request) {
+	nts, err := repo.Notificaciones(r.Context(), c.DB)
+	if err != nil {
+		utility.ErrorResponse(w, r, err, nil)
+		return
+	}
+
+	if len(nts) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	principal.ModalAlerta(nts).Render(r.Context(), w)
 }
 
 func (c *AvisosController) FormNew(w http.ResponseWriter, r *http.Request) {

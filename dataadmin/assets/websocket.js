@@ -50,6 +50,7 @@ const NOTIFICACIONES_SUBS = `
     }
 `;
 
+let flag_ver_alertas_on_refresh_page = true;
 const procesar_mensajes = (data) => {
   const notificacion = data?.data?.notificaciones_subs;
 
@@ -72,18 +73,28 @@ const procesar_mensajes = (data) => {
       const conectados = datos.datos?.conectados ?? 0;
       const assets_v = datos.datos?.assets_version ?? "";
 
-      const contador = document.getElementById("ws_total_conectados");
-      const tooltip = document.getElementById("ws_tabs_conectados");
+      const contadores = document.querySelectorAll("[data-conectados-1]");
+      const badges = document.querySelectorAll("[data-conectados-badge]");
 
-      if (contador) {
+      contadores.forEach((contador) => {
         contador.textContent = conectados;
-      }
+      });
+      
+      badges.forEach((indicador) => {
+        indicador.title = `Conectados: ${total}`;
+      });
 
-      if (tooltip) {
-        tooltip.title = `Conectados: ${total}`;
+      if (flag_ver_alertas_on_refresh_page) {
+        flag_ver_alertas_on_refresh_page = false;
+        mostrarAlertas();
       }
 
       verificar_new_version(assets_v);
+      //
+    } else if (datos.tipo == "alerta") {
+      // const mensaje = datos.datos?.mensaje || "Nueva alerta del sistema";
+      mostrarAlertas();
+      //
     } else if (!datos.tipo) {
       mostrar_notificacion_ws(notificacion.title || "Nueva notificación");
     }
@@ -117,14 +128,28 @@ const verificar_new_version = (assets_version) => {
   }
 };
 
+async function mostrarAlertas() {
+  const response = await fetch("/adminx/avisos/modal");
+
+  if (!response.ok || response.status === 204) {
+    return;
+  }
+
+  document.body.insertAdjacentHTML("beforeend", await response.text());
+
+  const modal = document.getElementById("xmodal-alerta");
+
+  modal?.classList.remove("hidden");
+  modal?.classList.add("flex");
+}
+
 const mostrar_notificacion_ws = (mensaje) => {
   Toastify({
     text: mensaje,
     duration: 3000,
     gravity: "top",
     position: "right",
-    close: true,
-    // backgroundColor: "#21ba45",
+    close: true, 
     style: {
       background: "#21ba45",
     },
@@ -132,30 +157,32 @@ const mostrar_notificacion_ws = (mensaje) => {
 };
 
 const cambiar_estado_ws = (estado) => {
-  const badge = document.getElementById("ws_badge_indicator");
-  const punto = badge?.querySelector("[data-ws-status]");
+  const badges = document.querySelectorAll("[data-conectados-badge]");
 
-  if (!badge || !punto) return;
+  if (!badges) return;
 
-  badge.classList.remove("bg-orange-500", "bg-[#479066]", "bg-red-500");
-
-  punto.classList.remove("bg-orange-500", "bg-green-500", "bg-red-500");
-
-  switch (estado) {
-    case "conectando":
-      badge.classList.add("bg-orange-500");
-      punto.classList.add("bg-orange-500");
-      break;
-
-    case "conectado":
-      badge.classList.add("bg-[#01c4fb]");
-      punto.classList.add("bg-green-500");
-      break;
-
-    case "error":
-      badge.classList.add("bg-red-500");
-      punto.classList.add("bg-red-500");
-      break;
+  for(let i=0;i<badges.length;i++){
+    const badge = badges[i];
+    badge.classList.remove("bg-orange-500", "bg-[#479066]", "bg-red-500");
+    const punto = badge?.querySelector("[data-ws-status]");
+    if (!punto) continue;
+    punto.classList.remove("bg-orange-500", "bg-green-500", "bg-red-500");
+    switch (estado) {
+      case "conectando":
+        badge.classList.add("bg-orange-500");
+        punto.classList.add("bg-orange-500");
+        break;
+  
+      case "conectado":
+        badge.classList.add("bg-[#01c4fb]");
+        punto.classList.add("bg-green-500");
+        break;
+  
+      case "error":
+        badge.classList.add("bg-red-500");
+        punto.classList.add("bg-red-500");
+        break;
+    }
   }
 };
 
