@@ -21,9 +21,10 @@ import (
 var Assets embed.FS
 
 var (
-	WEB_PATH_BASE  = "/adminx/"
-	WEB_PATH_LOGIN = "/adminx/login"
-	WEB_PATH_MAIN  = "/adminx/main"
+	WEB_PATH_BASE   = "/adminx/"
+	WEB_PATH_LOGIN  = "/adminx/login"
+	WEB_PATH_LOGOUT = "/adminx/logout"
+	WEB_PATH_MAIN   = "/adminx/main"
 
 	WEB_ADMIN_PATH_SET_COOKIE_UNIDAD = "/adminx/setcookie/data"
 	WEB_ADMIN_PATH_USUARIOS          = "/adminx/usuarios"
@@ -82,6 +83,7 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 	ssr = append(ssr, &utils.Handlers2{Path: "/assets/*", H: http.StripPrefix("/assets/", http.FileServer(http.FS(fs1)))})
 	ssr = append(ssr, &utils.Handlers2{Path: "/templui/*", H: http.StripPrefix("/templui/", http.FileServer(http.FS(templuiFS)))})
 
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGOUT, H: http.HandlerFunc(cont_login.Logout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGIN, H: cont_login.Login()})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio())})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(cont_main.MainLayout)})

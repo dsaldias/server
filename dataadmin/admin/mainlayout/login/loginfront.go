@@ -13,7 +13,23 @@ type Logincontroller struct {
 	DB *sql.DB
 }
 
-func (c *Logincontroller) Logout() {}
+func (c *Logincontroller) Logout(w http.ResponseWriter, r *http.Request) {
+	cookies := []string{
+		"galletita_traviesa",
+		"galletita_traviesa_unidad_default",
+	}
+
+	for _, name := range cookies {
+		http.SetCookie(w, &http.Cookie{
+			Name:   name,
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		})
+	}
+
+	http.Redirect(w, r, "/adminx/", http.StatusSeeOther)
+}
 
 func (c *Logincontroller) Login() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

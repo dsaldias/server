@@ -109,17 +109,17 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 									Profile
 								</span>
 							}
-							@dropdown.Item() {
-								<span class="flex items-center">
-									@icon.Settings(icon.Props{
-										Class: "size-4 mr-2",
-									})
-									Settings
-								</span>
-							}
 							@dropdown.Separator()
 							@dropdown.Item(dropdown.ItemProps{
-								Href: "/adminx/",
+								// Href: "/adminx/logout",
+								Attributes: templ.Attributes{
+									"href":    "#",
+									"hx-get":  "/adminx/logout",
+									"hx-swap": "none",
+									"hx-on::after-request": `
+            				window.location.replace('/adminx/');
+        					`,
+								},
 							}) {
 								<span class="flex items-center">
 									@icon.LogOut(icon.Props{

@@ -250,6 +250,10 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 		escribirArchivo("app/front/assets/css/input.css", []byte(inputCcs))
 	}
 
+	if err := os.MkdirAll("app/front/utils", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/utils/: %v\n", err)
+	}
+
 	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
 	} else {
