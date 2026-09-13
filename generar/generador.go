@@ -159,7 +159,7 @@ import (
 	"database/sql"
 	"embed"
 	"io/fs"
-	"net/http" 
+	"net/http"
 
 	"github.com/dsaldias/server/dataadmin"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
@@ -181,25 +181,22 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 	}
 
 	conf := mainlayout.LayoutConfig{
-			Title: "Hola Mundo!!!",
-			// Personaliza clases, colores y asset desde el proyecto consumidor.
-			// Stylesheet: "/asset/css/output.css",
-			// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
-			// ExtraCSS:   []string{"/asset/css/custom.css"},
-			// ExtraJS:    []string{"/asset/custom.js"},
-		}
+		Title: "Hola Mundo!!!",
+		// Personaliza clases, colores y asset desde el proyecto consumidor.
+		Stylesheet: "/asset/css/output.css",
+		// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
+		// ExtraCSS:   []string{"/asset/css/custom.css"},
+		// ExtraJS:    []string{"/asset/custom.js"},
+	}
 
 	cont_main := mainlayout.MainController{
-		DB: db,
+		DB:     db,
 		Config: conf,
 	}
-	
-	ssr_admin := dataadmin.RutasFrontAdmin(db,conf)
-	for _, h := range ssr_admin {
-		router.Handle(h.Path, h.H)
-	}
+
+	ssr_admin := dataadmin.RutasFrontAdmin(db, conf)
 	ssr := []*utils.Handlers2{}
-	ssr = append(ssr,ssr_admin)
+	ssr = append(ssr, ssr_admin...)
 
 	tcontroller := TestController{DB: db, C: &cont_main}
 
@@ -208,7 +205,6 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	return ssr
 }
-
 `
 
 	content_controller1 := `

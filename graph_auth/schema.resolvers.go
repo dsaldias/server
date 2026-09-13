@@ -8,319 +8,203 @@ package graph_auth
 import (
 	"context"
 
-	"github.com/dsaldias/server/dataauth/archivos"
-	"github.com/dsaldias/server/dataauth/avisos"
-	"github.com/dsaldias/server/dataauth/chat"
-	"github.com/dsaldias/server/dataauth/dashboard"
-	"github.com/dsaldias/server/dataauth/login"
-	"github.com/dsaldias/server/dataauth/menus"
-	"github.com/dsaldias/server/dataauth/permisos"
-	"github.com/dsaldias/server/dataauth/roles"
-	"github.com/dsaldias/server/dataauth/ticketss"
-	"github.com/dsaldias/server/dataauth/unidades"
-	"github.com/dsaldias/server/dataauth/usuarios"
-	"github.com/dsaldias/server/dataauth/utils"
-	"github.com/dsaldias/server/dataauth/xnotificaciones"
+	"github.com/dsaldias/server/dataauth/repo"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.NewLogin) (*model.ResponseLogin, error) {
-	return login.Login(ctx, r.DB, input, false)
+	return repo.Login(ctx, r.DB, input)
 }
 
 // LoginV2 is the resolver for the login_v2 field.
 func (r *mutationResolver) LoginV2(ctx context.Context, input model.NewLogin2) (*model.ResponseLogin, error) {
-	return login.Login2(ctx, r.DB, input)
+	return repo.LoginV2(ctx, r.DB, input)
 }
 
 // CreateRol is the resolver for the create_rol field.
 func (r *mutationResolver) CreateRol(ctx context.Context, input model.NewRol) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "create_rol")
-	if err != nil {
-		return nil, err
-	}
-	return roles.Crear(r.DB, input)
+	return repo.CreateRol(ctx, r.DB, input)
 }
 
 // UpdateRol is the resolver for the update_rol field.
 func (r *mutationResolver) UpdateRol(ctx context.Context, input model.UpdateRol) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "update_rol")
-	if err != nil {
-		return nil, err
-	}
-	return roles.Actualizar(r.DB, input)
+	return repo.UpdateRol(ctx, r.DB, input)
 }
 
 // CreateUsuario is the resolver for the create_usuario field.
 func (r *mutationResolver) CreateUsuario(ctx context.Context, input model.NewUsuario) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "create_usuario")
-	if err != nil {
-		return nil, err
-	}
-	return usuarios.Crear(r.DB, input, nil)
+	return repo.CreateUsuario(ctx, r.DB, input)
 }
 
 // UpdateUsuario is the resolver for the update_usuario field.
 func (r *mutationResolver) UpdateUsuario(ctx context.Context, input model.UpdateUsuario) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "update_usuario")
-	if err != nil {
-		return nil, err
-	}
-	return usuarios.Actualizar(r.DB, input)
+	return repo.UpdateUsuario(ctx, r.DB, input)
 }
 
 // UpdatePerfil is the resolver for the update_perfil field.
 func (r *mutationResolver) UpdatePerfil(ctx context.Context, input model.UpdatePerfil) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "update_perfil")
-	if err != nil {
-		return nil, err
-	}
-	return usuarios.UpdatePerfil(r.DB, input)
+	return repo.UpdatePerfil(ctx, r.DB, input)
 }
 
 // CreateUnidad is the resolver for the create_unidad field.
 func (r *mutationResolver) CreateUnidad(ctx context.Context, input model.NewUnidad) (*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "create_unidad")
-	if err != nil {
-		return nil, err
-	}
-	return unidades.Crear(r.DB, input)
+	return repo.CreateUnidad(ctx, r.DB, input)
 }
 
 // UpdateUnidad is the resolver for the update_unidad field.
 func (r *mutationResolver) UpdateUnidad(ctx context.Context, input model.UpdUnidad) (*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "update_unidad")
-	if err != nil {
-		return nil, err
-	}
-	return unidades.Actualizar(r.DB, input)
+	return repo.UpdateUnidad(ctx, r.DB, input)
 }
 
 // CreateOauth is the resolver for the createOauth field.
 func (r *mutationResolver) CreateOauth(ctx context.Context, input model.NewUsuarioOauth) (*model.Usuario, error) {
-	return usuarios.CrearOauth(r.DB, input, false)
+	return repo.CreateOauth(ctx, r.DB, input)
 }
 
 // EnviarNotificacion is the resolver for the enviar_notificacion field.
 func (r *mutationResolver) EnviarNotificacion(ctx context.Context, titulo string) (bool, error) {
-	return xnotificaciones.EnviarNotificacion(ctx, titulo, nil)
+	return repo.EnviarNotificacion(ctx, r.DB, titulo)
 }
 
 // CrearNotificacion is the resolver for the crear_notificacion field.
 func (r *mutationResolver) CrearNotificacion(ctx context.Context, input model.NewNotificacion) (*model.Notificacion, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "crear_notificacion")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return avisos.Crear(r.DB, input, userid)
+	return repo.CrearNotificacion(ctx, r.DB, input)
 }
 
 // UpdateNotificacion is the resolver for the update_notificacion field.
 func (r *mutationResolver) UpdateNotificacion(ctx context.Context, input model.UpdNotificacion) (*model.Notificacion, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "update_notificacion")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return avisos.Actualizar(r.DB, input, userid)
+	return repo.UpdateNotificacion(ctx, r.DB, input)
 }
 
 // CreateTicket is the resolver for the create_ticket field.
 func (r *mutationResolver) CreateTicket(ctx context.Context, input model.NewTicket) (*model.Ticket, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "create_ticket")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return ticketss.Crear(ctx, r.DB, input, userid)
+	return repo.CreateTicket(ctx, r.DB, input)
 }
 
 // UpdateTicket is the resolver for the update_ticket field.
 func (r *mutationResolver) UpdateTicket(ctx context.Context, input model.NewTicketRespuesta) (*model.Ticket, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "update_ticket")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return ticketss.Update(ctx, r.DB, input, userid)
+	return repo.UpdateTicket(ctx, r.DB, input)
 }
 
 // CerrarTicket is the resolver for the cerrar_ticket field.
 func (r *mutationResolver) CerrarTicket(ctx context.Context, id string) (*model.Ticket, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "cerrar_ticket")
-	if err != nil {
-		return nil, err
-	}
-	return ticketss.Cerrar(ctx, r.DB, id)
+	return repo.CerrarTicket(ctx, r.DB, id)
 }
 
 // ChatEnviarMensaje is the resolver for the chat_enviar_mensaje field.
 func (r *mutationResolver) ChatEnviarMensaje(ctx context.Context, input model.ChatEnviarMensajeInput) (*model.ChatMensaje, error) {
-	return chat.EnviarChatMensaje(ctx, r.DB, input)
+	return repo.ChatEnviarMensaje(ctx, r.DB, input)
 }
 
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context, input model.InputMe) (*model.ResponseMe, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return usuarios.GetMe(r.DB, input, userid)
+	return repo.Me(ctx, r.DB, input)
 }
 
 // Roles is the resolver for the roles field.
 func (r *queryResolver) Roles(ctx context.Context) ([]*model.ResponseRoles, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "roles")
-	if err != nil {
-		return nil, err
-	}
-	return roles.GetRoles(r.DB)
+	return repo.Roles(ctx, r.DB)
 }
 
 // Permisos is the resolver for the permisos field.
 func (r *queryResolver) Permisos(ctx context.Context) ([]*model.Permiso, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "permisos")
-	if err != nil {
-		return nil, err
-	}
-	return permisos.GetPermisos(r.DB)
+	return repo.Permisos(ctx, r.DB)
 }
 
 // Usuarios is the resolver for the usuarios field.
 func (r *queryResolver) Usuarios(ctx context.Context, query model.QueryUsuarios) ([]*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "usuarios")
-	if err != nil {
-		return nil, err
-	}
-	return usuarios.GetUsuarios(r.DB, query)
+	return repo.Usuarios(ctx, r.DB, query)
 }
 
 // UsuariosConectados is the resolver for the usuarios_conectados field.
 func (r *queryResolver) UsuariosConectados(ctx context.Context) ([]*model.Usuario, error) {
-	return usuarios.GetUsuariosConectados(r.DB)
+	return repo.UsuariosConectados(ctx, r.DB)
 }
 
 // UsuarioByID is the resolver for the usuario_by_id field.
 func (r *queryResolver) UsuarioByID(ctx context.Context, id string) (*model.ResponseUsuario, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "usuario_by_id")
-	if err != nil {
-		return nil, err
-	}
-	return usuarios.GetBy(r.DB, id)
+	return repo.UsuarioByID(ctx, r.DB, id)
 }
 
 // RolByID is the resolver for the rol_by_id field.
 func (r *queryResolver) RolByID(ctx context.Context, id string) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "rol_by_id")
-	if err != nil {
-		return nil, err
-	}
-	return roles.GetRolById(r.DB, id)
+	return repo.RolByID(ctx, r.DB, id)
 }
 
 // Menus is the resolver for the menus field.
 func (r *queryResolver) Menus(ctx context.Context) ([]*model.Menus, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "menus")
-	if err != nil {
-		return nil, err
-	}
-	return menus.Listar(r.DB)
+	return repo.Menus(ctx, r.DB)
 }
 
 // Unidades is the resolver for the unidades field.
 func (r *queryResolver) Unidades(ctx context.Context) ([]*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "unidades")
-	if err != nil {
-		return nil, err
-	}
-	return unidades.Listar(r.DB)
+	return repo.Unidades(ctx, r.DB)
 }
 
 // GetImagen is the resolver for the get_imagen field.
 func (r *queryResolver) GetImagen(ctx context.Context, url string) (string, error) {
-	return archivos.GetImagen(url)
+	return repo.GetImagen(ctx, r.DB, url)
 }
 
 // ConexionesWs is the resolver for the conexiones_ws field.
 func (r *queryResolver) ConexionesWs(ctx context.Context) (string, error) {
-	return xnotificaciones.VerConexiones()
+	return repo.ConexionesWs(ctx, r.DB)
 }
 
 // Notificaciones is the resolver for the notificaciones field.
 func (r *queryResolver) Notificaciones(ctx context.Context) ([]*model.Notificacion, error) {
-	return avisos.GetNotificacionesActivas(r.DB)
+	return repo.Notificaciones(ctx, r.DB)
 }
 
 // Reporte1 is the resolver for the reporte1 field.
 func (r *queryResolver) Reporte1(ctx context.Context) ([]*model.ResponseReporte1, error) {
-	return dashboard.Reporte1(r.DB)
+	return repo.Reporte1(ctx, r.DB)
 }
 
 // Reporte2 is the resolver for the reporte2 field.
 func (r *queryResolver) Reporte2(ctx context.Context) ([]*model.ResponseReporte2, error) {
-	return dashboard.Reporte2(r.DB)
+	return repo.Reporte2(ctx, r.DB)
 }
 
 // Reporte2b is the resolver for the reporte2b field.
 func (r *queryResolver) Reporte2b(ctx context.Context) ([]*model.ResponseReporte2b, error) {
-	return dashboard.Reporte2b(r.DB)
+	return repo.Reporte2b(ctx, r.DB)
 }
 
 // AllTickets is the resolver for the all_tickets field.
 func (r *queryResolver) AllTickets(ctx context.Context, q model.QueryTickets) ([]*model.RespTickets, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "all_tickets")
-	if err != nil {
-		return nil, err
-	}
-	return ticketss.AllTickets(r.DB, q)
+	return repo.AllTickets(ctx, r.DB, q)
 }
 
 // MisTickets is the resolver for the mis_tickets field.
 func (r *queryResolver) MisTickets(ctx context.Context) ([]*model.RespTickets, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "mis_tickets")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return ticketss.MisTickets(r.DB, userid)
+	return repo.MisTickets(ctx, r.DB)
 }
 
 // VerTicket is the resolver for the ver_ticket field.
 func (r *queryResolver) VerTicket(ctx context.Context, id string) (*model.Ticket, error) {
-	_, err := utils.CtxValue(ctx, r.DB, "ver_ticket")
-	if err != nil {
-		return nil, err
-	}
-	return ticketss.Get(ctx, r.DB, id)
+	return repo.VerTicket(ctx, r.DB, id)
 }
 
 // ChatsByUser is the resolver for the chats_by_user field.
 func (r *queryResolver) ChatsByUser(ctx context.Context, userID string) ([]*model.ResponseChatConversacion, error) {
-	return chat.ConversacionesByUser(r.DB, userID)
+	return repo.ChatsByUser(ctx, r.DB, userID)
 }
 
 // ChatMensajes is the resolver for the chat_mensajes field.
 func (r *queryResolver) ChatMensajes(ctx context.Context, conversacionID string) ([]*model.ChatMensaje, error) {
-	tok, err := utils.CtxValue(ctx, r.DB, "")
-	if err != nil {
-		return nil, err
-	}
-	userid := tok.SessionKey.UsuarioID
-	return chat.MensajesByChat(r.DB, conversacionID, userid)
+	return repo.ChatMensajes(ctx, r.DB, conversacionID)
 }
 
 // ChatsNoLeidos is the resolver for the chats_no_leidos field.
 func (r *queryResolver) ChatsNoLeidos(ctx context.Context, userID string) (int32, error) {
-	return chat.MensajesNoLeidos(r.DB, userID)
+	return repo.ChatsNoLeidos(ctx, r.DB, userID)
 }
 
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
 func (r *subscriptionResolver) NotificacionesSubs(ctx context.Context) (<-chan *model.XNotificacion, error) {
-	userid := utils.CtxUserIDWs(ctx, r.DB, "")
-	return xnotificaciones.NotificacionesSubs(ctx, userid)
+	return repo.NotificacionesSubs(ctx, r.DB)
 }
 
 // Mutation returns MutationResolver implementation.

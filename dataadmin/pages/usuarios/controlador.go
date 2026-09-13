@@ -7,12 +7,8 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
+	"github.com/dsaldias/server/dataauth/repo"
 
-	"github.com/dsaldias/server/dataauth/menus"
-	"github.com/dsaldias/server/dataauth/permisos"
-	"github.com/dsaldias/server/dataauth/roles"
-	"github.com/dsaldias/server/dataauth/unidades"
-	"github.com/dsaldias/server/dataauth/usuarios"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/go-chi/chi"
 )
@@ -27,7 +23,7 @@ func (c *UsuariosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	us, err := usuarios.GetUsuarios(c.DB, model.QueryUsuarios{})
+	us, err := repo.Usuarios(r.Context(), c.DB, model.QueryUsuarios{})
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -48,7 +44,7 @@ func (c *UsuariosController) Ver(w http.ResponseWriter, r *http.Request) {
 	edit := model.ResponseUsuario{}
 
 	if len(id) > 0 {
-		us, err := usuarios.GetBy(c.DB, id)
+		us, err := repo.UsuarioByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -56,13 +52,13 @@ func (c *UsuariosController) Ver(w http.ResponseWriter, r *http.Request) {
 		edit = *us
 	}
 
-	perms, err := permisos.GetPermisos(c.DB)
+	perms, err := repo.Permisos(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	mens, err := menus.Listar(c.DB)
+	mens, err := repo.Menus(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -80,7 +76,7 @@ func (c *UsuariosController) FormNew(w http.ResponseWriter, r *http.Request) {
 	edit := model.ResponseUsuario{}
 
 	if len(id) > 0 {
-		us, err := usuarios.GetBy(c.DB, id)
+		us, err := repo.UsuarioByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -88,25 +84,25 @@ func (c *UsuariosController) FormNew(w http.ResponseWriter, r *http.Request) {
 		edit = *us
 	}
 
-	rols, err := roles.GetRoles(c.DB)
+	rols, err := repo.Roles(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	unis, err := unidades.Listar(c.DB)
+	unis, err := repo.Unidades(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	perms, err := permisos.GetPermisos(c.DB)
+	perms, err := repo.Permisos(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	mens, err := menus.Listar(c.DB)
+	mens, err := repo.Menus(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -138,7 +134,7 @@ func (c *UsuariosController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = usuarios.Actualizar(c.DB, input)
+		_, err = repo.UpdateUsuario(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -151,7 +147,7 @@ func (c *UsuariosController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = usuarios.Crear(c.DB, input, nil)
+		_, err = repo.CreateUsuario(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -172,7 +168,7 @@ func (c *UsuariosController) EditarPerfil(w http.ResponseWriter, r *http.Request
 	userid := xauth.Clains.USERID
 
 	if r.Method == "GET" {
-		us, err := usuarios.GetById(c.DB, userid)
+		us, err := repo.UsuarioByID(r.Context(), c.DB, userid)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -202,7 +198,7 @@ func (c *UsuariosController) EditarPerfil(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		_, err = usuarios.UpdatePerfil(c.DB, input)
+		_, err = repo.UpdatePerfil(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
