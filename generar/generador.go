@@ -143,7 +143,7 @@ func LoadCustomEvents() {
 	utils.SetOnUserExternalCreate(func(db *sql.DB, id, u, p string) {})
 	utils.SetOnUserRelogin(func(db *sql.DB, id, u, p string) {})
 	utils.SetOnTicketCreated(func(db *sql.DB, id string) {})
-	utils.SetOnUserExternalLogin(func(db *sql.DB, username,pass string) {})
+	utils.SetOnUserExternalLogin(func(db *sql.DB, username, pass string) {})
 }
 
 	`
