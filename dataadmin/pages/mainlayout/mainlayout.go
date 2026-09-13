@@ -112,9 +112,10 @@ func (c *MainController) layoutData(
 		return
 	}
 
+	rolid := cookie.RolID
 	unidadid = cookie.UnidadID
 
-	mens, err = menus.GetMenusbyRol(c.DB, unidadid)
+	mens, err = menus.GetMenusbyRol(c.DB, rolid)
 	if err != nil {
 		return
 	}
