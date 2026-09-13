@@ -16,8 +16,8 @@ tasks:
         printf '%s\n' \
           '@source "./**/*.templ";' \
           "@source \"$TEMPLUI_PATH/components/**/*.templ\";" \
-          > ./app/front/assets/css/sources.generated.css && \
-        tailwindcss -i ./app/front/assets/css/input.css -o ./app/front/assets/css/output.css --watch
+          > ./app/front/asset/css/sources.generated.css && \
+        tailwindcss -i ./app/front/asset/css/input.css -o ./app/front/asset/css/output.css --watch
 
   templui-assets:
     desc: Copiar JavaScript de TemplUI a los assets
@@ -25,7 +25,7 @@ tasks:
       - |
         set -e
         TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)"
-        DEST="./app/front/assets/templui/js"
+        DEST="./app/front/asset/templui/js"
 
         mkdir -p "$DEST"
 

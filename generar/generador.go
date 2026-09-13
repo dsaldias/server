@@ -159,23 +159,22 @@ import (
 	"database/sql"
 	"embed"
 	"io/fs"
-	"net/http"
-	"os"
+	"net/http" 
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
-//go:embed assets/*
-var Assets embed.FS
+//go:embed asset/*
+var Asset embed.FS
 
 var (
 	WEB_PATH_BASE = "/webc/"
 )
 
 func RutasFront(db *sql.DB) []*utils.Handlers2 {
-	fs1, err := fs.Sub(Assets, "assets")
+	fs1, err := fs.Sub(Asset, "asset")
 	if err != nil {
 		panic(err)
 	}
@@ -184,18 +183,18 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 		DB: db,
 		Config: mainlayout.LayoutConfig{
 			Title: "Hola Mundo!!!",
-			// Personaliza clases, colores y assets desde el proyecto consumidor.
-			// Stylesheet: "/assets/css/output.css",
+			// Personaliza clases, colores y asset desde el proyecto consumidor.
+			// Stylesheet: "/asset/css/output.css",
 			// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
-			// ExtraCSS:   []string{"/assets/css/custom.css"},
-			// ExtraJS:    []string{"/assets/custom.js"},
+			// ExtraCSS:   []string{"/asset/css/custom.css"},
+			// ExtraJS:    []string{"/asset/custom.js"},
 		},
 	}
 	ssr := []*utils.Handlers2{}
 
 	tcontroller := TestController{DB: db, C: &cont_main}
 
-	ssr = append(ssr, &utils.Handlers2{Path: "/assets/*", H: http.StripPrefix("/assets/", http.FileServer(http.FS(fs1)))})
+	ssr = append(ssr, &utils.Handlers2{Path: "/asset/*", H: http.StripPrefix("/asset/", http.FileServer(http.FS(fs1)))})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(tcontroller.Listar)})
 
 	return ssr
@@ -248,16 +247,16 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 		escribirArchivo("app/front/rutas_front.go", []byte(content_rutas_cli))
 	}
 
-	if err := os.MkdirAll("app/front/assets", 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/assets/: %v\n", err)
+	if err := os.MkdirAll("app/front/asset", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/asset/: %v\n", err)
 	} else {
-		escribirArchivo("app/front/assets/.kepp", []byte(""))
+		escribirArchivo("app/front/asset/.kepp", []byte(""))
 	}
 
-	if err := os.MkdirAll("app/front/assets/css", 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/assets/: %v\n", err)
+	if err := os.MkdirAll("app/front/asset/css", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/asset/: %v\n", err)
 	} else {
-		escribirArchivo("app/front/assets/css/input.css", []byte(inputCcs))
+		escribirArchivo("app/front/asset/css/input.css", []byte(inputCcs))
 	}
 
 	if err := os.MkdirAll("app/front/utils", 0755); err != nil {
