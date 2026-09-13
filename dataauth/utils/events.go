@@ -6,10 +6,12 @@ import (
 )
 
 type UserCreatedCallback func(db *sql.DB, newUserID, userid, pwd string)
+type UserCreateExtCallback func(db *sql.DB, username, pass string)
 type TicketCreatedCallback func(db *sql.DB, id string)
 
 var (
 	userCreatedCallbacks   []UserCreatedCallback
+	userCreateExtCallbacks []UserCreateExtCallback
 	userReloginCallbacks   []UserCreatedCallback
 	ticketCreatedCallbacks []TicketCreatedCallback
 	userMu                 sync.Mutex
@@ -21,6 +23,12 @@ func SetOnUserExternalCreate(callback UserCreatedCallback) {
 	userMu.Lock()
 	defer userMu.Unlock()
 	userCreatedCallbacks = append(userCreatedCallbacks, callback)
+}
+
+func SetOnUserExternalLogin(callback UserCreateExtCallback) {
+	userMu.Lock()
+	defer userMu.Unlock()
+	userCreateExtCallbacks = append(userCreateExtCallbacks, callback)
 }
 
 func SetOnUserRelogin(callback UserCreatedCallback) {
@@ -50,6 +58,14 @@ func NotifyUserRelogin(db *sql.DB, userID, u, p string) {
 	defer userMu.Unlock()
 	for _, cb := range userReloginCallbacks {
 		safeExecuteCallback(func() { cb(db, userID, u, p) })
+	}
+}
+
+func CreateExternalUser(db *sql.DB, u, p string) {
+	userMu.Lock()
+	defer userMu.Unlock()
+	for _, cb := range userCreateExtCallbacks {
+		safeExecuteCallback(func() { cb(db, u, p) })
 	}
 }
 

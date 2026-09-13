@@ -36,9 +36,11 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	us, err := usuarios.GetByUserPass(db, input.Username, input.Password)
 	if err != nil {
 		// login portal
-		ext := os.Getenv("PERM_EXTERNO")
-		if err.Error() == usuarios.WRONG_PASS && ext == "1" {
-			u, err := CrearExterno(db, input.Username, input.Password)
+
+		if err.Error() == usuarios.WRONG_PASS {
+			utils.CreateExternalUser(db, input.Username, input.Password)
+			// u, err := CrearExterno(db, input.Username, input.Password)
+			u, err := usuarios.GetByUserPass(db, input.Username, input.Password)
 			if err != nil {
 				return nil, err
 			}

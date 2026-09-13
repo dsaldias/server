@@ -17,7 +17,6 @@ func VerificarEnv() {
 		"DB_PASS",
 		"DB_HOST",
 		"DB_NAME",
-		"PERM_EXTERNO",
 		"EXTERNAL_AUTH",
 		"EXTERNAL_ME",
 		"PLAYGROUND",

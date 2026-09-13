@@ -72,7 +72,6 @@ Key variables:
 | `PLAYGROUND` | Enable GraphQL UI at `/auth` and `/app` |
 | `RATE_LIMIT` | Toggle 18 req/sec rate limiter |
 | `DECODE_PASS_KEY` | Key used to hash/verify passwords |
-| `PERM_EXTERNO` | Allow users to self-register |
 | `EXTERNAL_AUTH` | URL to delegate auth to external service |
 
 ## Step 5 — Add your own entities

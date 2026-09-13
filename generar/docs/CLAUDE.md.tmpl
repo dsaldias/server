@@ -224,7 +224,7 @@ data, err := archivos.GetImagen(path)                                  // load â
 
 ```go
 utils.SetOnUserExternalCreate(func(db *sql.DB, id, username, pass string) {
-    // called when a user self-registers (PERM_EXTERNO=1)
+    // called when a user self-registers
 })
 utils.SetOnUserRelogin(func(db *sql.DB, id, username, pass string) {
     // called on every successful login
@@ -242,7 +242,6 @@ utils.SetOnTicketCreated(func(db *sql.DB, ticketID string) {
 | `PLAYGROUND` | Enable GraphQL UI at `/auth` and `/app` |
 | `RATE_LIMIT` | Toggle 18 req/sec rate limiter per IP |
 | `DECODE_PASS_KEY` | Key for password hashing |
-| `PERM_EXTERNO` | Allow users to self-register |
 | `EXTERNAL_AUTH` | URL to delegate auth to external service |
 | `ALLOWED_ORIGINS` | CORS whitelist |
 
