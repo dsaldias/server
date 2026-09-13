@@ -162,7 +162,7 @@ import (
 	"io/fs"
 	"net/http"
 
-	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 
 	"github.com/dsaldias/server/dataauth/utils"
 )
@@ -200,8 +200,8 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
-	"github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 )
 
 type TestController struct {

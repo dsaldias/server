@@ -51,4 +51,4 @@ tasks:
     cmds: 
       - templ generate
       - task templui-assets
-      - go build -ldflags "-X github.com/dsaldias/server/dataadmin/admin/mainlayout/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./server.go
+      - go build -ldflags "-X github.com/dsaldias/server/dataadmin/pages/mainlayout/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./server.go

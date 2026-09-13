@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/dsaldias/server/dataadmin/admin/mainlayout/principal"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 

@@ -7,13 +7,13 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/dsaldias/server/dataadmin/admin/avisos"
-	"github.com/dsaldias/server/dataadmin/admin/mainlayout"
-	xlogin "github.com/dsaldias/server/dataadmin/admin/mainlayout/login"
-	"github.com/dsaldias/server/dataadmin/admin/roles"
-	"github.com/dsaldias/server/dataadmin/admin/ticket"
-	"github.com/dsaldias/server/dataadmin/admin/unidades"
-	"github.com/dsaldias/server/dataadmin/admin/usuarios"
+	"github.com/dsaldias/server/dataadmin/pages/avisos"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
+	xlogin "github.com/dsaldias/server/dataadmin/pages/mainlayout/login"
+	"github.com/dsaldias/server/dataadmin/pages/roles"
+	"github.com/dsaldias/server/dataadmin/pages/ticket"
+	"github.com/dsaldias/server/dataadmin/pages/unidades"
+	"github.com/dsaldias/server/dataadmin/pages/usuarios"
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
