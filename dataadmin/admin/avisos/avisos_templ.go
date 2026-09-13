@@ -541,7 +541,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Ver unidad",
-									HtmxGet:    fmt.Sprintf("/webx/avisos/%s/ver", un.ID),
+									HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", un.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID:   "xdialog-form-aviso",
 									Icon:       icon.Eye(),
@@ -555,8 +555,8 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Editar unidad",
-									HtmxGet:    fmt.Sprintf("/webx/avisos/%s/get", un.ID),
-									HtmxPost:   "/webx/avisos/crear",
+									HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", un.ID),
+									HtmxPost:   "/adminx/avisos/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:   "xdialog-form-aviso",
 									Icon:       icon.PenLine(),
@@ -624,8 +624,8 @@ func HeaderAcciones() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 			ModalTitle: "Registrar Nueva unidad",
-			HtmxGet:    "/webx/avisos/formnew",
-			HtmxPost:   "/webx/avisos/crear",
+			HtmxGet:    "/adminx/avisos/formnew",
+			HtmxPost:   "/adminx/avisos/crear",
 			BtnText:    "Registrar nueva unidad",
 			DialogID:   "xdialog-form-aviso",
 			Icon:       icon.Newspaper(),

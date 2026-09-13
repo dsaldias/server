@@ -17,7 +17,7 @@ func Is_Auth(db *sql.DB, w http.ResponseWriter, r *http.Request, metodo_name str
 			return nil, err
 		}
 
-		http.Redirect(w, r, "/webx/", http.StatusSeeOther)
+		http.Redirect(w, r, "/adminx/", http.StatusSeeOther)
 		return nil, err
 	}
 	return xauth, nil

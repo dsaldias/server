@@ -203,7 +203,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string) templ.Component {
 					templ_7745c5c3_Err = dropdown.Item(dropdown.ItemProps{
 						Attributes: templ.Attributes{
 							"data-role": r.Rol.Nombre + " " + r.Unidad.Nombre,
-							"hx-post":   "/webx/setcookie/data",
+							"hx-post":   "/adminx/setcookie/data",
 							"hx-vals": fmt.Sprintf(
 								`{"unidad_id":"%s","rol_id":"%s"}`,
 								r.Unidad.ID,

@@ -13,6 +13,8 @@ type Logincontroller struct {
 	DB *sql.DB
 }
 
+func (c *Logincontroller) Logout() {}
+
 func (c *Logincontroller) Login() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -88,10 +90,11 @@ func (c *Logincontroller) Login() http.Handler {
 		}
 
 		if len(logindata.Me.Roles) == 0 {
+			t := "datos correctos, pero no tienes ningun rol asignado."
 			if xis_relogin {
-				http.Error(w, "datos correctos, pero no tienes ningun rol asignado.", http.StatusForbidden)
+				http.Error(w, t, http.StatusForbidden)
 			} else {
-				utility.ErrorTpl("datos correctos, pero no tienes ningun rol asignado.").Render(r.Context(), w)
+				utility.ErrorTpl(t).Render(r.Context(), w)
 			}
 			return
 		}
@@ -99,18 +102,8 @@ func (c *Logincontroller) Login() http.Handler {
 		unidad := logindata.Me.Roles[0].Unidad
 		utility.SetUnidadOnCookie(unidad.ID, w, r)
 
-		/* http.SetCookie(w, &http.Cookie{
-			Name:     "galletita_traviesa_unidad_default",
-			Value:    unidad.ID,
-			Path:     "/",
-			HttpOnly: true,
-			Secure:   true, // true en producción con HTTPS
-			// SameSite: http.SameSiteLaxMode,
-			SameSite: http.SameSiteNoneMode, // front y back en dominios diferentes
-		}) */
-
 		if !xis_relogin {
-			w.Header().Set("HX-Redirect", "/webx/main")
+			w.Header().Set("HX-Redirect", "/adminx/main")
 		}
 
 		w.WriteHeader(http.StatusNoContent)

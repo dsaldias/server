@@ -428,7 +428,7 @@ func TablaAdminAcciones(
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"p-4 space-y-4 min-w-56\"><div class=\"border-b pb-3\"><h3 class=\"text-sm font-semibold text-gray-700\">Menú de Opciones</h3><p class=\"text-sm text-gray-500\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"p-4 space-y-4 min-w-56 bg-background\"><div class=\"border-b pb-3\"><p class=\"text-sm font-semibold\">Menú de opciones</p><p class=\"text-xs text-muted-foreground\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

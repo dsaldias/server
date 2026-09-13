@@ -636,7 +636,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									// ModalTitle: "Ver detalles del ticket",
-									HtmxGet:  fmt.Sprintf("/webx/tickets/%s/ver", ti.ID),
+									HtmxGet:  fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
 									Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID: "xdialog-form-ticket",
 									Icon:     icon.Eye(),
@@ -650,8 +650,8 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle:    "Responder",
-									HtmxGet:       fmt.Sprintf("/webx/tickets/%s/get", ti.ID),
-									HtmxPost:      "/webx/tickets/responder",
+									HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get", ti.ID),
+									HtmxPost:      "/adminx/tickets/responder",
 									BtnSubmitText: "responder",
 									Class:         "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:      "xdialog-form-ticket",
@@ -720,8 +720,8 @@ func HeaderAcciones() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 			ModalTitle: "Registrar algun problema",
-			HtmxGet:    "/webx/tickets/formnew",
-			HtmxPost:   "/webx/tickets/crear",
+			HtmxGet:    "/adminx/tickets/formnew",
+			HtmxPost:   "/adminx/tickets/crear",
 			BtnText:    "Sacar ticket",
 			DialogID:   "xdialog-form-ticket",
 			Icon:       icon.Newspaper(),

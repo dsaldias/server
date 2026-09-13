@@ -72,15 +72,15 @@ templ ListaUnidades(unidades []*model.Unidad) {
 						) {
 							@utility.ModalButton(utility.BtnProps{
 								ModalTitle: "Ver unidad",
-								HtmxGet:    fmt.Sprintf("/webx/unidades/%s/ver", un.ID),
+								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
 								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 								DialogID:   "xdialog-form-unidad",
 								Icon:       icon.Eye(),
 							})
 							@utility.ModalButton(utility.BtnProps{
 								ModalTitle: "Editar unidad",
-								HtmxGet:    fmt.Sprintf("/webx/unidades/%s/get", un.ID),
-								HtmxPost:   "/webx/unidades/crear",
+								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
+								HtmxPost:   "/adminx/unidades/crear",
 								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 								DialogID:   "xdialog-form-unidad",
 								Icon:       icon.PenLine(),
@@ -96,8 +96,8 @@ templ ListaUnidades(unidades []*model.Unidad) {
 templ HeaderAcciones() {
 	@utility.ModalButton(utility.BtnProps{
 		ModalTitle: "Registrar Nueva unidad",
-		HtmxGet:    "/webx/unidades/formnew",
-		HtmxPost:   "/webx/unidades/crear",
+		HtmxGet:    "/adminx/unidades/formnew",
+		HtmxPost:   "/adminx/unidades/crear",
 		BtnText:    "Registrar nueva unidad",
 		DialogID:   "xdialog-form-unidad",
 		Icon:       icon.Newspaper(),

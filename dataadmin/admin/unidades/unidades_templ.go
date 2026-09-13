@@ -491,7 +491,7 @@ func ListaUnidades(unidades []*model.Unidad) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Ver unidad",
-									HtmxGet:    fmt.Sprintf("/webx/unidades/%s/ver", un.ID),
+									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID:   "xdialog-form-unidad",
 									Icon:       icon.Eye(),
@@ -505,8 +505,8 @@ func ListaUnidades(unidades []*model.Unidad) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Editar unidad",
-									HtmxGet:    fmt.Sprintf("/webx/unidades/%s/get", un.ID),
-									HtmxPost:   "/webx/unidades/crear",
+									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
+									HtmxPost:   "/adminx/unidades/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:   "xdialog-form-unidad",
 									Icon:       icon.PenLine(),
@@ -574,8 +574,8 @@ func HeaderAcciones() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 			ModalTitle: "Registrar Nueva unidad",
-			HtmxGet:    "/webx/unidades/formnew",
-			HtmxPost:   "/webx/unidades/crear",
+			HtmxGet:    "/adminx/unidades/formnew",
+			HtmxPost:   "/adminx/unidades/crear",
 			BtnText:    "Registrar nueva unidad",
 			DialogID:   "xdialog-form-unidad",
 			Icon:       icon.Newspaper(),

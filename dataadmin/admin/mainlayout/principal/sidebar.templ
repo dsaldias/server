@@ -24,7 +24,7 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 			@sidebar.Menu() {
 				@sidebar.MenuItem() {
 					@sidebar.MenuButton(sidebar.MenuButtonProps{
-						Href:    "/webx/main",
+						Href:    "/adminx/main",
 						Tooltip: titulo,
 					}) {
 						@icon.LayoutPanelLeft(icon.Props{Class: "size-4"})
@@ -119,7 +119,7 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 							}
 							@dropdown.Separator()
 							@dropdown.Item(dropdown.ItemProps{
-								Href: "/webx/",
+								Href: "/adminx/",
 							}) {
 								<span class="flex items-center">
 									@icon.LogOut(icon.Props{
@@ -169,7 +169,7 @@ templ MenuItems(
 			} else {
 				@sidebar.MenuItem() {
 					@sidebar.MenuButton(sidebar.MenuButtonProps{
-						Href:     "/webx" + m.Path,
+						Href:     m.Path,
 						Tooltip:  m.Label,
 						IsActive: rutaActiva(current_path, m.Path),
 					}) {
@@ -187,11 +187,11 @@ templ MenuHijos(menus []*xm.Menus, padreID string, current_path string) {
 		if m.PadreID != nil && *m.PadreID == padreID {
 			@sidebar.MenuSubItem() {
 				@sidebar.MenuSubButton(sidebar.MenuSubButtonProps{
-					Href:     "/webx" + m.Path,
+					Href:     m.Path,
 					IsActive: rutaActiva(current_path, m.Path),
 					Attributes: templ.Attributes{
-						"data-menu-path": "/webx" + m.Path,
-						"hx-get":         "/webx" + m.Path,
+						"data-menu-path": m.Path,
+						"hx-get":         m.Path,
 						"hx-target":      "#contenido",
 						"hx-swap":        "innerHTML",
 						"hx-push-url":    "true",

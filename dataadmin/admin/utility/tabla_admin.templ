@@ -118,14 +118,14 @@ templ TablaAdminAcciones(
 			ShowArrow:     true,
 			HoverOutDelay: 500,
 		}) {
-			<div class="p-4 space-y-4 min-w-56">
+			<div class="p-4 space-y-4 min-w-56 bg-background">
 				<div class="border-b pb-3">
-					<h3 class="text-sm font-semibold text-gray-700">
-						Menú de Opciones
-					</h3>
-					<p class="text-sm text-gray-500">
-						{ nombre }
+					<p class="text-sm font-semibold">
+						Menú de opciones
 					</p>
+					<p class="text-xs text-muted-foreground">
+						{ nombre }
+					</p> 
 				</div>
 				<div class="flex items-center gap-2">
 					{ children... }

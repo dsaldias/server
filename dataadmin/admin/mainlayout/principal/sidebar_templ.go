@@ -136,7 +136,7 @@ func Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respons
 							return nil
 						})
 						templ_7745c5c3_Err = sidebar.MenuButton(sidebar.MenuButtonProps{
-							Href:    "/webx/main",
+							Href:    "/adminx/main",
 							Tooltip: titulo,
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -657,7 +657,7 @@ func Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respons
 									return nil
 								})
 								templ_7745c5c3_Err = dropdown.Item(dropdown.ItemProps{
-									Href: "/webx/",
+									Href: "/adminx/",
 								}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
@@ -916,7 +916,7 @@ func MenuItems(
 							return nil
 						})
 						templ_7745c5c3_Err = sidebar.MenuButton(sidebar.MenuButtonProps{
-							Href:     "/webx" + m.Path,
+							Href:     m.Path,
 							Tooltip:  m.Label,
 							IsActive: rutaActiva(current_path, m.Path),
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var40), templ_7745c5c3_Buffer)
@@ -1003,11 +1003,11 @@ func MenuHijos(menus []*xm.Menus, padreID string, current_path string) templ.Com
 						return nil
 					})
 					templ_7745c5c3_Err = sidebar.MenuSubButton(sidebar.MenuSubButtonProps{
-						Href:     "/webx" + m.Path,
+						Href:     m.Path,
 						IsActive: rutaActiva(current_path, m.Path),
 						Attributes: templ.Attributes{
-							"data-menu-path": "/webx" + m.Path,
-							"hx-get":         "/webx" + m.Path,
+							"data-menu-path": m.Path,
+							"hx-get":         m.Path,
 							"hx-target":      "#contenido",
 							"hx-swap":        "innerHTML",
 							"hx-push-url":    "true",

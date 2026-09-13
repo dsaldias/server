@@ -629,7 +629,7 @@ func ListaRoles(roles []*model.ResponseRoles) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Ver rol",
-									HtmxGet:    fmt.Sprintf("/webx/roles/%s/ver", rol.ID),
+									HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID:   "xdialog-form-rol",
 									Icon:       icon.Eye(),
@@ -643,8 +643,8 @@ func ListaRoles(roles []*model.ResponseRoles) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Editar rol",
-									HtmxGet:    fmt.Sprintf("/webx/roles/%s/get", rol.ID),
-									HtmxPost:   "/webx/roles/crear",
+									HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
+									HtmxPost:   "/adminx/roles/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:   "xdialog-form-rol",
 									Icon:       icon.PenLine(),
@@ -712,8 +712,8 @@ func HeaderAcciones() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 			ModalTitle: "Registrar Nuevo rol",
-			HtmxGet:    "/webx/roles/formnew",
-			HtmxPost:   "/webx/roles/crear",
+			HtmxGet:    "/adminx/roles/formnew",
+			HtmxPost:   "/adminx/roles/crear",
 			BtnText:    "Registrar rol",
 			DialogID:   "xdialog-form-rol",
 			Icon:       icon.Newspaper(),

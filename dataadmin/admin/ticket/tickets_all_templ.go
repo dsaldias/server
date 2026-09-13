@@ -540,7 +540,7 @@ func ListaTicketsAll(tickets []*model.RespTickets) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									// ModalTitle: "Ver detalles del ticket",
-									HtmxGet:  fmt.Sprintf("/webx/tickets/%s/ver", ti.ID),
+									HtmxGet:  fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
 									Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID: "xdialog-form-ticket-all",
 									Icon:     icon.Eye(),
@@ -554,8 +554,8 @@ func ListaTicketsAll(tickets []*model.RespTickets) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle:    "Responder",
-									HtmxGet:       fmt.Sprintf("/webx/tickets/%s/get?is_from_all=1", ti.ID),
-									HtmxPost:      "/webx/tickets/responder",
+									HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get?is_from_all=1", ti.ID),
+									HtmxPost:      "/adminx/tickets/responder",
 									BtnSubmitText: "responder",
 									Class:         "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:      "xdialog-form-ticket-all",

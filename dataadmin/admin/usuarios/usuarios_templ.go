@@ -465,7 +465,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Ver usuario",
-									HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/ver", us.ID),
+									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID:   "xdialog-form-usuario",
 									Icon:       icon.Eye(),
@@ -479,8 +479,8 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Editar Usuario",
-									HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/get", us.ID),
-									HtmxPost:   "/webx/usuarios/crear",
+									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
+									HtmxPost:   "/adminx/usuarios/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:   "xdialog-form-usuario",
 									Icon:       icon.PenLine(),
@@ -514,7 +514,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Ver usuario",
-									HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/ver", us.ID),
+									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
 									DialogID:   "xdialog-form-usuario",
 									Icon:       icon.Eye(),
@@ -528,8 +528,8 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 								}
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									ModalTitle: "Editar Usuario",
-									HtmxGet:    fmt.Sprintf("/webx/usuarios/%s/get", us.ID),
-									HtmxPost:   "/webx/usuarios/crear",
+									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
+									HtmxPost:   "/adminx/usuarios/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
 									DialogID:   "xdialog-form-usuario",
 									Icon:       icon.PenLine(),
@@ -597,8 +597,8 @@ func HeaderAcciones() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 			ModalTitle: "Registrar Nuevo usuario",
-			HtmxGet:    "/webx/usuarios/formnew",
-			HtmxPost:   "/webx/usuarios/crear",
+			HtmxGet:    "/adminx/usuarios/formnew",
+			HtmxPost:   "/adminx/usuarios/crear",
 			BtnText:    "Registrar usuario",
 			DialogID:   "xdialog-form-usuario",
 			Icon:       icon.Newspaper(),

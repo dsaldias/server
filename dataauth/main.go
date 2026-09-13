@@ -108,6 +108,6 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	}
 
 	log.Printf("connect to http://localhost:%s/app for GraphQL playground", port)
-	log.Printf("connect to http://localhost:%s/webx/ for Admin Site", port)
+	log.Printf("connect to http://localhost:%s/adminx/ for Admin Site", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
