@@ -14,7 +14,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/coder/websocket"
-	"github.com/dsaldias/server/dataadmin"
 	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 	"github.com/dsaldias/server/graph_auth"
@@ -102,10 +101,10 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	router.Post("/rest_auth/mutation/{operationName}", utils.RestToGraphQlHandler(schema2))
 	router.Get("/rest_auth/query/{operationName}", utils.RestToGraphQlHandler(schema2))
 
-	ssr := dataadmin.RutasFront(db)
+	/* ssr := dataadmin.RutasFront(db)
 	for _, h := range ssr {
 		router.Handle(h.Path, h.H)
-	}
+	} */
 
 	log.Printf("connect to http://localhost:%s/app for GraphQL playground", port)
 	log.Printf("connect to http://localhost:%s/adminx/ for Admin Site", port)

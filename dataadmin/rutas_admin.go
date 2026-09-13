@@ -61,9 +61,9 @@ var (
 	WEB_ADMIN_PATH_TICKETS_RESPONDER     = "/adminx/tickets/responder"
 )
 
-func RutasFront(db *sql.DB) []*utils.Handlers2 {
+func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handlers2 {
 	ssr := []*utils.Handlers2{}
-	umain := mainlayout.MainController{DB: db}
+	umain := mainlayout.MainController{DB: db, Config: config}
 	cont_login := xlogin.Logincontroller{DB: db}
 	cont_main := mainlayout.MainController{DB: db}
 
