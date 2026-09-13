@@ -7,10 +7,8 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
+	"github.com/dsaldias/server/dataauth/repo"
 
-	"github.com/dsaldias/server/dataauth/menus"
-	"github.com/dsaldias/server/dataauth/permisos"
-	"github.com/dsaldias/server/dataauth/roles"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/go-chi/chi"
 )
@@ -25,7 +23,7 @@ func (c *RolesController) ListarRoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	roles, err := roles.GetRoles(c.DB)
+	roles, err := repo.Roles(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -47,7 +45,7 @@ func (c *RolesController) FormNew(w http.ResponseWriter, r *http.Request) {
 	edit := model.Rol{}
 
 	if len(id) > 0 {
-		rol, err := roles.GetRolById(c.DB, id)
+		rol, err := repo.RolByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -55,13 +53,13 @@ func (c *RolesController) FormNew(w http.ResponseWriter, r *http.Request) {
 		edit = *rol
 	}
 
-	perms, err := permisos.GetPermisos(c.DB)
+	perms, err := repo.Permisos(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	mens, err := menus.Listar(c.DB)
+	mens, err := repo.Menus(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -93,7 +91,7 @@ func (c *RolesController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = roles.Actualizar(c.DB, input)
+		_, err = repo.UpdateRol(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -106,7 +104,7 @@ func (c *RolesController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = roles.Crear(c.DB, input)
+		_, err = repo.CreateRol(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -125,7 +123,7 @@ func (c *RolesController) Ver(w http.ResponseWriter, r *http.Request) {
 	edit := model.Rol{}
 
 	if len(id) > 0 {
-		us, err := roles.GetRolById(c.DB, id)
+		us, err := repo.RolByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return

@@ -8,8 +8,8 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
+	"github.com/dsaldias/server/dataauth/repo"
 
-	"github.com/dsaldias/server/dataauth/ticketss"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/go-chi/chi"
 )
@@ -20,20 +20,14 @@ type TicketController struct {
 }
 
 func (c *TicketController) Listar(w http.ResponseWriter, r *http.Request) {
-	xauth, err := utility.Is_Auth(c.DB, w, r, "")
-	if err != nil {
-		return
-	}
-	userid := xauth.Clains.USERID
-
-	us, err := ticketss.MisTickets(c.DB, userid)
+	us, err := repo.MisTickets(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
 	q := model.QueryTickets{}
-	all, err := ticketss.AllTickets(c.DB, q)
+	all, err := repo.AllTickets(r.Context(), c.DB, q)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -59,7 +53,7 @@ func (c *TicketController) FormNew(w http.ResponseWriter, r *http.Request) {
 	edit := model.Ticket{}
 
 	if len(id) > 0 {
-		us, err := ticketss.Get(r.Context(), c.DB, id)
+		us, err := repo.VerTicket(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -71,12 +65,6 @@ func (c *TicketController) FormNew(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *TicketController) Crear(w http.ResponseWriter, r *http.Request) {
-	xauth, err := utility.Is_Auth(c.DB, w, r, "")
-	if err != nil {
-		return
-	}
-	userid := xauth.Clains.USERID
-
 	data, err := utility.ParseBodyToJSON(r)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
@@ -96,7 +84,7 @@ func (c *TicketController) Crear(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = ticketss.Crear(r.Context(), c.DB, input, userid)
+	_, err = repo.CreateTicket(r.Context(), c.DB, input)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -114,7 +102,7 @@ func (c *TicketController) Ver(w http.ResponseWriter, r *http.Request) {
 	edit := model.Ticket{}
 
 	if len(id) > 0 {
-		us, err := ticketss.Get(r.Context(), c.DB, id)
+		us, err := repo.VerTicket(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -131,7 +119,7 @@ func (c *TicketController) FormResponder(w http.ResponseWriter, r *http.Request)
 	edit := model.Ticket{}
 
 	if len(id) > 0 {
-		us, err := ticketss.Get(r.Context(), c.DB, id)
+		us, err := repo.VerTicket(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -146,12 +134,6 @@ func (c *TicketController) FormResponder(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *TicketController) ResponderTicket(w http.ResponseWriter, r *http.Request) {
-	xauth, err := utility.Is_Auth(c.DB, w, r, "")
-	if err != nil {
-		return
-	}
-	userid := xauth.Clains.USERID
-
 	data, err := utility.ParseBodyToJSON(r)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
@@ -170,7 +152,7 @@ func (c *TicketController) ResponderTicket(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	_, err = ticketss.Update(r.Context(), c.DB, input, userid)
+	_, err = repo.UpdateTicket(r.Context(), c.DB, input)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -178,7 +160,7 @@ func (c *TicketController) ResponderTicket(w http.ResponseWriter, r *http.Reques
 
 	if data["is_from_all"] != nil {
 		q := model.QueryTickets{}
-		all, err := ticketss.AllTickets(c.DB, q)
+		all, err := repo.AllTickets(r.Context(), c.DB, q)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -186,7 +168,7 @@ func (c *TicketController) ResponderTicket(w http.ResponseWriter, r *http.Reques
 		ListaTicketsAll(all).Render(r.Context(), w)
 
 	} else {
-		us, err := ticketss.MisTickets(c.DB, userid)
+		us, err := repo.MisTickets(r.Context(), c.DB)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return

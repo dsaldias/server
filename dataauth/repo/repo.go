@@ -235,6 +235,14 @@ func Unidades(ctx context.Context, db *sql.DB) ([]*model.Unidad, error) {
 	return unidades.Listar(db)
 }
 
+func UnidadByID(ctx context.Context, db *sql.DB, id string) (*model.Unidad, error) {
+	_, err := utils.CtxValue(ctx, db, "")
+	if err != nil {
+		return nil, err
+	}
+	return unidades.GetById(db, id)
+}
+
 // GetImagen is the resolver for the get_imagen field.
 func GetImagen(ctx context.Context, db *sql.DB, url string) (string, error) {
 	return archivos.GetImagen(url)
@@ -248,6 +256,10 @@ func ConexionesWs(ctx context.Context, db *sql.DB) (string, error) {
 // Notificaciones is the resolver for the notificaciones field.
 func Notificaciones(ctx context.Context, db *sql.DB) ([]*model.Notificacion, error) {
 	return avisos.GetNotificacionesActivas(db)
+}
+
+func Notificacion(ctx context.Context, db *sql.DB, id string) (*model.Notificacion, error) {
+	return avisos.Get(db, id)
 }
 
 // Reporte1 is the resolver for the reporte1 field.

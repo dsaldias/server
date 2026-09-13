@@ -8,8 +8,8 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
+	"github.com/dsaldias/server/dataauth/repo"
 
-	av "github.com/dsaldias/server/dataauth/avisos"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/go-chi/chi"
 )
@@ -24,7 +24,7 @@ func (c *AvisosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	us, err := av.GetNotificacionesActivas(c.DB)
+	us, err := repo.Notificaciones(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -45,7 +45,7 @@ func (c *AvisosController) FormNew(w http.ResponseWriter, r *http.Request) {
 	edit := model.Notificacion{}
 
 	if len(id) > 0 {
-		avi, err := av.Get(c.DB, id)
+		avi, err := repo.Notificacion(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -57,12 +57,6 @@ func (c *AvisosController) FormNew(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *AvisosController) Crear(w http.ResponseWriter, r *http.Request) {
-	xauth, err := utility.Is_Auth(c.DB, w, r, "")
-	if err != nil {
-		return
-	}
-	userid := xauth.Clains.USERID
-
 	data, err := utility.ParseBodyToJSON(r)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
@@ -88,7 +82,7 @@ func (c *AvisosController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = av.Actualizar(c.DB, input, userid)
+		_, err = repo.UpdateNotificacion(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -101,7 +95,7 @@ func (c *AvisosController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = av.Crear(c.DB, input, userid)
+		_, err = repo.CrearNotificacion(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -120,7 +114,7 @@ func (c *AvisosController) Ver(w http.ResponseWriter, r *http.Request) {
 	edit := model.Notificacion{}
 
 	if len(id) > 0 {
-		us, err := av.Get(c.DB, id)
+		us, err := repo.Notificacion(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return

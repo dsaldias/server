@@ -7,8 +7,8 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
+	"github.com/dsaldias/server/dataauth/repo"
 
-	"github.com/dsaldias/server/dataauth/unidades"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/go-chi/chi"
 )
@@ -23,7 +23,7 @@ func (c *UnidadesController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	us, err := unidades.Listar(c.DB)
+	us, err := repo.Unidades(r.Context(), c.DB)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
@@ -44,7 +44,7 @@ func (c *UnidadesController) FormNew(w http.ResponseWriter, r *http.Request) {
 	edit := model.Unidad{}
 
 	if len(id) > 0 {
-		us, err := unidades.GetById(c.DB, id)
+		us, err := repo.UnidadByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -78,7 +78,7 @@ func (c *UnidadesController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = unidades.Actualizar(c.DB, input)
+		_, err = repo.UpdateUnidad(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -91,7 +91,7 @@ func (c *UnidadesController) Crear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = unidades.Crear(c.DB, input)
+		_, err = repo.CreateUnidad(r.Context(), c.DB, input)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
@@ -110,7 +110,7 @@ func (c *UnidadesController) Ver(w http.ResponseWriter, r *http.Request) {
 	edit := model.Unidad{}
 
 	if len(id) > 0 {
-		us, err := unidades.GetById(c.DB, id)
+		us, err := repo.UnidadByID(r.Context(), c.DB, id)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
