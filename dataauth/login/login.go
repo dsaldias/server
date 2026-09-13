@@ -35,17 +35,15 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 
 	us, err := usuarios.GetByUserPass(db, input.Username, input.Password)
 	if err != nil {
-		// login portal
-
+		// login externo
 		if err.Error() == usuarios.WRONG_PASS {
 			utils.CreateExternalUser(db, input.Username, input.Password)
-			// u, err := CrearExterno(db, input.Username, input.Password)
 			u, err := usuarios.GetByUserPass(db, input.Username, input.Password)
 			if err != nil {
 				return nil, err
 			}
 			us = u
-			// fin login portal
+			// fin login externo
 		} else {
 			return nil, err
 		}
@@ -64,7 +62,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 		return nil, err
 	}
 
-	un, err := unidades.GetFirtsByUser(db, us.ID)
+	uni, rol, err := unidades.GetUnidadRolByUserFirst(db, us.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +70,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	usuarios.SetLastLogin(db, us.ID)
 
 	inp := model.InputMe{}
-	inp.UnidadID = un.ID
+	inp.UnidadID = uni
 	me, err := usuarios.GetMe(db, inp, us.ID)
 	if err != nil {
 		return nil, err
@@ -92,7 +90,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	}
 
 	// funcionalidad nueva para cookie
-	utils.CtxSetCookie(ctx, sesion.Key, exp)
+	utils.CtxSetCookie(ctx, sesion.Key, us.ID, us.Username, rol, uni, exp)
 
 	return &res, nil
 }

@@ -82,7 +82,9 @@ func AuthMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			if skey == "" {
 				cookie, err := r.Cookie("galletita_traviesa")
 				if err == nil {
-					skey = cookie.Value
+					// [token, userid, username, rolid, unidadid]
+					partes := strings.Split(cookie.Value, "|")
+					skey = partes[0]
 				}
 			}
 
@@ -199,11 +201,15 @@ func MiddlewareCookie(next http.Handler) http.Handler {
 	})
 }
 
-func CtxSetCookie(ctx context.Context, token string, exp time.Time) {
+func CtxSetCookie(ctx context.Context, token, userid, username, rolid, unidadid string, exp time.Time) {
+	resultado := strings.Join([]string{
+		token, userid, username, rolid, unidadid,
+	}, "|")
+
 	w := ctx.Value("responseWriterCookie").(http.ResponseWriter)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "galletita_traviesa",
-		Value:    token,
+		Value:    resultado,
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true, // true en producción con HTTPS

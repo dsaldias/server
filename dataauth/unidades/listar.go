@@ -37,6 +37,24 @@ func GetFirtsByUser(db *sql.DB, userid string) (*model.Unidad, error) {
 	return &u, nil
 }
 
+func GetUnidadRolByUserFirst(db *sql.DB, userid string) (string, string, error) {
+	var unidad_id string
+	var rol_id string
+	sql := `
+	select ruu.unidad_id, ruu.rol_id
+	from rbac_rol_usuario_unidades ruu
+	where ruu.usuario_id = ?
+	order by ruu.unidad_id asc
+	limit 1
+	`
+	row := db.QueryRow(sql, userid)
+	err := row.Scan(&unidad_id, &rol_id)
+	if err != nil {
+		return "", "", err
+	}
+	return unidad_id, rol_id, nil
+}
+
 func Listar(db *sql.DB) ([]*model.Unidad, error) {
 	sql := `select id, nombre, descripcion, orden,ST_X(ubicacion) AS latitud, ST_Y(ubicacion) AS longitud, fecha_registro from rbac_unidades order by id, orden`
 	rows, err := db.Query(sql)
