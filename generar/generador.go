@@ -116,7 +116,6 @@ OAUTH_EMAILS_PERM=
 DB_CONN_LIFETIME_MIN=5
 DB_MAX_OPEN=20
 DB_MAX_IDLE=5
-WEB_SIDEBAR_TITLE=Admin
 ALLOWED_ORIGINS=http://localhost:9200,https://sladia.site,https://esam.edu.bo
 
 `, module)
@@ -184,7 +183,7 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 	cont_main := mainlayout.MainController{
 		DB: db,
 		Config: mainlayout.LayoutConfig{
-			Title: os.Getenv("WEB_SIDEBAR_TITLE"),
+			Title: "Hola Mundo!!!",
 			// Personaliza clases, colores y assets desde el proyecto consumidor.
 			// Stylesheet: "/assets/css/output.css",
 			// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",

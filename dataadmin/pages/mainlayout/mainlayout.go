@@ -3,7 +3,6 @@ package mainlayout
 import (
 	"database/sql"
 	"net/http"
-	"os"
 
 	"github.com/a-h/templ"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
@@ -51,10 +50,6 @@ func (c *MainController) RenderLayout(
 
 	config := c.Config.WithDefaults()
 	title := config.Title
-	if title == "" {
-		title = os.Getenv("WEB_SIDEBAR_TITLE")
-	}
-	config.Title = title
 
 	principal.MainPageLayout(
 		title,
