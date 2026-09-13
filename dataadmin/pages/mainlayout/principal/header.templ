@@ -82,7 +82,9 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 										r.Unidad.ID,
 										r.Rol.ID,
 									),
-									"hx-swap": "none",
+									"xxxxxhx-swap": "none",
+									"hx-swap":      "innerHTML",
+									"hx-target":    "#x-sidebar-menus",
 									"onclick": fmt.Sprintf(
 										"document.getElementById('rol-seleccionado').textContent = '%s'",
 										r.Unidad.Nombre,

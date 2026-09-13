@@ -194,7 +194,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 						var templ_7745c5c3_Var9 string
 						templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(r.Unidad.Nombre)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 94, Col: 27}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 96, Col: 27}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 						if templ_7745c5c3_Err != nil {
@@ -207,7 +207,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 						var templ_7745c5c3_Var10 string
 						templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(r.Rol.Nombre)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 97, Col: 24}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 99, Col: 24}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 						if templ_7745c5c3_Err != nil {
@@ -228,7 +228,9 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 								r.Unidad.ID,
 								r.Rol.ID,
 							),
-							"hx-swap": "none",
+							"xxxxxhx-swap": "none",
+							"hx-swap":      "innerHTML",
+							"hx-target":    "#x-sidebar-menus",
 							"onclick": fmt.Sprintf(
 								"document.getElementById('rol-seleccionado').textContent = '%s'",
 								r.Unidad.Nombre,

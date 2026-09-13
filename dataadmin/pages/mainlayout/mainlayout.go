@@ -9,6 +9,7 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/dataauth/menus"
+	"github.com/dsaldias/server/dataauth/repo"
 	"github.com/dsaldias/server/dataauth/roles"
 	"github.com/dsaldias/server/dataauth/usuarios"
 	"github.com/dsaldias/server/dataauth/utils"
@@ -33,6 +34,13 @@ func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Reques
 		cookie.RolID = rol_id
 		cookie.UnidadID = unidad_id
 		utils.CtxSetCookie(r.Context(), *cookie)
+
+		mens, err := repo.Menus(r.Context(), c.DB)
+		if err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+		principal.MenuItems(mens, nil, "").Render(r.Context(), w)
 	}
 
 }

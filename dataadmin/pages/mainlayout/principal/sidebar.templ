@@ -67,7 +67,9 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 				@sidebar.GroupLabel() {
 					Menu lateral
 				}
-				@sidebar.Menu() {
+				@sidebar.Menu(sidebar.MenuProps{
+					ID: "x-sidebar-menus",
+				}) {
 					@MenuItems(menus, nil, current_path)
 				}
 			}
