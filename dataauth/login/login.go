@@ -90,7 +90,15 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	}
 
 	// funcionalidad nueva para cookie
-	utils.CtxSetCookie(ctx, sesion.Key, us.ID, us.Username, rol, uni, exp)
+	cd := utils.CookieData{
+		Token:    sesion.Key,
+		UserID:   us.ID,
+		Username: us.Username,
+		RolID:    rol,
+		UnidadID: uni,
+		Expires:  exp,
+	}
+	utils.CtxSetCookie(ctx, cd)
 
 	return &res, nil
 }

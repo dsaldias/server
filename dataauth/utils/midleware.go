@@ -32,6 +32,15 @@ type AuthData struct {
 	TOKEN      string `json:"token"`
 }
 
+type CookieData struct {
+	Token    string
+	Username string
+	UserID   string
+	RolID    string
+	UnidadID string
+	Expires  time.Time
+}
+
 var jwtSecret = []byte(getJwtSecret())
 
 func getJwtSecret() string {
@@ -80,19 +89,11 @@ func AuthMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 
 			// funcionalidad de cookie
 			if skey == "" {
-				cookie, err := r.Cookie("galletita_traviesa")
+				cookie, err := CtxGetCookie(r)
 				if err == nil {
-					// [token, userid, username, rolid, unidadid]
-					partes := strings.Split(cookie.Value, "|")
-					skey = partes[0]
-				}
-			}
-
-			// en el nuevo front ssr por defecto manda la primera unidad, en esta cookie
-			if unidad == "" {
-				cookie, err := r.Cookie("galletita_traviesa_unidad_default")
-				if err == nil {
-					unidad = cookie.Value
+					skey = cookie.Token
+					rol = cookie.RolID
+					unidad = cookie.UnidadID
 				}
 			}
 
@@ -201,9 +202,13 @@ func MiddlewareCookie(next http.Handler) http.Handler {
 	})
 }
 
-func CtxSetCookie(ctx context.Context, token, userid, username, rolid, unidadid string, exp time.Time) {
+func CtxSetCookie(ctx context.Context, data CookieData) {
 	resultado := strings.Join([]string{
-		token, userid, username, rolid, unidadid,
+		data.Token,
+		data.UserID,
+		data.Username,
+		data.RolID,
+		data.UnidadID,
 	}, "|")
 
 	w := ctx.Value("responseWriterCookie").(http.ResponseWriter)
@@ -215,6 +220,25 @@ func CtxSetCookie(ctx context.Context, token, userid, username, rolid, unidadid 
 		Secure:   true, // true en producción con HTTPS
 		// SameSite: http.SameSiteLaxMode,
 		SameSite: http.SameSiteNoneMode, // front y back en dominios diferentes
-		Expires:  exp,
+		Expires:  data.Expires,
 	})
+}
+
+func CtxGetCookie(r *http.Request) (*CookieData, error) {
+	cookie, err := r.Cookie("galletita_traviesa")
+	if err != nil {
+		return nil, err
+	}
+
+	// [token, userid, username, rolid, unidadid]
+	partes := strings.Split(cookie.Value, "|")
+	data := CookieData{
+		Token:    partes[0],
+		UserID:   partes[1],
+		Username: partes[2],
+		RolID:    partes[3],
+		UnidadID: partes[4],
+		Expires:  cookie.Expires,
+	}
+	return &data, nil
 }

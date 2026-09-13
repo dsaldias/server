@@ -11,6 +11,7 @@ import (
 	"github.com/dsaldias/server/dataauth/menus"
 	"github.com/dsaldias/server/dataauth/roles"
 	"github.com/dsaldias/server/dataauth/usuarios"
+	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
@@ -21,14 +22,18 @@ type MainController struct {
 
 func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Request) {
 
+	rol_id := r.FormValue("rol_id")
 	unidad_id := r.FormValue("unidad_id")
-	// rol_id := r.FormValue("rol_id")
 
-	// fmt.Println("UNIDAD:", unidad_id)
-	// fmt.Println("ROL:", rol_id)
+	cookie, err := utils.CtxGetCookie(r)
+	if err != nil {
+		cookie.RolID = rol_id
+		cookie.UnidadID = unidad_id
+		utils.CtxSetCookie(r.Context(), *cookie)
+	} else {
+		utility.ErrorResponse(w, r, err, nil)
+	}
 
-	// AL PARECER EL ROL NO SE USA, POR MEDIO DE LA UNIDAD Y USERID YA SE VERIFICA EL PERMISO EN EL BACK
-	utility.SetUnidadOnCookie(unidad_id, w, r)
 }
 
 func (c *MainController) MainLayout(w http.ResponseWriter, r *http.Request) {
@@ -93,12 +98,12 @@ func (c *MainController) layoutData(
 	}
 	userid = xauth.Clains.USERID
 
-	cookie, err := r.Cookie("galletita_traviesa_unidad_default")
+	cookie, err := utils.CtxGetCookie(r)
 	if err != nil {
 		return
 	}
 
-	unidadid = cookie.Value
+	unidadid = cookie.UnidadID
 
 	mens, err = menus.GetMenusbyRol(c.DB, unidadid)
 	if err != nil {

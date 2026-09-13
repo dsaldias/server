@@ -16,7 +16,6 @@ type Logincontroller struct {
 func (c *Logincontroller) Logout(w http.ResponseWriter, r *http.Request) {
 	cookies := []string{
 		"galletita_traviesa",
-		"galletita_traviesa_unidad_default",
 	}
 
 	for _, name := range cookies {
@@ -66,9 +65,6 @@ func (c *Logincontroller) Login() http.Handler {
 			}
 			return
 		}
-
-		unidad := logindata.Me.Roles[0].Unidad
-		utility.SetUnidadOnCookie(unidad.ID, w, r)
 
 		if !xis_relogin {
 			w.Header().Set("HX-Redirect", "/adminx/main")
