@@ -197,9 +197,10 @@ func sizeBtn(p BtnProps) button.Size {
 
 func classBtn(p BtnProps) string {
 	if p.Class == "" {
-		return "hover:bg-[#e8f2f1]"
+		return "btn-neon"
 	}
-	return p.Class
+
+	return "btn-neon " + p.Class
 }
 
 var _ = templruntime.GeneratedTemplate

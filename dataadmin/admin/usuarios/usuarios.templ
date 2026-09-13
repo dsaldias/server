@@ -13,7 +13,7 @@ import (
 templ Usuarios(usuarios []*model.Usuario, url_refresh string) {
 	@selectbox.Script()
 	@utility.TablaAdmin(utility.MiTablaProps{
-		Titulo:         "Usuarios",
+		Titulo:         "Usuarios registrados",
 		Descripcion:    "Administración y gestión de usuarios del sistema",
 		UrlRefresh:     url_refresh,
 		ListaID:        "lista-usuarios",

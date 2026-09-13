@@ -62,7 +62,7 @@ func Usuarios(usuarios []*model.Usuario, url_refresh string) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = utility.TablaAdmin(utility.MiTablaProps{
-			Titulo:         "Usuarios",
+			Titulo:         "Usuarios registrados",
 			Descripcion:    "Administración y gestión de usuarios del sistema",
 			UrlRefresh:     url_refresh,
 			ListaID:        "lista-usuarios",

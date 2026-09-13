@@ -104,16 +104,16 @@ const verificar_new_version = (assets_version) => {
   if (assets_version !== current_version && !recargando_version) {
     recargando_version = true;
     Toastify({
-      text: "Nueva versión disponible. La aplicación se actualizará en 10 segundos...",
-      duration: 10000,
+      text: "↻  Hay una nueva versión disponible. Haz clic aquí para actualizar",
+      duration: -1,
       gravity: "top",
       position: "center",
       close: false,
+      className: "cursor-pointer",
+      onClick: function () {
+        window.location.reload();
+      },
     }).showToast();
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 10000);
   }
 };
 
