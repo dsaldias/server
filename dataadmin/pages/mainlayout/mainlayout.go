@@ -27,11 +27,12 @@ func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Reques
 
 	cookie, err := utils.CtxGetCookie(r)
 	if err != nil {
+		utility.ErrorResponse(w, r, err, nil)
+
+	} else {
 		cookie.RolID = rol_id
 		cookie.UnidadID = unidad_id
 		utils.CtxSetCookie(r.Context(), *cookie)
-	} else {
-		utility.ErrorResponse(w, r, err, nil)
 	}
 
 }
