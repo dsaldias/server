@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/a-h/templ"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/dataauth/menus"
@@ -15,7 +16,8 @@ import (
 )
 
 type MainController struct {
-	DB *sql.DB
+	DB     *sql.DB
+	Config layoutconfig.Config
 }
 
 func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +49,13 @@ func (c *MainController) RenderLayout(
 
 	ruta := r.URL.Path
 
-	title := os.Getenv("WEB_SIDEBAR_TITLE")
+	config := c.Config.WithDefaults()
+	title := config.Title
+	if title == "" {
+		title = os.Getenv("WEB_SIDEBAR_TITLE")
+	}
+	config.Title = title
+
 	principal.MainPageLayout(
 		title,
 		unidadid,
@@ -56,6 +64,7 @@ func (c *MainController) RenderLayout(
 		user,
 		contenido,
 		ruta,
+		config,
 	).Render(r.Context(), w)
 }
 

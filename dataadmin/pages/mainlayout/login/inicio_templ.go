@@ -8,7 +8,10 @@ package xlogin
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
+import (
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
+)
 
 func Inicio() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -57,7 +60,7 @@ func Inicio() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = principal.Layout("Iniciar sesión").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = principal.Layout("Iniciar sesión", layoutconfig.Default()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

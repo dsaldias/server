@@ -1,5 +1,7 @@
 package principal
 
+import "github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
+
 // la clave para actualizar en test es cambiar esta variable
 // para prod, el propio task build setea el valor en cada compilacion
 // por lo general sirve para actualizar los assets como js y css, los html vienen del server
@@ -7,16 +9,20 @@ var AssetVersion = "dev"
 
 templ Layout(
 	titulo string,
+	config layoutconfig.Config,
 ) {
 	<!DOCTYPE html>
 	<html lang="es">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<meta id="theme-color" name="theme-color" content="#081027"/>
+			<meta id="theme-color" name="theme-color" content={ config.WithDefaults().ThemeColor }/>
 			<meta id="x-asset-version" data-value={ AssetVersion }/>
 			<title>{ titulo }</title>
-			<link rel="stylesheet" href={ "/assets/css/output.css?v=" + AssetVersion }/>
+			<link rel="stylesheet" href={ config.WithDefaults().Stylesheet + "?v=" + AssetVersion }/>
+			for _, href := range config.ExtraCSS {
+				<link rel="stylesheet" href={ href + "?v=" + AssetVersion }/>
+			}
 			<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
 			<script src="https://unpkg.com/htmx.org@2.0.4"></script>
 			<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -25,8 +31,11 @@ templ Layout(
 			<script src={ "/assets/websocket.js?v=" + AssetVersion }></script>
 			<script src={ "/assets/json_enc_custom.js?v=" + AssetVersion }></script>
 			<script src={ "/assets/mitabla_admin.js?v=" + AssetVersion }></script>
+			for _, src := range config.ExtraJS {
+				<script src={ src + "?v=" + AssetVersion }></script>
+			}
 		</head>
-		<body class="min-h-screen bg-background text-foreground">
+		<body class={ config.WithDefaults().BodyClass }>
 			{ children... }
 			@ModalLogin()
 		</body>

@@ -1,6 +1,7 @@
 package principal
 
 import (
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/templui/templui/components/sidebar"
 )
@@ -13,16 +14,17 @@ templ MainPageLayout(
 	usuario *model.ResponseUsuario,
 	contenido templ.Component,
 	current_path string,
+	config layoutconfig.Config,
 ) {
-	@Layout(titulo) {
+	@Layout(titulo, config) {
 		@sidebar.Layout() {
-			@Sidebar(titulo, current_path, menus, usuario)
+			@Sidebar(titulo, current_path, menus, usuario, config)
 			@sidebar.Inset() {
-				<div class="flex h-full min-h-0 flex-col">
-					@Header(roles, unidadid)
+				<div class={ config.WithDefaults().ShellClass }>
+					@Header(roles, unidadid, config)
 					<main
 						id="contenido"
-						class="min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16"
+						class={ config.WithDefaults().MainClass }
 					>
 						@contenido
 					</main>

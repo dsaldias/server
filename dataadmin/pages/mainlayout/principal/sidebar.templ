@@ -1,6 +1,7 @@
 package principal
 
 import (
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 	"github.com/templui/templui/components/avatar"
 	"github.com/templui/templui/components/badge"
 	"github.com/templui/templui/components/collapsible"
@@ -12,7 +13,7 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.ResponseUsuario) {
+templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.ResponseUsuario, config layoutconfig.Config) {
 	@dropdown.Script()
 	@sidebar.Script()
 	@collapsible.Script()
@@ -24,7 +25,7 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 	@sidebar.Sidebar(sidebar.Props{
 		Collapsible: sidebar.CollapsibleIcon,
 		Variant:     sidebar.VariantSidebar,
-		Class:       "text-white z-[100]",
+		Class:       config.WithDefaults().SidebarClass,
 	}) {
 		@sidebar.Header() {
 			@sidebar.Menu() {

@@ -161,6 +161,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"os"
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 
@@ -180,7 +181,17 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 		panic(err)
 	}
 
-	cont_main := mainlayout.MainController{DB: db}
+	cont_main := mainlayout.MainController{
+		DB: db,
+		Config: mainlayout.LayoutConfig{
+			Title: os.Getenv("WEB_SIDEBAR_TITLE"),
+			// Personaliza clases, colores y assets desde el proyecto consumidor.
+			// Stylesheet: "/assets/css/output.css",
+			// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
+			// ExtraCSS:   []string{"/assets/css/custom.css"},
+			// ExtraJS:    []string{"/assets/custom.js"},
+		},
+	}
 	ssr := []*utils.Handlers2{}
 
 	tcontroller := TestController{DB: db, C: &cont_main}
