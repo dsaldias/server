@@ -10,14 +10,25 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-func nombreRolUnidad(roles []*xm.ResponseRolMe, unidadid string) string {
+type RolUnidadNombre struct {
+	unidad string
+	rol    string
+}
+
+func nombreUnidadRol(roles []*xm.ResponseRolMe, unidadid string) RolUnidadNombre {
 	for _, r := range roles {
 		if r.Unidad != nil && r.Rol != nil && r.Unidad.ID == unidadid {
-			return r.Unidad.Nombre
+			return RolUnidadNombre{
+				unidad: r.Unidad.Nombre,
+				rol:    r.Rol.Nombre,
+			}
 		}
 	}
 
-	return "Rol / Unidad"
+	return RolUnidadNombre{
+		unidad: "Rol / Unidad",
+		rol:    "",
+	}
 }
 
 templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Config) {
@@ -46,12 +57,23 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 			</button>
 			@dropdown.Dropdown() {
 				@dropdown.Trigger() {
-					<button class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-sidebar-accent">
-						<span id="rol-seleccionado">
-							{ nombreRolUnidad(roles, unidadid) }
-						</span>
+					<button class="flex items-center gap-2 rounded-md px-3 py-0 hover:bg-sidebar-accent">
+						<div class="min-w-0 max-w-fit flex flex-col text-left leading-tight">
+							<span
+								id="rol-seleccionado"
+								class="whitespace-nowrap font-medium"
+							>
+								{ nombreUnidadRol(roles, unidadid).unidad }
+							</span>
+							<span
+								class="truncate whitespace-nowrap text-xs text-muted-foreground"
+								title={ nombreUnidadRol(roles, unidadid).rol }
+							>
+								{ nombreUnidadRol(roles, unidadid).rol }
+							</span>
+						</div>
 						@icon.ChevronDown(icon.Props{
-							Class: "size-4",
+							Class: "size-4 shrink-0",
 						})
 					</button>
 				}
@@ -82,9 +104,8 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 										r.Unidad.ID,
 										r.Rol.ID,
 									),
-									"xxxxxhx-swap": "none",
-									"hx-swap":      "innerHTML",
-									"hx-target":    "#x-sidebar-menus",
+									"hx-swap":   "innerHTML",
+									"hx-target": "#x-sidebar-menus",
 									"onclick": fmt.Sprintf(
 										"document.getElementById('rol-seleccionado').textContent = '%s'",
 										r.Unidad.Nombre,

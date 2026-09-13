@@ -807,6 +807,9 @@
   .max-w-\[min\(24rem\,calc\(100vw-2rem\)\)\] {
     max-width: min(24rem, calc(100vw - 2rem));
   }
+  .max-w-fit {
+    max-width: fit-content;
+  }
   .max-w-lg {
     max-width: var(--container-lg);
   }

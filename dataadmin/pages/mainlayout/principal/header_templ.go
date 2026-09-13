@@ -18,14 +18,25 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-func nombreRolUnidad(roles []*xm.ResponseRolMe, unidadid string) string {
+type RolUnidadNombre struct {
+	unidad string
+	rol    string
+}
+
+func nombreUnidadRol(roles []*xm.ResponseRolMe, unidadid string) RolUnidadNombre {
 	for _, r := range roles {
 		if r.Unidad != nil && r.Rol != nil && r.Unidad.ID == unidadid {
-			return r.Unidad.Nombre
+			return RolUnidadNombre{
+				unidad: r.Unidad.Nombre,
+				rol:    r.Rol.Nombre,
+			}
 		}
 	}
 
-	return "Rol / Unidad"
+	return RolUnidadNombre{
+		unidad: "Rol / Unidad",
+		rol:    "",
+	}
 }
 
 func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Config) templ.Component {
@@ -121,30 +132,56 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button class=\"flex items-center gap-2 rounded-md px-3 py-1 hover:bg-sidebar-accent\"><span id=\"rol-seleccionado\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button class=\"flex items-center gap-2 rounded-md px-3 py-0 hover:bg-sidebar-accent\"><div class=\"min-w-0 max-w-fit flex flex-col text-left leading-tight\"><span id=\"rol-seleccionado\" class=\"whitespace-nowrap font-medium\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(nombreRolUnidad(roles, unidadid))
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(nombreUnidadRol(roles, unidadid).unidad)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 51, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 66, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span> <span class=\"truncate whitespace-nowrap text-xs text-muted-foreground\" title=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(nombreUnidadRol(roles, unidadid).rol)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 70, Col: 52}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(nombreUnidadRol(roles, unidadid).rol)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 72, Col: 46}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = icon.ChevronDown(icon.Props{
-					Class: "size-4",
+					Class: "size-4 shrink-0",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -154,11 +191,11 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -170,12 +207,12 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"p-2\"><input type=\"text\" placeholder=\"Buscar rol o unidad...\" class=\"w-full rounded-md border bg-background px-3 py-2 text-sm outline-none\" oninput=\"\n\t\t\t\t\t\t\t\tconst q = this.value.toLowerCase();\n\t\t\t\t\t\t\t\tdocument.querySelectorAll('#lista-roles [data-role]').forEach(e => {\n\t\t\t\t\t\t\t\t\te.style.display = e.dataset.role.toLowerCase().includes(q) ? '' : 'none';\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\"></div><div id=\"lista-roles\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"p-2\"><input type=\"text\" placeholder=\"Buscar rol o unidad...\" class=\"w-full rounded-md border bg-background px-3 py-2 text-sm outline-none\" oninput=\"\n\t\t\t\t\t\t\t\tconst q = this.value.toLowerCase();\n\t\t\t\t\t\t\t\tdocument.querySelectorAll('#lista-roles [data-role]').forEach(e => {\n\t\t\t\t\t\t\t\t\te.style.display = e.dataset.role.toLowerCase().includes(q) ? '' : 'none';\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\"></div><div id=\"lista-roles\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, r := range roles {
-					templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 						if !templ_7745c5c3_IsBuffer {
@@ -187,33 +224,33 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"flex flex-col\"><span class=\"font-medium\">")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex flex-col\"><span class=\"font-medium\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var9 string
-						templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(r.Unidad.Nombre)
+						var templ_7745c5c3_Var11 string
+						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(r.Unidad.Nombre)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 96, Col: 27}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 117, Col: 27}
 						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span> <span class=\"text-xs text-muted-foreground\">")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var10 string
-						templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(r.Rol.Nombre)
-						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 99, Col: 24}
-						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</span> <span class=\"text-xs text-muted-foreground\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></div>")
+						var templ_7745c5c3_Var12 string
+						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(r.Rol.Nombre)
+						if templ_7745c5c3_Err != nil {
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 120, Col: 24}
+						}
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</span></div>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -228,20 +265,19 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 								r.Unidad.ID,
 								r.Rol.ID,
 							),
-							"xxxxxhx-swap": "none",
-							"hx-swap":      "innerHTML",
-							"hx-target":    "#x-sidebar-menus",
+							"hx-swap":   "innerHTML",
+							"hx-target": "#x-sidebar-menus",
 							"onclick": fmt.Sprintf(
 								"document.getElementById('rol-seleccionado').textContent = '%s'",
 								r.Unidad.Nombre,
 							),
 						},
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -249,7 +285,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 			})
 			templ_7745c5c3_Err = dropdown.Content(dropdown.ContentProps{
 				Class: "w-72",
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -259,7 +295,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
