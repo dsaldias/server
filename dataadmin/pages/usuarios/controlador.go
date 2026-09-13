@@ -163,3 +163,50 @@ func (c *UsuariosController) Crear(w http.ResponseWriter, r *http.Request) {
 	r.URL.RawQuery = q.Encode()
 	c.Listar(w, r)
 }
+
+func (c *UsuariosController) EditarPerfil(w http.ResponseWriter, r *http.Request) {
+	xauth, err := utility.Is_Auth(c.DB, w, r, "")
+	if err != nil {
+		return
+	}
+	userid := xauth.Clains.USERID
+
+	if r.Method == "GET" {
+		us, err := usuarios.GetById(c.DB, userid)
+		if err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+		PerfilView(us).Render(r.Context(), w)
+
+	} else {
+		data, err := utility.ParseBodyToJSON(r)
+		if err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+
+		if data["foto64"] == nil || data["foto64"] == "" {
+			data["foto64"] = nil
+		}
+
+		var input model.UpdatePerfil
+		jsonData, err := json.Marshal(data)
+		if err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+
+		if err := json.Unmarshal(jsonData, &input); err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+
+		_, err = usuarios.UpdatePerfil(c.DB, input)
+		if err != nil {
+			utility.ErrorResponse(w, r, err, nil)
+			return
+		}
+	}
+
+}

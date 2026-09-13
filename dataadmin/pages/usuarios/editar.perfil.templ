@@ -1,0 +1,205 @@
+package usuarios
+
+import (
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/input"
+)
+
+templ PerfilView(
+	edit *model.Usuario,
+) {
+	<!-- ID -->
+	<div class="hidden">
+		@input.Input(input.Props{
+			ID:       "id",
+			Name:     "id",
+			Value:    edit.ID,
+			Readonly: true,
+		})
+	</div>
+	<div class="space-y-6">
+		<!-- DATOS PERSONALES -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Datos personales
+			</h3>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				@input.Input(input.Props{
+					ID:          "nombres",
+					Name:        "nombres",
+					Placeholder: "Nombres",
+					Value:       edit.Nombres,
+				})
+				@input.Input(input.Props{
+					ID:          "apellido1",
+					Name:        "apellido1",
+					Placeholder: "Primer apellido",
+					Value:       edit.Apellido1,
+				})
+				@input.Input(input.Props{
+					ID:          "apellido2",
+					Name:        "apellido2",
+					Placeholder: "Segundo apellido",
+					Value:       parseStringx(edit.Apellido2),
+				})
+				@input.Input(input.Props{
+					ID:          "documento",
+					Name:        "documento",
+					Placeholder: "Documento",
+					Value:       parseStringx(edit.Documento),
+				})
+			</div>
+		</div>
+		<!-- CONTACTO -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Contacto
+			</h3>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				@input.Input(input.Props{
+					ID:          "celular",
+					Name:        "celular",
+					Placeholder: "Celular",
+					Value:       parseStringx(edit.Celular),
+				})
+				@input.Input(input.Props{
+					ID:          "correo",
+					Name:        "correo",
+					Type:        "email",
+					Placeholder: "Correo electrónico",
+					Value:       parseStringx(edit.Correo),
+				})
+			</div>
+			@input.Input(input.Props{
+				ID:          "direccion",
+				Name:        "direccion",
+				Placeholder: "Dirección",
+				Value:       parseStringx(edit.Direccion),
+			})
+			@input.Input(input.Props{
+				ID:          "sexo",
+				Name:        "sexo",
+				Placeholder: "Sexo",
+				Value:       parseStringx(edit.Sexo),
+			})
+		</div>
+		<!-- ACCESO -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Acceso
+			</h3>
+			@input.Input(input.Props{
+				ID:          "username",
+				Name:        "username",
+				Placeholder: "Nombre de usuario",
+				Value:       edit.Username,
+			})
+			@input.Input(input.Props{
+				ID:          "password",
+				Name:        "password",
+				Type:        "password",
+				Placeholder: "Nueva contraseña",
+			})
+			<p class="text-xs text-muted-foreground">
+				Deja este campo vacío si no deseas cambiar tu contraseña.
+			</p>
+		</div>
+		<!-- FOTO -->
+		<div class="space-y-3">
+			<h3 class="text-sm font-semibold text-primary uppercase">
+				Fotografía
+			</h3>
+			<div class="flex flex-col sm:flex-row items-center gap-4">
+				<!-- Preview -->
+				<div
+					id="foto_preview_container"
+					class="size-24 shrink-0 overflow-hidden rounded-full border bg-muted flex items-center justify-center"
+				>
+					if edit.FotoURL != nil && *edit.FotoURL != "" {
+						<img
+							id="foto_preview"
+							src={ *edit.FotoURL }
+							alt="Foto de perfil"
+							class="size-full object-cover"
+						/>
+					} else {
+						<span
+							id="foto_preview_placeholder"
+							class="text-xs text-muted-foreground text-center px-2"
+						>
+							Sin foto
+						</span>
+					}
+				</div>
+				<div class="space-y-2">
+					<input
+						id="foto"
+						type="file"
+						accept="image/*"
+						class="block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
+					/>
+					<p class="text-xs text-muted-foreground">
+						Selecciona una imagen para actualizar tu fotografía.
+					</p>
+				</div>
+			</div>
+			<!-- Base64 -->
+			<div class="hidden">
+				@input.Input(input.Props{
+					ID:   "foto64",
+					Name: "foto64",
+				})
+			</div>
+		</div>
+	</div>
+	<script>
+	(() => {
+		const fileInput = document.getElementById("foto");
+		const foto64 = document.getElementById("foto64");
+		const preview = document.getElementById("foto_preview");
+		const placeholder = document.getElementById("foto_preview_placeholder");
+
+		if (!fileInput || !foto64) return;
+
+		fileInput.addEventListener("change", (event) => {
+			const file = event.target.files?.[0];
+
+			if (!file) {
+				foto64.value = "";
+				return;
+			}
+
+			const reader = new FileReader();
+
+			reader.onload = (e) => {
+				const dataUri = e.target.result;
+
+				if (typeof dataUri !== "string") return;
+
+				foto64.value = dataUri;
+
+				if (preview) {
+					preview.src = dataUri;
+					preview.classList.remove("hidden");
+				} else {
+					const img = document.createElement("img");
+					img.id = "foto_preview";
+					img.alt = "Foto de perfil";
+					img.className = "size-full object-cover";
+					img.src = dataUri;
+
+					document
+						.getElementById("foto_preview_container")
+						.appendChild(img);
+				}
+
+				if (placeholder) {
+					placeholder.classList.add("hidden");
+				}
+			};
+
+			reader.readAsDataURL(file);
+		});
+	})();
+	</script>
+}

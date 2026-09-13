@@ -8,6 +8,7 @@ import (
 	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/sidebar"
 
+	"github.com/dsaldias/server/dataadmin/pages/utility"
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
@@ -15,6 +16,11 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 	@dropdown.Script()
 	@sidebar.Script()
 	@collapsible.Script()
+	// ESTE COMPONENTE ES NECESARIO PARA EDITAR EL PERFIL
+	@utility.ModalGenerico(utility.ModalGenericoX{
+		DialogID: "x-modal-perfil",
+	})
+	// 
 	@sidebar.Sidebar(sidebar.Props{
 		Collapsible: sidebar.CollapsibleIcon,
 		Variant:     sidebar.VariantSidebar,
@@ -102,12 +108,16 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 							}
 							@dropdown.Separator()
 							@dropdown.Item() {
-								<span class="flex items-center">
-									@icon.User(icon.Props{
-										Class: "size-4 mr-2",
-									})
-									Profile
-								</span>
+								@utility.ModalButton(utility.BtnProps{
+									ModalTitle:    "Editar perfil",
+									HtmxGet:       "/adminx/usuarios/getperfil",
+									HtmxPost:      "/adminx/usuarios/setperfil",
+									Class:         "bg-grey-100 text-grey-700 hover:bg-blue-200 w-full",
+									DialogID:      "x-modal-perfil",
+									BtnText:       "Perfil",
+									Icon:          icon.PersonStanding(),
+									NoSwapContent: true, // si en modalgenerico no pasamos TargetRefreshID, pongamos true pa evitar htmx:targetError
+								})
 							}
 							@dropdown.Separator()
 							@dropdown.Item(dropdown.ItemProps{

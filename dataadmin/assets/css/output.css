@@ -597,6 +597,10 @@
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
   }
+  .size-24 {
+    width: calc(var(--spacing) * 24);
+    height: calc(var(--spacing) * 24);
+  }
   .size-\[18px\] {
     width: 18px;
     height: 18px;
@@ -604,6 +608,10 @@
   .size-\[22px\] {
     width: 22px;
     height: 22px;
+  }
+  .size-full {
+    width: 100%;
+    height: 100%;
   }
   .\!h-dvh {
     height: 100dvh !important;
@@ -931,6 +939,9 @@
   }
   .appearance-none {
     appearance: none;
+  }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1354,6 +1365,9 @@
   }
   .fill-current {
     fill: currentcolor;
+  }
+  .object-cover {
+    object-fit: cover;
   }
   .\!p-0 {
     padding: 0px !important;
@@ -1943,18 +1957,33 @@
   .selection\:text-primary-foreground::selection {
     color: var(--primary-foreground);
   }
+  .file\:mr-3::file-selector-button {
+    margin-right: calc(var(--spacing) * 3);
+  }
   .file\:inline-flex::file-selector-button {
     display: inline-flex;
   }
   .file\:h-7::file-selector-button {
     height: calc(var(--spacing) * 7);
   }
+  .file\:rounded-md::file-selector-button {
+    border-radius: calc(var(--radius) - 2px);
+  }
   .file\:border-0::file-selector-button {
     border-style: var(--tw-border-style);
     border-width: 0px;
   }
+  .file\:bg-primary::file-selector-button {
+    background-color: var(--primary);
+  }
   .file\:bg-transparent::file-selector-button {
     background-color: transparent;
+  }
+  .file\:px-3::file-selector-button {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .file\:py-2::file-selector-button {
+    padding-block: calc(var(--spacing) * 2);
   }
   .file\:text-sm::file-selector-button {
     font-size: var(--text-sm);
@@ -1966,6 +1995,9 @@
   }
   .file\:text-foreground::file-selector-button {
     color: var(--foreground);
+  }
+  .file\:text-primary-foreground::file-selector-button {
+    color: var(--primary-foreground);
   }
   .placeholder\:text-muted-foreground::placeholder {
     color: var(--muted-foreground);
@@ -2192,6 +2224,12 @@
     }
     .hover\:opacity-100:hover {
       opacity: 100%;
+    }
+    .hover\:file\:bg-primary\/90:hover::file-selector-button {
+      background-color: var(--primary);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--primary) 90%, transparent);
+      }
     }
   }
   .focus\:bg-accent:focus {
@@ -2587,6 +2625,9 @@
     }
     .md\:max-w-\[420px\] {
       max-width: 420px;
+    }
+    .md\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .md\:text-sm {
       font-size: var(--text-sm);

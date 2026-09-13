@@ -32,6 +32,8 @@ var (
 	WEB_ADMIN_PATH_USUARIOS_CREAR    = "/adminx/usuarios/crear"
 	WEB_ADMIN_PATH_USUARIOS_GET      = "/adminx/usuarios/{id}/get"
 	WEB_ADMIN_PATH_USUARIOS_VER      = "/adminx/usuarios/{id}/ver"
+	WEB_ADMIN_PATH_USUARIOS_EDIT     = "/adminx/usuarios/getperfil"
+	WEB_ADMIN_PATH_USUARIOS_EDITSET  = "/adminx/usuarios/setperfil"
 
 	WEB_ADMIN_PATH_ROLES         = "/adminx/roles"
 	WEB_ADMIN_PATH_ROLES_FORMNEW = "/adminx/roles/formnew"
@@ -94,6 +96,8 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS_CREAR, H: http.HandlerFunc(ucontroller.Crear)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS_GET, H: http.HandlerFunc(ucontroller.FormNew)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS_VER, H: http.HandlerFunc(ucontroller.Ver)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS_EDIT, H: http.HandlerFunc(ucontroller.EditarPerfil)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS_EDITSET, H: http.HandlerFunc(ucontroller.EditarPerfil)})
 
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_ROLES, H: http.HandlerFunc(rcontroller.ListarRoles)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_ROLES_FORMNEW, H: http.HandlerFunc(rcontroller.FormNew)})

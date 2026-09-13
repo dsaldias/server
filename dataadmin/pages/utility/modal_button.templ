@@ -13,6 +13,7 @@ type BtnProps struct {
 	BtnText          string
 	BtnSubmitText    string
 	BtnCancelText    string
+	NoSwapContent    bool
 }
 
 templ ModalButton(p BtnProps) {
@@ -43,7 +44,7 @@ templ ModalButton(p BtnProps) {
 					gravity: 'top',
 					position: 'right'
 				}).showToast();
-			`, 
+			`,
 			"hx-on::after-request": `
 				this.disabled = false;
 				this.innerHTML = this.dataset.originalContent;
@@ -82,6 +83,9 @@ templ ModalButton(p BtnProps) {
         	}
 					if (form) {
 						form.setAttribute("hx-post", "` + p.HtmxPost + `");
+						if ("` + isTrue(p.NoSwapContent) + `" == "1") {
+							form.setAttribute("hx-swap", "none");
+						} 
 						htmx.process(form);
 					}
 					window.tui.dialog.open("` + p.DialogID + `");
@@ -118,4 +122,11 @@ func classBtn(p BtnProps) string {
 	}
 
 	return "btn-neon " + p.Class
+}
+
+func isTrue(b bool) string {
+	if b {
+		return "1"
+	}
+	return "0"
 }
