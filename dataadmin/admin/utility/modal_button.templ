@@ -43,21 +43,7 @@ templ ModalButton(p BtnProps) {
 					gravity: 'top',
 					position: 'right'
 				}).showToast();
-			`,
-			"xxxxxxhx-on::response-error": `
-				Toastify({
-					text: event.detail.xhr.responseText,
-					style: {
-						background: 'red',
-						zIndex: 999999
-					},
-					duration: 5000,
-					close: true,
-					gravity: 'top',
-					position: 'right'
-				}).showToast();
-			`,
-
+			`, 
 			"hx-on::after-request": `
 				this.disabled = false;
 				this.innerHTML = this.dataset.originalContent;

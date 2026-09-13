@@ -62,9 +62,6 @@ templ ModalGenerico(p ModalGenericoX) {
 						button.disabled = true;
 						button.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';
 					"
-					xxxxxhx-on::response-error={ templ.ComponentScript{
-            Call: "Toastify({ text: 'EN sidebar.js YA CONTROLO ESTOS ERRORES O RELOGIN',style: {background:'red',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()",
-          } }
 					hx-on::after-request="
 						const d = this.parentElement.parentElement;
 						const button = d.querySelector('button[type=submit]');
@@ -77,7 +74,6 @@ templ ModalGenerico(p ModalGenericoX) {
 						}
 					"
 				>
-					// { children... }
 					<div class="xoverflow-y-auto flex-1 pr-2">
 						<div id={ "xcontenido-" + p.DialogID }>
 							{ children... }

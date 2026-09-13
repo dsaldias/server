@@ -650,13 +650,15 @@ func Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respons
 									if templ_7745c5c3_Err != nil {
 										return templ_7745c5c3_Err
 									}
-									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "Log out</span>")
+									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "Cerrar sesion</span>")
 									if templ_7745c5c3_Err != nil {
 										return templ_7745c5c3_Err
 									}
 									return nil
 								})
-								templ_7745c5c3_Err = dropdown.Item().Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = dropdown.Item(dropdown.ItemProps{
+									Href: "/webx/",
+								}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -782,7 +784,7 @@ func MenuItems(
 								var templ_7745c5c3_Var36 string
 								templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(m.Label)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 155, Col: 22}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 157, Col: 22}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 								if templ_7745c5c3_Err != nil {
@@ -901,7 +903,7 @@ func MenuItems(
 							var templ_7745c5c3_Var41 string
 							templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(m.Label)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 175, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 177, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 							if templ_7745c5c3_Err != nil {
@@ -988,7 +990,7 @@ func MenuHijos(menus []*xm.Menus, padreID string, current_path string) templ.Com
 						var templ_7745c5c3_Var45 string
 						templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(m.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 252, Col: 20}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/mainlayout/principal/sidebar.templ`, Line: 254, Col: 20}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 						if templ_7745c5c3_Err != nil {

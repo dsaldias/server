@@ -74,7 +74,7 @@ func ModalButton(p BtnProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.BtnText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_button.templ`, Line: 110, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_button.templ`, Line: 96, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -115,20 +115,6 @@ func ModalButton(p BtnProps) templ.Component {
 					position: 'right'
 				}).showToast();
 			`,
-				"xxxxxxhx-on::response-error": `
-				Toastify({
-					text: event.detail.xhr.responseText,
-					style: {
-						background: 'red',
-						zIndex: 999999
-					},
-					duration: 5000,
-					close: true,
-					gravity: 'top',
-					position: 'right'
-				}).showToast();
-			`,
-
 				"hx-on::after-request": `
 				this.disabled = false;
 				this.innerHTML = this.dataset.originalContent;

@@ -118,12 +118,14 @@ templ Sidebar(titulo, current_path string, menus []*xm.Menus, usuario *xm.Respon
 								</span>
 							}
 							@dropdown.Separator()
-							@dropdown.Item() {
+							@dropdown.Item(dropdown.ItemProps{
+								Href: "/webx/",
+							}) {
 								<span class="flex items-center">
 									@icon.LogOut(icon.Props{
 										Class: "size-4 mr-2",
 									})
-									Log out
+									Cerrar sesion
 								</span>
 							}
 						}

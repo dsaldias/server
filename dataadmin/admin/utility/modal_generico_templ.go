@@ -196,35 +196,20 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" xxxxxhx-on::response-error=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div class=\"xoverflow-y-auto flex-1 pr-2\"><div id=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.ComponentScript{
-					Call: "Toastify({ text: 'EN sidebar.js YA CONTROLO ESTOS ERRORES O RELOGIN',style: {background:'red',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()",
-				})
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 67, Col: 11}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 78, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div class=\"xoverflow-y-auto flex-1 pr-2\"><div id=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 82, Col: 42}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -232,24 +217,24 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></form><div id=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></form><div id=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 87, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 83, Col: 39}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></div></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"></div></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -261,24 +246,24 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var15 string
-					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 90, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/admin/utility/modal_generico.templ`, Line: 86, Col: 36}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" class=\"flex gap-2\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"flex gap-2\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 						if !templ_7745c5c3_IsBuffer {
@@ -290,7 +275,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Var17 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 							if !templ_7745c5c3_IsBuffer {
@@ -306,7 +291,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " <span class=\"btn-cerrar-text\">Cancelar</span>")
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " <span class=\"btn-cerrar-text\">Cancelar</span>")
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -316,7 +301,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 							Variant: button.VariantOutline,
 							Type:    "button",
 							Class:   "bg-red-100 text-red-700 hover:bg-red-200",
-						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
+						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -324,11 +309,11 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					})
 					templ_7745c5c3_Err = dialog.Close(dialog.CloseProps{
 						ID: "btn-cerrar-" + p.DialogID,
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Var18 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Var17 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 						if !templ_7745c5c3_IsBuffer {
@@ -344,7 +329,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " <span class=\"btn-submit-text\">Aceptar</span>")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " <span class=\"btn-submit-text\">Aceptar</span>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -356,17 +341,17 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						Type:    "submit",
 						Class:   "bg-green-100 text-green-700 hover:bg-green-200",
 						Form:    "xform-" + p.DialogID,
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = dialog.Footer().Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = dialog.Footer().Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -393,7 +378,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<script>\n\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n    document.querySelectorAll('[data-mobile-modal]').forEach(dialog => {\n        const mobile = window.matchMedia(\"(max-width: 767px)\").matches;\n\n        dialog.dataset.tuiDialogShowModal = !mobile ? \"true\" : \"false\";\n    });\n});\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<script>\n\tdocument.addEventListener(\"DOMContentLoaded\", () => {\n    document.querySelectorAll('[data-mobile-modal]').forEach(dialog => {\n        const mobile = window.matchMedia(\"(max-width: 767px)\").matches;\n\n        dialog.dataset.tuiDialogShowModal = !mobile ? \"true\" : \"false\";\n    });\n});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
