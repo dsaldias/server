@@ -15,6 +15,7 @@ tasks:
         TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)" && \
         printf '%s\n' \
           '@source "./**/*.templ";' \
+          '@source "./**/*.go";' \
           "@source \"$TEMPLUI_PATH/components/**/*.templ\";" \
           > ./dataadmin/assets/css/sources.generated.css && \
         tailwindcss -i ./dataadmin/assets/css/input.css -o ./dataadmin/assets/css/output.css --watch

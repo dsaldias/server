@@ -167,7 +167,7 @@ import (
 	"github.com/dsaldias/server/dataauth/utils"
 )
 
-// //go:embed assets/*
+//go:embed assets/*
 var Assets embed.FS
 
 var (
