@@ -2,7 +2,9 @@ package mainlayout
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/a-h/templ"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
@@ -40,7 +42,16 @@ func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Reques
 			utility.ErrorResponse(w, r, err, nil)
 			return
 		}
-		principal.MenuItems(mens, nil, "").Render(r.Context(), w)
+
+		referer := r.Referer()
+		u, err := url.Parse(referer)
+		path := ""
+		if err == nil {
+			path = u.Path
+		}
+
+		fmt.Println(".....", len(mens))
+		principal.MenuItems(mens, nil, path).Render(r.Context(), w)
 	}
 
 }
