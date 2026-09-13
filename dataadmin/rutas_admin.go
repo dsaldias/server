@@ -65,7 +65,6 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	ssr := []*utils.Handlers2{}
 	umain := mainlayout.MainController{DB: db, Config: config}
 	cont_login := xlogin.Logincontroller{DB: db}
-	cont_main := mainlayout.MainController{DB: db}
 
 	ucontroller := usuarios.UsuariosController{DB: db, C: &umain}
 	rcontroller := roles.RolesController{DB: db, C: &umain}
@@ -88,7 +87,7 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGOUT, H: http.HandlerFunc(cont_login.Logout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGIN, H: cont_login.Login()})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio())})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(cont_main.MainLayout)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(umain.MainLayout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_SET_COOKIE_UNIDAD, H: http.HandlerFunc(umain.SetCookieUnidadId)})
 
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_USUARIOS, H: http.HandlerFunc(ucontroller.Listar)})
