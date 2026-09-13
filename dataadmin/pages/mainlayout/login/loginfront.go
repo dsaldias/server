@@ -44,56 +44,8 @@ func (c *Logincontroller) Login() http.Handler {
 		}
 		logindata, err := login.Login2(r.Context(), c.DB, data)
 		if err != nil {
-			token_portal, err2 := LoginPortal(usuario, clave)
-			if err2 != nil {
-				if xis_relogin {
-					http.Error(w, err2.Error(), http.StatusForbidden)
-				} else {
-					utility.ErrorTpl(err2.Error()).Render(r.Context(), w)
-				}
-				return
-			}
-
-			if len(token_portal) == 0 {
-				t := "datos del portal incorrectos"
-				if xis_relogin {
-					http.Error(w, t, http.StatusForbidden)
-				} else {
-					utility.ErrorTpl(t).Render(r.Context(), w)
-				}
-				return
-			}
-
-			res, err3 := GetMe(token_portal)
-			if err3 != nil {
-				if xis_relogin {
-					http.Error(w, err3.Error(), http.StatusForbidden)
-				} else {
-					utility.ErrorTpl(err3.Error()).Render(r.Context(), w)
-				}
-				return
-			}
-
-			e := GuardarDatosPortal(c.DB, usuario, clave, res)
-			if e != nil {
-				if xis_relogin {
-					http.Error(w, e.Error(), http.StatusForbidden)
-				} else {
-					utility.ErrorTpl(e.Error()).Render(r.Context(), w)
-				}
-				return
-			}
-
-			newlogin, err4 := login.Login2(r.Context(), c.DB, data)
-			if err4 != nil {
-				if xis_relogin {
-					http.Error(w, err4.Error(), http.StatusForbidden)
-				} else {
-					utility.ErrorTpl(err4.Error()).Render(r.Context(), w)
-				}
-				return
-			}
-			logindata = newlogin
+			utility.ErrorTpl(err.Error()).Render(r.Context(), w)
+			return
 		}
 
 		if logindata == nil {
