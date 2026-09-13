@@ -38,6 +38,7 @@ import (
 	"%s/app/front"
 	"%s/graph" 
 	"time"
+	"uuid"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
