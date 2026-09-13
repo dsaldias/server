@@ -46,6 +46,7 @@ import (
 	"github.com/coder/websocket"
 	"github.com/vektah/gqlparser/v2/ast"
 
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataauth"
 	"github.com/dsaldias/server/dataauth/utils"
 )
@@ -85,6 +86,9 @@ func main() {
 	app.LoadCustomEvents()
 
 	ssr := front.RutasFront(db)
+
+	// para dev, actualizamos los assets
+	principal.AssetVersion = uuid.New().String()
 
 	dataauth.Iniciar(srv, &schema, db, ssr, nil)
 }
@@ -182,8 +186,8 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	conf := mainlayout.LayoutConfig{
 		Title: "Hola Mundo!!!",
-		// Personaliza clases, colores y asset desde el proyecto consumidor.
-		Stylesheet: "/asset/css/output.css",
+		// ###### Personaliza clases, colores y asset desde el proyecto consumidor.
+		// Stylesheet: "/asset/css/output.css",
 		// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
 		// ExtraCSS:   []string{"/asset/css/custom.css"},
 		// ExtraJS:    []string{"/asset/custom.js"},
