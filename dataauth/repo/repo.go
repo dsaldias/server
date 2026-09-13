@@ -226,6 +226,14 @@ func Menus(ctx context.Context, db *sql.DB) ([]*model.Menus, error) {
 	return menus.Listar(db)
 }
 
+func GetMenusbyRol(ctx context.Context, db *sql.DB, rolid string) ([]*model.Menus, error) {
+	_, err := utils.CtxValue(ctx, db, "")
+	if err != nil {
+		return nil, err
+	}
+	return menus.GetMenusbyRol(db, rolid)
+}
+
 // Unidades is the resolver for the unidades field.
 func Unidades(ctx context.Context, db *sql.DB) ([]*model.Unidad, error) {
 	_, err := utils.CtxValue(ctx, db, "unidades")

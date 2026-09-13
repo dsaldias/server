@@ -35,7 +35,7 @@ func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Reques
 		cookie.UnidadID = unidad_id
 		utils.CtxSetCookie(r.Context(), *cookie)
 
-		mens, err := repo.Menus(r.Context(), c.DB)
+		mens, err := repo.GetMenusbyRol(r.Context(), c.DB, cookie.RolID)
 		if err != nil {
 			utility.ErrorResponse(w, r, err, nil)
 			return
