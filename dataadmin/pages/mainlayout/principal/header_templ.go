@@ -272,8 +272,8 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 								r.Unidad.Nombre,
 							),
 							"hx-on::after-request": `
-										const side = document.querySelector("#x-sidebar-menus");
-										console.log(side);
+										// const side = document.querySelector("#x-sidebar-menus");
+										// console.log(side);
 										document.querySelectorAll('[data-tui-collapsible="root"]').forEach((root) => {
 											const trigger = root.querySelector(
 													'[data-tui-collapsible="trigger"]'

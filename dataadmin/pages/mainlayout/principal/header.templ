@@ -110,7 +110,7 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 										"document.getElementById('rol-seleccionado').textContent = '%s'",
 										r.Unidad.Nombre,
 									),
-									"hx-on::after-request":`
+									"hx-on::after-request": `
 										// const side = document.querySelector("#x-sidebar-menus");
 										// console.log(side);
 										document.querySelectorAll('[data-tui-collapsible="root"]').forEach((root) => {
