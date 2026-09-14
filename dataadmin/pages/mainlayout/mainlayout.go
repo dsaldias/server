@@ -2,7 +2,6 @@ package mainlayout
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -50,8 +49,9 @@ func (c *MainController) SetCookieUnidadId(w http.ResponseWriter, r *http.Reques
 			path = u.Path
 		}
 
-		fmt.Println(".....", len(mens))
-		principal.MenuItems(mens, nil, path).Render(r.Context(), w)
+		grupos := principal.AgruparMenus(mens)
+
+		principal.MenuItems2(grupos, path).Render(r.Context(), w)
 	}
 
 }
@@ -107,7 +107,7 @@ func (c *MainController) layoutData(
 ) (
 	userid string,
 	unidadid string,
-	mens []*model.Menus,
+	mens []*principal.MenuGrupo,
 	rols []*model.ResponseRolMe,
 	user *model.ResponseUsuario,
 	err error,
@@ -126,10 +126,12 @@ func (c *MainController) layoutData(
 	rolid := cookie.RolID
 	unidadid = cookie.UnidadID
 
-	mens, err = menus.GetMenusbyRol(c.DB, rolid)
+	menx, err := menus.GetMenusbyRol(c.DB, rolid)
 	if err != nil {
 		return
 	}
+
+	mens = principal.AgruparMenus(menx)
 
 	rols, err = roles.GetRolesByUsuario(c.DB, userid)
 	if err != nil {

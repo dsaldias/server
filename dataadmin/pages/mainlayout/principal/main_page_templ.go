@@ -17,7 +17,7 @@ import (
 func MainPageLayout(
 	titulo string,
 	unidadid string,
-	menus []*model.Menus,
+	menus []*MenuGrupo,
 	roles []*model.ResponseRolMe,
 	usuario *model.ResponseUsuario,
 	contenido templ.Component,

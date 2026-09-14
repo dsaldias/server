@@ -1,0 +1,165 @@
+package principal
+
+import (
+	xm "github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/collapsible"
+	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/sidebar"
+)
+
+type MenuGrupo struct {
+	Padre *xm.Menus
+	Hijos []*xm.Menus
+}
+
+templ MenuItems2(
+	grupos []*MenuGrupo,
+	current_path string,
+) {
+	for _, grupo := range grupos {
+		if len(grupo.Hijos) > 0 {
+			@collapsible.Collapsible(collapsible.Props{
+				Class: "group/collapsible w-full",
+				Open:  rutaGrupoActivo(grupo.Hijos, current_path),
+			}) {
+				@collapsible.Trigger() {
+					@sidebar.MenuButton(sidebar.MenuButtonProps{
+						Tooltip: grupo.Padre.Label,
+					}) {
+						@icon.FileText(icon.Props{
+							Class: "size-4",
+						})
+						<span>{ grupo.Padre.Label }</span>
+						@icon.ChevronRight(icon.Props{
+							Class: "ml-auto size-4",
+						})
+					}
+				}
+				@collapsible.Content() {
+					@sidebar.MenuSub() {
+						for _, hijo := range grupo.Hijos {
+							@MenuHijo(hijo, current_path)
+						}
+					}
+				}
+			}
+		} else {
+			@sidebar.MenuItem() {
+				@sidebar.MenuButton(sidebar.MenuButtonProps{
+					Href:     grupo.Padre.Path,
+					Tooltip:  grupo.Padre.Label,
+					IsActive: rutaActiva(current_path, grupo.Padre.Path),
+				}) {
+					@icon.FileText(icon.Props{
+						Class: "size-4",
+					})
+					<span>{ grupo.Padre.Label }</span>
+				}
+			}
+		}
+	}
+}
+
+templ MenuHijo(
+	menu *xm.Menus,
+	current_path string,
+) {
+	@sidebar.MenuSubItem() {
+		@sidebar.MenuSubButton(sidebar.MenuSubButtonProps{
+			Href:     menu.Path,
+			IsActive: rutaActiva(current_path, menu.Path),
+			Attributes: templ.Attributes{
+				"data-menu-path": menu.Path,
+				"hx-get":         menu.Path,
+				"hx-target":      "#contenido",
+				"hx-swap":        "innerHTML",
+				"hx-push-url":    "true",
+
+				"hx-on::before-request": `
+					const loading = this.querySelector('[data-loading]');
+					if (loading) {
+						loading.classList.remove('hidden');
+					}
+					this.style.pointerEvents = 'none';
+				`,
+
+				"hx-on::after-request": `
+					const loading = this.querySelector('[data-loading]');
+					if (loading) {
+						loading.classList.add('hidden');
+					}
+					this.style.pointerEvents = '';
+				`,
+
+				"hx-on::send-error": `
+					const loading = this.querySelector('[data-loading]');
+					if (loading) {
+						loading.classList.add('hidden');
+					}
+					this.style.pointerEvents = '';
+
+					Toastify({
+						text: 'No se pudo conectar con el servidor',
+						style: {
+							background: 'red',
+							zIndex: 999999
+						},
+						duration: 5000,
+						close: true,
+						gravity: 'top',
+						position: 'right'
+					}).showToast();
+				`,
+
+				"hx-on::response-error": `
+					const loading = this.querySelector('[data-loading]');
+					if (loading) {
+						loading.classList.add('hidden');
+					}
+					this.style.pointerEvents = '';
+				`,
+			},
+		}) {
+			<span>{ menu.Label }</span>
+			<span data-loading class="hidden ml-auto animate-spin">↻</span>
+		}
+	}
+}
+
+func AgruparMenus(menus []*xm.Menus) []*MenuGrupo {
+	grupos := make([]*MenuGrupo, 0)
+
+	hijosPorPadre := make(map[string][]*xm.Menus)
+
+	for _, m := range menus {
+		if m.PadreID != nil {
+			hijosPorPadre[*m.PadreID] = append(hijosPorPadre[*m.PadreID], m)
+		}
+	}
+
+	for _, m := range menus {
+		if m.PadreID != nil {
+			continue
+		}
+
+		grupos = append(grupos, &MenuGrupo{
+			Padre: m,
+			Hijos: hijosPorPadre[m.ID],
+		})
+	}
+
+	return grupos
+}
+
+func rutaGrupoActivo(
+	hijos []*xm.Menus,
+	currentPath string,
+) bool {
+	for _, hijo := range hijos {
+		if hijo.Path == currentPath {
+			return true
+		}
+	}
+
+	return false
+}
