@@ -110,6 +110,29 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 										"document.getElementById('rol-seleccionado').textContent = '%s'",
 										r.Unidad.Nombre,
 									),
+									"hx-on::after-request":`
+										const side = document.querySelector("#x-sidebar-menus");
+										console.log(side);
+										document.querySelectorAll('[data-tui-collapsible="root"]').forEach((root) => {
+											const trigger = root.querySelector(
+													'[data-tui-collapsible="trigger"]'
+											);
+
+											const content = root.querySelector(
+													'[data-tui-collapsible="content"]'
+											);
+
+											if (!trigger || !content) {
+													return;
+											}
+
+											const open =
+													root.getAttribute("data-tui-collapsible-state") === "open";
+
+											trigger.setAttribute("aria-expanded", String(open));
+											content.classList.toggle("tui-collapsible-open", open);
+									});
+									`,
 								},
 							}) {
 								<div class="flex flex-col">

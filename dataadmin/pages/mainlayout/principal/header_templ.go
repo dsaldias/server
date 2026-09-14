@@ -231,7 +231,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 						var templ_7745c5c3_Var11 string
 						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(r.Unidad.Nombre)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 117, Col: 27}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 140, Col: 27}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 						if templ_7745c5c3_Err != nil {
@@ -244,7 +244,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 						var templ_7745c5c3_Var12 string
 						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(r.Rol.Nombre)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 120, Col: 24}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/header.templ`, Line: 143, Col: 24}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 						if templ_7745c5c3_Err != nil {
@@ -271,6 +271,29 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 								"document.getElementById('rol-seleccionado').textContent = '%s'",
 								r.Unidad.Nombre,
 							),
+							"hx-on::after-request": `
+										const side = document.querySelector("#x-sidebar-menus");
+										console.log(side);
+										document.querySelectorAll('[data-tui-collapsible="root"]').forEach((root) => {
+											const trigger = root.querySelector(
+													'[data-tui-collapsible="trigger"]'
+											);
+
+											const content = root.querySelector(
+													'[data-tui-collapsible="content"]'
+											);
+
+											if (!trigger || !content) {
+													return;
+											}
+
+											const open =
+													root.getAttribute("data-tui-collapsible-state") === "open";
+
+											trigger.setAttribute("aria-expanded", String(open));
+											content.classList.toggle("tui-collapsible-open", open);
+									});
+									`,
 						},
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
