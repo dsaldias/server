@@ -6,7 +6,7 @@ go 1.26.0
 require (
 	github.com/99designs/gqlgen v0.17.95
 	github.com/HugoSmits86/nativewebp v1.3.0
-	github.com/Oudwins/tailwind-merge-go v0.2.0
+	github.com/Oudwins/tailwind-merge-go v0.2.3
 	github.com/a-h/templ v0.3.1020
 	github.com/coder/websocket v1.8.15
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -29,7 +29,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
-	github.com/urfave/cli/v3 v3.11.0 // indirect
+	github.com/urfave/cli/v3 v3.12.0 // indirect
 	golang.org/x/image v0.46.0 // indirect
 	golang.org/x/mod v0.41.0 // indirect
 	golang.org/x/sync v0.23.0 // indirect
