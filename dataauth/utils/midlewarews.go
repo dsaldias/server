@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -33,8 +32,6 @@ func UaserIDMiddleware(db *sql.DB) transport.WebsocketInitFunc {
 	return func(ctx context.Context, initPayload transport.InitPayload) (context.Context, *transport.InitPayload, error) {
 		uid, ok3 := initPayload["uid"].(string)
 		pay := &transport.InitPayload{}
-
-		fmt.Printf("%+v\n\n", initPayload)
 
 		if !ok3 {
 			return ctx, pay, nil

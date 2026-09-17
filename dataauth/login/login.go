@@ -86,7 +86,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	send := os.Getenv("SEND_NOTI_LOGIN")
 	if send == "1" {
 		user := fmt.Sprintf("%s %s", us.Nombres, us.Apellido1)
-		xnotificaciones.EnviarNotificacion(ctx, user+" ha accedido al sistema", nil)
+		xnotificaciones.EnviarNotificacion(ctx, user+" acaba de ingresar al sistema", nil)
 	}
 
 	// funcionalidad nueva para cookie
