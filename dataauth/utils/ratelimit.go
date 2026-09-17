@@ -74,7 +74,8 @@ func (rl *RateLimiter) RateMiddleware(next http.Handler) http.Handler {
 		}
 
 		if info.count >= rl.limit {
-			http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
+			// http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
+			http.Error(w, "demasiadas conexiones al servidor en 1 segundo!!!!!", http.StatusTooManyRequests)
 			return
 		}
 

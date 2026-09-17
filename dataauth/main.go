@@ -43,7 +43,7 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	router.Use(utils.MiddlewareCookie)
 	router.Use(utils.AuthMiddleware(db))
 	if rate == "1" {
-		rl := utils.NewRateLimiter(18, time.Second)
+		rl := utils.NewRateLimiter(22, time.Second)
 		router.Use(rl.RateMiddleware)
 	}
 
@@ -80,7 +80,8 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	}
 
 	router.Handle("/query_auth", srv2)
-	router.Handle("/ws", srv2)
+	// router.Handle("/ws", srv2)
+	router.Handle("/ws", utils.WsMiddlewareCookie(srv2))
 	router.Handle("/query", srv)
 	router.Handle("/ws_app", srv)
 	router.Get("/sse", xnotificaciones.SSEHandler)

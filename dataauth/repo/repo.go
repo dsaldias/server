@@ -336,5 +336,8 @@ func ChatsNoLeidos(ctx context.Context, db *sql.DB, userID string) (int32, error
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
 func NotificacionesSubs(ctx context.Context, db *sql.DB) (<-chan *model.XNotificacion, error) {
 	userid := utils.CtxUserIDWs(ctx, db, "")
-	return xnotificaciones.NotificacionesSubs(ctx, userid)
+	if userid != nil {
+		return xnotificaciones.NotificacionesSubs(ctx, *userid)
+	}
+	return nil, nil
 }

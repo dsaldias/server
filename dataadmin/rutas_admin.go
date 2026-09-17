@@ -22,7 +22,8 @@ import (
 var Assets embed.FS
 
 var (
-	WEB_PATH_BASE   = "/adminx/"
+	WEB_PATH_BASE   = "/adminx"
+	WEB_PATH_BASE2  = "/adminx/"
 	WEB_PATH_LOGIN  = "/adminx/login"
 	WEB_PATH_LOGOUT = "/adminx/logout"
 	WEB_PATH_MAIN   = "/adminx/main"
@@ -89,6 +90,7 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGOUT, H: http.HandlerFunc(cont_login.Logout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGIN, H: cont_login.Login()})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio(principal.AssetVersion))})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE2, H: templ.Handler(xlogin.Inicio(principal.AssetVersion))})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(umain.MainLayout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_SET_COOKIE_UNIDAD, H: http.HandlerFunc(umain.SetCookieUnidadId)})
 
