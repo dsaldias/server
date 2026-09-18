@@ -30,7 +30,8 @@ const (
 type ModalGenericoX struct {
 	DialogID        string
 	TargetRefreshID string
-	DialogSize      string
+	DialogClass     string
+	// DialogSize      string
 }
 
 func ModalGenerico(p ModalGenericoX) templ.Component {
@@ -109,7 +110,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var6 string
 						templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue("titulo-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 44, Col: 38}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 45, Col: 38}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 						if templ_7745c5c3_Err != nil {
@@ -148,7 +149,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("descripcion-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 47, Col: 43}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 48, Col: 43}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 						if templ_7745c5c3_Err != nil {
@@ -177,7 +178,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue("xform-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 52, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 53, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
@@ -190,7 +191,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.TargetRefreshID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 54, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 55, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 				if templ_7745c5c3_Err != nil {
@@ -203,7 +204,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 78, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 79, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 				if templ_7745c5c3_Err != nil {
@@ -224,7 +225,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 83, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 84, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 				if templ_7745c5c3_Err != nil {
@@ -253,7 +254,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 86, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 87, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 					if templ_7745c5c3_Err != nil {
@@ -359,7 +360,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 			})
 			templ_7745c5c3_Err = dialog.Content(dialog.ContentProps{
 				// max-w-2xl, max-w-5xl, max-w-7xl
-				Class:        p.DialogSize + " max-h-[90vh] flex flex-col z-[99999]",
+				Class:        modalDialogClass(p.DialogClass),
 				DisableModal: false,
 				Attributes: templ.Attributes{
 					"data-mobile-modal": "true",
@@ -384,6 +385,13 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 		}
 		return nil
 	})
+}
+
+func modalDialogClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "max-h-[90vh] flex flex-col z-[99999]"
 }
 
 var _ = templruntime.GeneratedTemplate
