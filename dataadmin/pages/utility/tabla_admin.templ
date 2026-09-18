@@ -13,7 +13,7 @@ type MiTablaProps struct {
 	UrlRefresh     string
 	ListaID        string
 	DialogID       string
-	DialogSize     string
+	DialogClass     string
 	Acciones       templ.Component
 	Busqueda       bool
 	Ordenable      bool
@@ -40,7 +40,7 @@ templ TablaAdmin(
 	@ModalGenerico(ModalGenericoX{
 		DialogID:        props.DialogID,
 		TargetRefreshID: "#" + props.ListaID,
-		DialogSize:      props.DialogSize,
+		DialogClass:      props.DialogClass,
 	}) {
 	}
 	<div
