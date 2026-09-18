@@ -21,6 +21,7 @@ type MiTablaProps struct {
 	UrlRefresh     string
 	ListaID        string
 	DialogID       string
+	DialogSize     string
 	Acciones       templ.Component
 	Busqueda       bool
 	Ordenable      bool
@@ -57,7 +58,7 @@ func TablaAdmin(
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Titulo)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 26, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 27, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -70,7 +71,7 @@ func TablaAdmin(
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Descripcion)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 28, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 29, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -127,6 +128,7 @@ func TablaAdmin(
 		templ_7745c5c3_Err = ModalGenerico(ModalGenericoX{
 			DialogID:        props.DialogID,
 			TargetRefreshID: "#" + props.ListaID,
+			DialogSize:      props.DialogSize,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -138,7 +140,7 @@ func TablaAdmin(
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(props.ListaID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 45, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 47, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -162,7 +164,7 @@ func TablaAdmin(
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(props.FilasPorPagina))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 52, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 54, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -241,7 +243,7 @@ func TablaAdminBusqueda(lista_id string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(lista_id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 71, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 73, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -435,7 +437,7 @@ func TablaAdminAcciones(
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(nombre)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 127, Col: 14}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 129, Col: 14}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -501,7 +503,7 @@ func TablaAdminContextual(t string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(t)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 148, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 150, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -551,7 +553,7 @@ func TablaAdminPaginacion(lista_id string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(lista_id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 160, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 162, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {

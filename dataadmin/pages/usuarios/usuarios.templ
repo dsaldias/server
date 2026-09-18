@@ -2,11 +2,11 @@ package usuarios
 
 import (
 	"fmt"
+	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/selectbox"
 	"github.com/templui/templui/components/table"
-	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"time"
 )
 
@@ -18,6 +18,7 @@ templ Usuarios(usuarios []*model.Usuario, url_refresh string) {
 		UrlRefresh:     url_refresh,
 		ListaID:        "lista-usuarios",
 		DialogID:       "xdialog-form-usuario",
+		// DialogSize:     "sm:max-w-6xl",
 		Acciones:       HeaderAcciones(),
 		Busqueda:       true,
 		Ordenable:      true,
