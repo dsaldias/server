@@ -168,6 +168,7 @@ import (
 
 	"github.com/dsaldias/server/dataadmin"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 
 	"github.com/dsaldias/server/dataauth/utils"
 )
@@ -191,7 +192,9 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 		// Stylesheet: "/asset/css/output.css",
 		// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
 		// ExtraCSS:   []string{"/asset/css/custom.css"},
-		// ExtraJS:    []string{"/asset/custom.js"},
+		// ExtraJS: []layoutconfig.JSLink{
+		// 	{Src: "/asset/custom.js"}, 
+		// },
 	}
 
 	cont_main := mainlayout.MainController{
