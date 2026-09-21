@@ -31,7 +31,7 @@ templ Layout(
 			<script src={ "/assets/json_enc_custom.js?v=" + AssetVersion }></script>
 			<script src={ "/assets/mitabla_admin.js?v=" + AssetVersion }></script>
 			for _, js := range config.ExtraJS {
-				<script src={ js.Src + "?v=" + AssetVersion } if js.Module != "" {
+				<script src={ js.Src + "?v=" + AssetVersion } if js.Type != "" {
 	type={ js.Type }
 }></script>
 			}
