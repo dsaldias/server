@@ -1,5 +1,10 @@
 package layoutconfig
 
+type JSLink struct {
+	Src    string
+	Module string
+}
+
 type Config struct {
 	Title        string
 	ThemeColor   string
@@ -10,7 +15,7 @@ type Config struct {
 	SidebarClass string
 	HeaderClass  string
 	ExtraCSS     []string
-	ExtraJS      []string
+	ExtraJS      []JSLink
 }
 
 func Default() Config {

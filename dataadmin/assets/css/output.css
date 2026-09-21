@@ -2695,9 +2695,6 @@
     .sm\:\!max-w-sm {
       max-width: var(--container-sm) !important;
     }
-    .sm\:max-w-6xl {
-      max-width: var(--container-6xl);
-    }
     .sm\:max-w-lg {
       max-width: var(--container-lg);
     }

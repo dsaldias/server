@@ -62,12 +62,11 @@ func Usuarios(usuarios []*model.Usuario, url_refresh string) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = utility.TablaAdmin(utility.MiTablaProps{
-			Titulo:      "Usuarios registrados",
-			Descripcion: "Administración y gestión de usuarios del sistema",
-			UrlRefresh:  url_refresh,
-			ListaID:     "lista-usuarios",
-			DialogID:    "xdialog-form-usuario",
-			// DialogSize:     "sm:max-w-6xl",
+			Titulo:         "Usuarios registrados",
+			Descripcion:    "Administración y gestión de usuarios del sistema",
+			UrlRefresh:     url_refresh,
+			ListaID:        "lista-usuarios",
+			DialogID:       "xdialog-form-usuario",
 			Acciones:       HeaderAcciones(),
 			Busqueda:       true,
 			Ordenable:      true,
@@ -305,7 +304,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var14 string
 							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(us.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 58, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 57, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 							if templ_7745c5c3_Err != nil {
@@ -336,7 +335,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var16 string
 							templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(us.Nombres)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 61, Col: 18}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 60, Col: 18}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 							if templ_7745c5c3_Err != nil {
@@ -349,7 +348,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(us.Apellido1)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 61, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 60, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -362,7 +361,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var18 string
 							templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(us.Apellido2))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 62, Col: 33}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 61, Col: 33}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 							if templ_7745c5c3_Err != nil {
@@ -393,7 +392,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var20 string
 							templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(us.Conexiones)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 65, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 64, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 							if templ_7745c5c3_Err != nil {
@@ -424,7 +423,7 @@ func ListaUsuarios(usuarios []*model.Usuario) templ.Component {
 							var templ_7745c5c3_Var22 string
 							templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(us.LastLogin))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 68, Col: 31}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 67, Col: 31}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 							if templ_7745c5c3_Err != nil {

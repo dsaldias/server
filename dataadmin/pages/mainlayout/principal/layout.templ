@@ -30,13 +30,15 @@ templ Layout(
 			<script src={ "/assets/sidebar.js?v=" + AssetVersion }></script>
 			<script src={ "/assets/json_enc_custom.js?v=" + AssetVersion }></script>
 			<script src={ "/assets/mitabla_admin.js?v=" + AssetVersion }></script>
-			for _, src := range config.ExtraJS {
-				<script src={ src + "?v=" + AssetVersion }></script>
+			for _, js := range config.ExtraJS {
+				<script src={ js.Src + "?v=" + AssetVersion } if js.Module != "" {
+	type={ js.Module }
+}></script>
 			}
 		</head>
 		<body class={ config.WithDefaults().BodyClass }>
 			{ children... }
-			@ModalLogin() 
+			@ModalLogin()
 		</body>
 	</html>
 }
