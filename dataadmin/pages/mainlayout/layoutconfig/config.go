@@ -1,5 +1,6 @@
 package layoutconfig
 
+// mi clase de ayuda
 type JSLink struct {
 	Src  string
 	Type string
