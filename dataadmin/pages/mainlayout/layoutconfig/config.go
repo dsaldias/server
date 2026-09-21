@@ -1,8 +1,8 @@
 package layoutconfig
 
 type JSLink struct {
-	Src    string
-	Module string
+	Src  string
+	Type string
 }
 
 type Config struct {
