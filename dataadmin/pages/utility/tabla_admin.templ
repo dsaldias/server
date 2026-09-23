@@ -13,7 +13,7 @@ type MiTablaProps struct {
 	UrlRefresh     string
 	ListaID        string
 	DialogID       string
-	DialogClass     string
+	DialogClass    string
 	Acciones       templ.Component
 	Busqueda       bool
 	Ordenable      bool
@@ -23,7 +23,7 @@ type MiTablaProps struct {
 templ TablaAdmin(
 	props MiTablaProps,
 ) {
-	<div class="mb-4">
+	/* <div class="mb-4">
 		<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
 		<p class="text-sm text-muted-foreground">
 			{ props.Descripcion }
@@ -33,18 +33,34 @@ templ TablaAdmin(
 		if props.Acciones != nil {
 			@props.Acciones
 		}
-	}
+	} */
+	<div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
+		<div class="text-left">
+			<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
+			<p class="text-sm text-muted-foreground">
+				{ props.Descripcion }
+			</p>
+		</div>
+		<div class="md:flex md:justify-end">
+			@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
+				if props.Acciones != nil {
+					@props.Acciones
+				}
+			}
+		</div>
+	</div>
 	if props.Busqueda {
 		@TablaAdminBusqueda(props.ListaID)
 	}
 	@ModalGenerico(ModalGenericoX{
 		DialogID:        props.DialogID,
 		TargetRefreshID: "#" + props.ListaID,
-		DialogClass:      props.DialogClass,
+		DialogClass:     props.DialogClass,
 	}) {
 	}
 	<div
 		id={ props.ListaID }
+		class="rounded-xl border border-border shadow-sm overflow-hidden bg-background px-1"
 		data-tabla-contextual="true"
 		if props.Ordenable {
 			data-tabla-ordenable="true"
