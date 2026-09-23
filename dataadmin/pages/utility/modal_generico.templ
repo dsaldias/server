@@ -34,10 +34,12 @@ templ ModalGenerico(p ModalGenericoX) {
 	}) {
 		@dialog.Content(dialog.ContentProps{
 			// max-w-2xl, max-w-5xl, max-w-7xl
-			Class: modalDialogClass(p.DialogClass),
+			// Class:        modalDialogClass(p.DialogClass),
+			Class:        "relative " + modalDialogClass(p.DialogClass),
 			DisableModal: false,
 			Attributes: templ.Attributes{
 				"data-mobile-modal": "true",
+				"id":                "modal-content-" + p.DialogID,
 			},
 		}) {
 			@dialog.Header() {
@@ -47,6 +49,20 @@ templ ModalGenerico(p ModalGenericoX) {
 				@dialog.Description() {
 					<span id={ "descripcion-" + p.DialogID }></span>
 				}
+			}
+			@button.Button(button.Props{
+				ID:      "btn-expandir-" + p.DialogID,
+				Variant: button.VariantGhost,
+				Type:    "button",
+				Class:   "absolute right-12 top-2 h-8 w-8 p-0 z-10",
+			}) {
+				<span
+					id={ "icon-expandir-" + p.DialogID }
+					class="text-lg leading-none"
+					title="Expandir"
+				>
+					⛶
+				</span>
 			}
 			<div class="overflow-y-auto flex-1 pr-2">
 				<form
@@ -111,7 +127,7 @@ templ ModalGenerico(p ModalGenericoX) {
 			}
 		}
 	}
-	<script>
+	/* <script>
 	document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('[data-mobile-modal]').forEach(dialog => {
         const mobile = window.matchMedia("(max-width: 767px)").matches;
@@ -119,7 +135,55 @@ templ ModalGenerico(p ModalGenericoX) {
         dialog.dataset.tuiDialogShowModal = !mobile ? "true" : "false";
     });
 });
-	</script>
+	</script> */
+	<script>
+	if (!window.modalGenericoExpandirInicializado) {
+		window.modalGenericoExpandirInicializado = true;
+
+		document.addEventListener("click", (event) => {
+			const button = event.target.closest('[id^="btn-expandir-"]');
+
+			if (!button) {
+				return;
+			}
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			const dialogID = button.id.replace("btn-expandir-", "");
+			const content = document.getElementById("modal-content-" + dialogID);
+			const icon = document.getElementById("icon-expandir-" + dialogID);
+
+			if (!content) {
+				return;
+			}
+
+			const expandido = content.dataset.expanded === "true";
+
+			if (expandido) {
+				content.style.width = "";
+				content.style.maxWidth = "";
+
+				content.dataset.expanded = "false";
+
+				if (icon) {
+					icon.textContent = "⛶";
+					icon.title = "Expandir";
+				}
+			} else {
+				content.style.width = "90vw";
+				content.style.maxWidth = "90vw";
+
+				content.dataset.expanded = "true";
+
+				if (icon) {
+					icon.textContent = "⛶";
+					icon.title = "Restaurar";
+				}
+			}
+		});
+	}
+</script>
 }
 
 func modalDialogClass(class string) string {
