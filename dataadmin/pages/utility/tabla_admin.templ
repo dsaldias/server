@@ -87,19 +87,21 @@ templ TablaAdminHeaderAcciones(
 	lista_id string,
 ) {
 	<div class="flex items-center gap-2 mb-4">
-		@button.Button(button.Props{
-			Variant: button.VariantOutline,
-			Size:    button.SizeSm,
-			Class:   "hover:bg-[#e8f2f1]",
-			Attributes: templ.Attributes{
-				"hx-get":          url_refresh,
-				"hx-disabled-elt": "this",
-				"hx-target":       "#" + lista_id,
-				"hx-swap":         "innerHTML",
-			},
-		}) {
-			@icon.RefreshCw()
-			Refrescar
+		if url_refresh != "" {
+			@button.Button(button.Props{
+				Variant: button.VariantOutline,
+				Size:    button.SizeSm,
+				Class:   "hover:bg-[#e8f2f1]",
+				Attributes: templ.Attributes{
+					"hx-get":          url_refresh,
+					"hx-disabled-elt": "this",
+					"hx-target":       "#" + lista_id,
+					"hx-swap":         "innerHTML",
+				},
+			}) {
+				@icon.RefreshCw()
+				Refrescar
+			}
 		}
 		{ children... }
 	</div>
