@@ -83,12 +83,12 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = sidebar.Trigger(sidebar.TriggerProps{
-			Class: "hover:bg-sidebar-accent",
+			Class: "hover:bg-header-accent",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"flex items-center gap-2\"><button type=\"button\" class=\"inline-flex items-center justify-center rounded-md p-2 hover:bg-sidebar-accent\" onclick=\"\n\t\t\t\t\tconst dark = document.documentElement.classList.toggle('dark');\n\t\t\t\t\tlocalStorage.setItem('theme', dark ? 'dark' : 'light');\n\t\t\t\t\" title=\"Cambiar tema\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"flex items-center gap-2\"><button type=\"button\" class=\"inline-flex items-center justify-center rounded-md p-2 hover:bg-header-accent\" onclick=\"\n\t\t\t\t\tconst dark = document.documentElement.classList.toggle('dark');\n\t\t\t\t\tlocalStorage.setItem('theme', dark ? 'dark' : 'light');\n\t\t\t\t\" title=\"Cambiar tema\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +132,7 @@ func Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Conf
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button class=\"flex items-center gap-2 rounded-md px-3 py-0 hover:bg-sidebar-accent\"><div class=\"min-w-0 max-w-fit flex flex-col text-left leading-tight\"><span id=\"rol-seleccionado\" class=\"whitespace-nowrap font-medium\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button class=\"flex items-center gap-2 rounded-md px-3 py-0 hover:bg-header-accent\"><div class=\"min-w-0 max-w-fit flex flex-col text-left leading-tight\"><span id=\"rol-seleccionado\" class=\"whitespace-nowrap font-medium\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

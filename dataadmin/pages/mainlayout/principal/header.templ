@@ -35,13 +35,13 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 	<header class={ config.WithDefaults().HeaderClass }>
 		<div class="flex items-center gap-3">
 			@sidebar.Trigger(sidebar.TriggerProps{
-				Class: "hover:bg-sidebar-accent",
+				Class: "hover:bg-header-accent",
 			})
 		</div>
 		<div class="flex items-center gap-2">
 			<button
 				type="button"
-				class="inline-flex items-center justify-center rounded-md p-2 hover:bg-sidebar-accent"
+				class="inline-flex items-center justify-center rounded-md p-2 hover:bg-header-accent"
 				onclick="
 					const dark = document.documentElement.classList.toggle('dark');
 					localStorage.setItem('theme', dark ? 'dark' : 'light');
@@ -57,7 +57,7 @@ templ Header(roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Con
 			</button>
 			@dropdown.Dropdown() {
 				@dropdown.Trigger() {
-					<button class="flex items-center gap-2 rounded-md px-3 py-0 hover:bg-sidebar-accent">
+					<button class="flex items-center gap-2 rounded-md px-3 py-0 hover:bg-header-accent">
 						<div class="min-w-0 max-w-fit flex flex-col text-left leading-tight">
 							<span
 								id="rol-seleccionado"
