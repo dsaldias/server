@@ -4,6 +4,7 @@ import "github.com/templui/templui/components/button"
 
 type BtnProps struct {
 	ModalTitle       string
+	ModalTooltip     string
 	ModalDescription string
 	HtmxGet          string
 	HtmxPost         string
@@ -22,7 +23,7 @@ templ ModalButton(p BtnProps) {
 		Size:    sizeBtn(p),
 		Variant: button.VariantOutline,
 		Attributes: templ.Attributes{
-			"title":     p.ModalTitle,
+			"title":     tooltip(p.ModalTitle, p.ModalTooltip),
 			"hx-get":    p.HtmxGet,
 			"hx-target": "#xcontenido-" + p.DialogID,
 			"hx-swap":   "innerHTML",
@@ -129,4 +130,11 @@ func isTrue(b bool) string {
 		return "1"
 	}
 	return "0"
+}
+
+func tooltip(a, b string) string {
+	if len(b) > 0 {
+		return b
+	}
+	return a
 }

@@ -20,9 +20,10 @@ const (
 )
 
 type ModalGenericoX struct {
-	DialogID        string
-	TargetRefreshID string
-	DialogClass     string
+	DialogID          string
+	TargetRefreshID   string
+	DialogClass       string
+	DisableCustomForm bool
 	// DialogSize      string
 }
 
@@ -65,21 +66,29 @@ templ ModalGenerico(p ModalGenericoX) {
 				</span>
 			}
 			<div class="overflow-y-auto flex-1 pr-2">
-				<form
-					id={ "xform-" + p.DialogID }
-					hx-post=""
-					hx-target={ p.TargetRefreshID }
-					hx-swap="innerHTML"
-					hx-ext="json-enc-custom"
-					class="space-y-5"
-					hx-on::before-request="
+				if p.DisableCustomForm {
+					<div class="xoverflow-y-auto flex-1 pr-2">
+						<div id={ "xcontenido-" + p.DialogID }>
+							{ children... }
+						</div>
+					</div>
+					
+				} else {
+					<form
+						id={ "xform-" + p.DialogID }
+						hx-post=""
+						hx-target={ p.TargetRefreshID }
+						hx-swap="innerHTML"
+						hx-ext="json-enc-custom"
+						class="space-y-5"
+						hx-on::before-request="
 						const d = this.parentElement.parentElement;
 						this.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;
 						const button = d.querySelector('button[type=submit]');
 						button.disabled = true;
 						button.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';
 					"
-					hx-on::after-request="
+						hx-on::after-request="
 						const d = this.parentElement.parentElement;
 						const button = d.querySelector('button[type=submit]');
 						button.disabled = false;
@@ -90,13 +99,14 @@ templ ModalGenerico(p ModalGenericoX) {
 							Toastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()
 						}
 					"
-				>
-					<div class="xoverflow-y-auto flex-1 pr-2">
-						<div id={ "xcontenido-" + p.DialogID }>
-							{ children... }
+					>
+						<div class="xoverflow-y-auto flex-1 pr-2">
+							<div id={ "xcontenido-" + p.DialogID }>
+								{ children... }
+							</div>
 						</div>
-					</div>
-				</form>
+					</form>
+				}
 				<div id={ "resultado-" + p.DialogID }></div>
 			</div>
 			@dialog.Footer() {

@@ -12,6 +12,7 @@ import "github.com/templui/templui/components/button"
 
 type BtnProps struct {
 	ModalTitle       string
+	ModalTooltip     string
 	ModalDescription string
 	HtmxGet          string
 	HtmxPost         string
@@ -75,7 +76,7 @@ func ModalButton(p BtnProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.BtnText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 100, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 101, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -93,7 +94,7 @@ func ModalButton(p BtnProps) templ.Component {
 			Size:    sizeBtn(p),
 			Variant: button.VariantOutline,
 			Attributes: templ.Attributes{
-				"title":     p.ModalTitle,
+				"title":     tooltip(p.ModalTitle, p.ModalTooltip),
 				"hx-get":    p.HtmxGet,
 				"hx-target": "#xcontenido-" + p.DialogID,
 				"hx-swap":   "innerHTML",
@@ -198,6 +199,13 @@ func isTrue(b bool) string {
 		return "1"
 	}
 	return "0"
+}
+
+func tooltip(a, b string) string {
+	if len(b) > 0 {
+		return b
+	}
+	return a
 }
 
 var _ = templruntime.GeneratedTemplate
