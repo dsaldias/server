@@ -87,6 +87,8 @@
   --header: #081027;
   --header-foreground: #ffffff;
   --header-accent: #244775;
+
+  --header-xtable: #e2e5ef;
 }
 
 .dark {
@@ -144,6 +146,8 @@
   --header: #060b19;
   --header-foreground: #ffffff;
   --header-accent: #10264a;
+
+  --header-xtable: #000000;
 }
 .dark body {
   background-color: var(--background);

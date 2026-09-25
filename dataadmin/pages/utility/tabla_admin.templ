@@ -14,6 +14,7 @@ type MiTablaProps struct {
 	ListaID        string
 	DialogID       string
 	DialogClass    string
+	HeaderClass    string
 	Acciones       templ.Component
 	Busqueda       bool
 	Ordenable      bool
@@ -23,30 +24,37 @@ type MiTablaProps struct {
 templ TablaAdmin(
 	props MiTablaProps,
 ) {
-	<div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
-		<div class="text-left">
-			<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
-			<p class="text-sm text-muted-foreground">
-				{ props.Descripcion }
-			</p>
-		</div>
-		<div class="md:flex md:justify-end">
-			@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
-				if props.Acciones != nil {
-					@props.Acciones
+	<div
+		if props.HeaderClass == "" {
+			class="bg-[var(--header-xtable)] px-3 py-1"
+		} else {
+			class={ props.HeaderClass }
+		}
+	>
+		<div class="mb-2 grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
+			<div class="text-left">
+				<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
+				<p class="text-sm text-muted-foreground">
+					{ props.Descripcion }
+				</p>
+			</div>
+			<div class="md:flex md:items-center md:justify-end">
+				@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
+					if props.Acciones != nil {
+						@props.Acciones
+					}
 				}
-			}
+			</div>
 		</div>
+		if props.Busqueda {
+			@TablaAdminBusqueda(props.ListaID)
+		}
+		@ModalGenerico(ModalGenericoX{
+			DialogID:        props.DialogID,
+			TargetRefreshID: "#" + props.ListaID,
+			DialogClass:     props.DialogClass,
+		})
 	</div>
-	if props.Busqueda {
-		@TablaAdminBusqueda(props.ListaID)
-	}
-	@ModalGenerico(ModalGenericoX{
-		DialogID:        props.DialogID,
-		TargetRefreshID: "#" + props.ListaID,
-		DialogClass:     props.DialogClass,
-	}) {
-	}
 	<div
 		id={ props.ListaID }
 		class="rounded-xl border border-border shadow-sm overflow-hidden bg-background px-1"
@@ -69,7 +77,7 @@ templ TablaAdmin(
 }
 
 templ TablaAdminBusqueda(lista_id string) {
-	<div class="mb-4">
+	<div class="mb-1">
 		<div class="relative max-w-sm">
 			<input
 				type="text"
@@ -86,7 +94,7 @@ templ TablaAdminHeaderAcciones(
 	url_refresh string,
 	lista_id string,
 ) {
-	<div class="flex items-center gap-2 mb-4">
+	<div class="flex items-center gap-2 mb-0">
 		if url_refresh != "" {
 			@button.Button(button.Props{
 				Variant: button.VariantOutline,

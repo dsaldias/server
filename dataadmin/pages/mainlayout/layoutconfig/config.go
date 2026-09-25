@@ -26,8 +26,8 @@ func Default() Config {
 		Stylesheet:   "/assets/css/output.css",
 		BodyClass:    "min-h-screen bg-background text-foreground",
 		ShellClass:   "flex h-full min-h-0 flex-col",
-		MainClass:    "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
-		SidebarClass: "text-white z-[100]",
+		MainClass:    "min-h-0 flex-1 overflow-auto px-0 pt-0 pb-16",
+		SidebarClass: "text-white z-[100] !border-r-0",
 		HeaderClass:  "sticky top-0 flex h-10 w-full shrink-0 items-center justify-between border-b px-6 bg-header text-header-foreground z-[999]",
 	}
 }
