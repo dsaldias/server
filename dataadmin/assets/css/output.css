@@ -3061,7 +3061,7 @@
   --header-xtable: #e2e5ef;
 }
 .dark {
-  --background: #070b18;
+  --background: #24243e;
   --foreground: #eef4ff;
   --card: #0d1428;
   --card-foreground: #eef4ff;
@@ -3079,7 +3079,7 @@
   --border: #1c3158;
   --input: #1a2b4d;
   --ring: #38bdf8;
-  --sidebar: #060b19;
+  --sidebar: #0e0e23;
   --sidebar-foreground: #eaf2ff;
   --sidebar-primary: #4f8cff;
   --sidebar-primary-foreground: #ffffff;
@@ -3090,7 +3090,7 @@
   --header: #060b19;
   --header-foreground: #ffffff;
   --header-accent: #10264a;
-  --header-xtable: #000000;
+  --header-xtable: #0d1428;
 }
 .dark body {
   background-color: var(--background);

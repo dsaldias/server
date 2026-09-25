@@ -3,6 +3,7 @@ package utility
 import (
 	"fmt"
 	"github.com/templui/templui/components/button"
+	"github.com/templui/templui/components/card"
 	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/popover"
 )
@@ -26,7 +27,7 @@ templ TablaAdmin(
 ) {
 	<div
 		if props.HeaderClass == "" {
-			class="bg-[var(--header-xtable)] px-3 py-1"
+			class="bg-[var(--header-xtable)] px-3 py-1 mb-1"
 		} else {
 			class={ props.HeaderClass }
 		}
@@ -176,13 +177,17 @@ templ TablaAdminPaginacion(lista_id string) {
 		class="flex items-center justify-between mt-4"
 		data-tabla-paginacion={ lista_id }
 	>
-		<div class="text-sm text-muted-foreground" data-paginacion-info></div>
+		<div class="text-sm text-muted-foreground ml-2" data-paginacion-info></div>
 		<div class="flex items-center gap-1" data-paginacion-controles></div>
 	</div>
 }
 
 templ TablaAdminLista() {
 	<div>
-		{ children... }
+		@card.Card() {
+			@card.Content() {
+				{ children... }
+			}
+		}
 	</div>
 }

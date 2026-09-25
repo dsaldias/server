@@ -93,7 +93,7 @@
 
 .dark {
   /* Fondo general */
-  --background: #070b18;
+  --background: #24243e;
   --foreground: #eef4ff;
 
   /* Superficies */
@@ -130,7 +130,7 @@
   --ring: #38bdf8;
 
   /* Sidebar */
-  --sidebar: #060b19;
+  --sidebar: #0e0e23;
   --sidebar-foreground: #eaf2ff;
 
   --sidebar-primary: #4f8cff;
@@ -147,7 +147,7 @@
   --header-foreground: #ffffff;
   --header-accent: #10264a;
 
-  --header-xtable: #000000;
+  --header-xtable: #0d1428;
 }
 .dark body {
   background-color: var(--background);
