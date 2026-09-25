@@ -23,8 +23,7 @@ type ModalGenericoX struct {
 	DialogID          string
 	TargetRefreshID   string
 	DialogClass       string
-	DisableCustomForm bool
-	// DialogSize      string
+	DisableCustomForm bool 
 }
 
 templ ModalGenerico(p ModalGenericoX) {
@@ -33,9 +32,7 @@ templ ModalGenerico(p ModalGenericoX) {
 		DisableClickAway: true,
 		Class:            "z-[99999]",
 	}) {
-		@dialog.Content(dialog.ContentProps{
-			// max-w-2xl, max-w-5xl, max-w-7xl
-			// Class:        modalDialogClass(p.DialogClass),
+		@dialog.Content(dialog.ContentProps{ 
 			Class:        "relative " + modalDialogClass(p.DialogClass),
 			DisableModal: false,
 			Attributes: templ.Attributes{

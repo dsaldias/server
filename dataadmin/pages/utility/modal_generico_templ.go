@@ -32,7 +32,6 @@ type ModalGenericoX struct {
 	TargetRefreshID   string
 	DialogClass       string
 	DisableCustomForm bool
-	// DialogSize      string
 }
 
 func ModalGenerico(p ModalGenericoX) templ.Component {
@@ -111,7 +110,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var6 string
 						templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue("titulo-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 48, Col: 38}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 45, Col: 38}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 						if templ_7745c5c3_Err != nil {
@@ -150,7 +149,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("descripcion-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 51, Col: 43}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 48, Col: 43}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 						if templ_7745c5c3_Err != nil {
@@ -195,7 +194,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue("icon-expandir-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 61, Col: 39}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 58, Col: 39}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 					if templ_7745c5c3_Err != nil {
@@ -228,7 +227,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 71, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 68, Col: 42}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 					if templ_7745c5c3_Err != nil {
@@ -254,7 +253,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("xform-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 78, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 75, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 					if templ_7745c5c3_Err != nil {
@@ -267,7 +266,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.TargetRefreshID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 80, Col: 35}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 77, Col: 35}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 					if templ_7745c5c3_Err != nil {
@@ -280,7 +279,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 104, Col: 43}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 101, Col: 43}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 					if templ_7745c5c3_Err != nil {
@@ -306,7 +305,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 110, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 107, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
@@ -335,7 +334,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 113, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 110, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 					if templ_7745c5c3_Err != nil {
@@ -440,8 +439,6 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				return nil
 			})
 			templ_7745c5c3_Err = dialog.Content(dialog.ContentProps{
-				// max-w-2xl, max-w-5xl, max-w-7xl
-				// Class:        modalDialogClass(p.DialogClass),
 				Class:        "relative " + modalDialogClass(p.DialogClass),
 				DisableModal: false,
 				Attributes: templ.Attributes{
