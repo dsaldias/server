@@ -20,10 +20,13 @@ const (
 )
 
 type ModalGenericoX struct {
-	DialogID          string
-	TargetRefreshID   string
-	DialogClass       string
-	DisableCustomForm bool 
+	DialogID           string
+	TargetRefreshID    string
+	DialogContentClass string
+	DialogHeaderClass  string
+	DialogFooterClass  string
+	DialogBodyClass    string
+	DisableCustomForm  bool
 }
 
 templ ModalGenerico(p ModalGenericoX) {
@@ -32,15 +35,17 @@ templ ModalGenerico(p ModalGenericoX) {
 		DisableClickAway: true,
 		Class:            "z-[99999]",
 	}) {
-		@dialog.Content(dialog.ContentProps{ 
-			Class:        "relative " + modalDialogClass(p.DialogClass),
+		@dialog.Content(dialog.ContentProps{
+			Class:        "relative " + modalContentClass(p.DialogContentClass),
 			DisableModal: false,
 			Attributes: templ.Attributes{
 				"data-mobile-modal": "true",
 				"id":                "modal-content-" + p.DialogID,
 			},
 		}) {
-			@dialog.Header() {
+			@dialog.Header(dialog.HeaderProps{
+				Class: modalHeaderClass(p.DialogHeaderClass),
+			}) {
 				@dialog.Title() {
 					<span id={ "titulo-" + p.DialogID }></span>
 				}
@@ -62,14 +67,11 @@ templ ModalGenerico(p ModalGenericoX) {
 					⛶
 				</span>
 			}
-			<div class="overflow-y-auto flex-1 pr-2">
+			<div class={modalBodyClass(p.DialogBodyClass)}>
 				if p.DisableCustomForm {
-					<div class="xoverflow-y-auto flex-1 pr-2">
-						<div id={ "xcontenido-" + p.DialogID }>
-							{ children... }
-						</div>
+					<div id={ "xcontenido-" + p.DialogID }>
+						{ children... }
 					</div>
-					
 				} else {
 					<form
 						id={ "xform-" + p.DialogID }
@@ -97,16 +99,16 @@ templ ModalGenerico(p ModalGenericoX) {
 						}
 					"
 					>
-						<div class="xoverflow-y-auto flex-1 pr-2">
-							<div id={ "xcontenido-" + p.DialogID }>
-								{ children... }
-							</div>
+						<div id={ "xcontenido-" + p.DialogID }>
+							{ children... }
 						</div>
 					</form>
 				}
 				<div id={ "resultado-" + p.DialogID }></div>
 			</div>
-			@dialog.Footer() {
+			@dialog.Footer(dialog.FooterProps{
+				Class: modalFooterClass(p.DialogFooterClass),
+			}) {
 				<div id={ "footer-" + p.DialogID } class="flex gap-2">
 					@dialog.Close(dialog.CloseProps{
 						ID: "btn-cerrar-" + p.DialogID,
@@ -114,17 +116,17 @@ templ ModalGenerico(p ModalGenericoX) {
 						@button.Button(button.Props{
 							Variant: button.VariantOutline,
 							Type:    "button",
-							Class:   "bg-red-100 text-red-700 hover:bg-red-200",
+							Class:   "bg-[var(--xdialog-cancel)] text-white border-[var(--xdialog-cancel)] hover:bg-[var(--xdialog-cancel-hover)]",
 						}) {
 							@icon.PanelLeftClose()
-							<span class="btn-cerrar-text">Cancelar</span>
+							<span class="btn-cerrar-text">Cerrar</span>
 						}
 					}
 					@button.Button(button.Props{
 						ID:      "btn-submit-" + p.DialogID,
 						Variant: button.VariantOutline,
 						Type:    "submit",
-						Class:   "bg-green-100 text-green-700 hover:bg-green-200",
+						Class:   "bg-[var(--xdialog-accept)] text-white border-[var(--xdialog-accept)] hover:bg-[var(--xdialog-accept-hover)]",
 						Form:    "xform-" + p.DialogID,
 					}) {
 						@icon.Check()
@@ -193,9 +195,30 @@ templ ModalGenerico(p ModalGenericoX) {
 </script>
 }
 
-func modalDialogClass(class string) string {
+func modalContentClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "max-h-[90vh] flex flex-col z-[99999]"
+	return "px-0 py-0 max-h-[90vh] flex flex-col z-[99999]"
+}
+
+func modalHeaderClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+}
+
+func modalFooterClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "bg-[var(--xdialog-footer)] px-4 py-3"
+}
+
+func modalBodyClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "overflow-y-auto flex-1 px-3"
 }

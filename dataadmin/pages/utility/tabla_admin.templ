@@ -9,17 +9,19 @@ import (
 )
 
 type MiTablaProps struct {
-	Titulo         string
-	Descripcion    string
-	UrlRefresh     string
-	ListaID        string
-	DialogID       string
-	DialogClass    string
-	HeaderClass    string
-	Acciones       templ.Component
-	Busqueda       bool
-	Ordenable      bool
-	FilasPorPagina int
+	Titulo             string
+	Descripcion        string
+	UrlRefresh         string
+	ListaID            string
+	DialogID           string
+	DialogContentClass string
+	DialogHeaderClass  string
+	DialogFooterClass  string
+	HeaderClass        string
+	Acciones           templ.Component
+	Busqueda           bool
+	Ordenable          bool
+	FilasPorPagina     int
 }
 
 templ TablaAdmin(
@@ -51,9 +53,11 @@ templ TablaAdmin(
 			@TablaAdminBusqueda(props.ListaID)
 		}
 		@ModalGenerico(ModalGenericoX{
-			DialogID:        props.DialogID,
-			TargetRefreshID: "#" + props.ListaID,
-			DialogClass:     props.DialogClass,
+			DialogID:           props.DialogID,
+			TargetRefreshID:    "#" + props.ListaID,
+			DialogContentClass: props.DialogContentClass,
+			DialogHeaderClass:  props.DialogHeaderClass,
+			DialogFooterClass:  props.DialogFooterClass,
 		})
 	</div>
 	<div

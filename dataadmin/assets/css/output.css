@@ -7,11 +7,8 @@
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-    --color-red-100: oklch(93.6% 0.032 17.717);
-    --color-red-200: oklch(88.5% 0.062 18.334);
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
-    --color-red-700: oklch(50.5% 0.213 27.518);
     --color-orange-500: oklch(70.5% 0.213 47.604);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
@@ -1128,6 +1125,10 @@
   .rounded-xs {
     border-radius: var(--radius-xs);
   }
+  .rounded-t-lg {
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+  }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
@@ -1186,6 +1187,12 @@
   }
   .border-\[\#081027\] {
     border-color: #081027;
+  }
+  .border-\[var\(--xdialog-accept\)\] {
+    border-color: var(--xdialog-accept);
+  }
+  .border-\[var\(--xdialog-cancel\)\] {
+    border-color: var(--xdialog-cancel);
   }
   .border-blue-500\/30 {
     border-color: color-mix(in srgb, oklch(62.3% 0.214 259.815) 30%, transparent);
@@ -1270,6 +1277,18 @@
   }
   .bg-\[var\(--header-xtable\)\] {
     background-color: var(--header-xtable);
+  }
+  .bg-\[var\(--xdialog-accept\)\] {
+    background-color: var(--xdialog-accept);
+  }
+  .bg-\[var\(--xdialog-cancel\)\] {
+    background-color: var(--xdialog-cancel);
+  }
+  .bg-\[var\(--xdialog-footer\)\] {
+    background-color: var(--xdialog-footer);
+  }
+  .bg-\[var\(--xdialog-header\)\] {
+    background-color: var(--xdialog-header);
   }
   .bg-background {
     background-color: var(--background);
@@ -1369,9 +1388,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--primary) 10%, transparent);
     }
-  }
-  .bg-red-100 {
-    background-color: var(--color-red-100);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -1510,9 +1526,6 @@
   }
   .pt-5 {
     padding-top: calc(var(--spacing) * 5);
-  }
-  .pr-2 {
-    padding-right: calc(var(--spacing) * 2);
   }
   .pr-8 {
     padding-right: calc(var(--spacing) * 8);
@@ -1718,9 +1731,6 @@
   }
   .text-red-600 {
     color: var(--color-red-600);
-  }
-  .text-red-700 {
-    color: var(--color-red-700);
   }
   .text-secondary-foreground {
     color: var(--secondary-foreground);
@@ -2260,6 +2270,12 @@
     .hover\:bg-\[\#e8f2f1\]:hover {
       background-color: #e8f2f1;
     }
+    .hover\:bg-\[var\(--xdialog-accept-hover\)\]:hover {
+      background-color: var(--xdialog-accept-hover);
+    }
+    .hover\:bg-\[var\(--xdialog-cancel-hover\)\]:hover {
+      background-color: var(--xdialog-cancel-hover);
+    }
     .hover\:bg-accent:hover {
       background-color: var(--accent);
     }
@@ -2328,9 +2344,6 @@
       .hover\:bg-primary\/90:hover {
         background-color: color-mix(in oklab, var(--primary) 90%, transparent);
       }
-    }
-    .hover\:bg-red-200:hover {
-      background-color: var(--color-red-200);
     }
     .hover\:bg-secondary\/80:hover {
       background-color: var(--secondary);
@@ -3059,6 +3072,12 @@
   --header-foreground: #ffffff;
   --header-accent: #244775;
   --header-xtable: #e2e5ef;
+  --xdialog-header: #e2e5ef;
+  --xdialog-footer: #d8dce7;
+  --xdialog-cancel: #64748b;
+  --xdialog-cancel-hover: #475569;
+  --xdialog-accept: #4f6b95;
+  --xdialog-accept-hover: #3f587e;
 }
 .dark {
   --background: #24243e;
@@ -3091,6 +3110,12 @@
   --header-foreground: #ffffff;
   --header-accent: #10264a;
   --header-xtable: #0d1428;
+  --xdialog-header: #252936;
+  --xdialog-footer: #20232d;
+  --xdialog-cancel: #64748b;
+  --xdialog-cancel-hover: #7b8ba3;
+  --xdialog-accept: #5d7eb2;
+  --xdialog-accept-hover: #7192c5;
 }
 .dark body {
   background-color: var(--background);

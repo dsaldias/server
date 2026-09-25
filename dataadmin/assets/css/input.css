@@ -89,6 +89,14 @@
   --header-accent: #244775;
 
   --header-xtable: #e2e5ef;
+
+  --xdialog-header: #e2e5ef;
+  --xdialog-footer: #d8dce7;
+  --xdialog-cancel: #64748b;
+	--xdialog-cancel-hover: #475569;
+
+	--xdialog-accept: #4f6b95;
+	--xdialog-accept-hover: #3f587e;
 }
 
 .dark {
@@ -148,6 +156,15 @@
   --header-accent: #10264a;
 
   --header-xtable: #0d1428;
+  
+  --xdialog-header: #252936;
+	--xdialog-footer: #20232d;
+
+	--xdialog-cancel: #64748b;
+	--xdialog-cancel-hover: #7b8ba3;
+
+	--xdialog-accept: #5d7eb2;
+	--xdialog-accept-hover: #7192c5;
 }
 .dark body {
   background-color: var(--background);

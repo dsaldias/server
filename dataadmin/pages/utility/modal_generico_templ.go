@@ -28,10 +28,13 @@ const (
 )
 
 type ModalGenericoX struct {
-	DialogID          string
-	TargetRefreshID   string
-	DialogClass       string
-	DisableCustomForm bool
+	DialogID           string
+	TargetRefreshID    string
+	DialogContentClass string
+	DialogHeaderClass  string
+	DialogFooterClass  string
+	DialogBodyClass    string
+	DisableCustomForm  bool
 }
 
 func ModalGenerico(p ModalGenericoX) templ.Component {
@@ -110,7 +113,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var6 string
 						templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue("titulo-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 45, Col: 38}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 50, Col: 38}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 						if templ_7745c5c3_Err != nil {
@@ -149,7 +152,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("descripcion-" + p.DialogID)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 48, Col: 43}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 53, Col: 43}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 						if templ_7745c5c3_Err != nil {
@@ -167,7 +170,9 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = dialog.Header().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = dialog.Header(dialog.HeaderProps{
+					Class: modalHeaderClass(p.DialogHeaderClass),
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -194,7 +199,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue("icon-expandir-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 58, Col: 39}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 63, Col: 39}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 					if templ_7745c5c3_Err != nil {
@@ -215,77 +220,47 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " <div class=\"overflow-y-auto flex-1 pr-2\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 = []any{modalBodyClass(p.DialogBodyClass)}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var11).String())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 1, Col: 0}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if p.DisableCustomForm {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"xoverflow-y-auto flex-1 pr-2\"><div id=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 68, Col: 42}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<form id=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var12 string
-					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("xform-" + p.DialogID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 75, Col: 32}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-post=\"\" hx-target=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var13 string
-					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.TargetRefreshID)
+					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 77, Col: 35}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 72, Col: 41}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div class=\"xoverflow-y-auto flex-1 pr-2\"><div id=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 101, Col: 43}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -293,29 +268,81 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div></form>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<form id=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("xform-" + p.DialogID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 77, Col: 32}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-post=\"\" hx-target=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.TargetRefreshID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 79, Col: 35}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div id=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue("xcontenido-" + p.DialogID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 102, Col: 42}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></form>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div id=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div id=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue("resultado-" + p.DialogID)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 107, Col: 39}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Var18 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -327,70 +354,20 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div id=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div id=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue("footer-" + p.DialogID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 110, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_generico.templ`, Line: 112, Col: 36}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"flex gap-2\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Var18 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Var19 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-							if !templ_7745c5c3_IsBuffer {
-								defer func() {
-									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-									if templ_7745c5c3_Err == nil {
-										templ_7745c5c3_Err = templ_7745c5c3_BufErr
-									}
-								}()
-							}
-							ctx = templ.InitializeContext(ctx)
-							templ_7745c5c3_Err = icon.PanelLeftClose().Render(ctx, templ_7745c5c3_Buffer)
-							if templ_7745c5c3_Err != nil {
-								return templ_7745c5c3_Err
-							}
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " <span class=\"btn-cerrar-text\">Cancelar</span>")
-							if templ_7745c5c3_Err != nil {
-								return templ_7745c5c3_Err
-							}
-							return nil
-						})
-						templ_7745c5c3_Err = button.Button(button.Props{
-							Variant: button.VariantOutline,
-							Type:    "button",
-							Class:   "bg-red-100 text-red-700 hover:bg-red-200",
-						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = dialog.Close(dialog.CloseProps{
-						ID: "btn-cerrar-" + p.DialogID,
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"flex gap-2\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -406,11 +383,61 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
+						templ_7745c5c3_Var21 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+							if !templ_7745c5c3_IsBuffer {
+								defer func() {
+									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+									if templ_7745c5c3_Err == nil {
+										templ_7745c5c3_Err = templ_7745c5c3_BufErr
+									}
+								}()
+							}
+							ctx = templ.InitializeContext(ctx)
+							templ_7745c5c3_Err = icon.PanelLeftClose().Render(ctx, templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " <span class=\"btn-cerrar-text\">Cerrar</span>")
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							return nil
+						})
+						templ_7745c5c3_Err = button.Button(button.Props{
+							Variant: button.VariantOutline,
+							Type:    "button",
+							Class:   "bg-[var(--xdialog-cancel)] text-white border-[var(--xdialog-cancel)] hover:bg-[var(--xdialog-cancel-hover)]",
+						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						return nil
+					})
+					templ_7745c5c3_Err = dialog.Close(dialog.CloseProps{
+						ID: "btn-cerrar-" + p.DialogID,
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Var22 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+						if !templ_7745c5c3_IsBuffer {
+							defer func() {
+								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+								if templ_7745c5c3_Err == nil {
+									templ_7745c5c3_Err = templ_7745c5c3_BufErr
+								}
+							}()
+						}
+						ctx = templ.InitializeContext(ctx)
 						templ_7745c5c3_Err = icon.Check().Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <span class=\"btn-submit-text\">Aceptar</span>")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " <span class=\"btn-submit-text\">Aceptar</span>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -420,26 +447,28 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						ID:      "btn-submit-" + p.DialogID,
 						Variant: button.VariantOutline,
 						Type:    "submit",
-						Class:   "bg-green-100 text-green-700 hover:bg-green-200",
+						Class:   "bg-[var(--xdialog-accept)] text-white border-[var(--xdialog-accept)] hover:bg-[var(--xdialog-accept-hover)]",
 						Form:    "xform-" + p.DialogID,
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = dialog.Footer().Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = dialog.Footer(dialog.FooterProps{
+					Class: modalFooterClass(p.DialogFooterClass),
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
 			templ_7745c5c3_Err = dialog.Content(dialog.ContentProps{
-				Class:        "relative " + modalDialogClass(p.DialogClass),
+				Class:        "relative " + modalContentClass(p.DialogContentClass),
 				DisableModal: false,
 				Attributes: templ.Attributes{
 					"data-mobile-modal": "true",
@@ -459,7 +488,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<script>\n\tif (!window.modalGenericoExpandirInicializado) {\n\t\twindow.modalGenericoExpandirInicializado = true;\n\n\t\tdocument.addEventListener(\"click\", (event) => {\n\t\t\tconst button = event.target.closest('[id^=\"btn-expandir-\"]');\n\n\t\t\tif (!button) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tevent.preventDefault();\n\t\t\tevent.stopPropagation();\n\n\t\t\tconst dialogID = button.id.replace(\"btn-expandir-\", \"\");\n\t\t\tconst content = document.getElementById(\"modal-content-\" + dialogID);\n\t\t\tconst icon = document.getElementById(\"icon-expandir-\" + dialogID);\n\n\t\t\tif (!content) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tconst expandido = content.dataset.expanded === \"true\";\n\n\t\t\tif (expandido) {\n\t\t\t\tcontent.style.width = \"\";\n\t\t\t\tcontent.style.maxWidth = \"\";\n\n\t\t\t\tcontent.dataset.expanded = \"false\";\n\n\t\t\t\tif (icon) {\n\t\t\t\t\ticon.textContent = \"⛶\";\n\t\t\t\t\ticon.title = \"Expandir\";\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tcontent.style.width = \"90vw\";\n\t\t\t\tcontent.style.maxWidth = \"90vw\";\n\n\t\t\t\tcontent.dataset.expanded = \"true\";\n\n\t\t\t\tif (icon) {\n\t\t\t\t\ticon.textContent = \"⛶\";\n\t\t\t\t\ticon.title = \"Restaurar\";\n\t\t\t\t}\n\t\t\t}\n\t\t});\n\t}\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<script>\n\tif (!window.modalGenericoExpandirInicializado) {\n\t\twindow.modalGenericoExpandirInicializado = true;\n\n\t\tdocument.addEventListener(\"click\", (event) => {\n\t\t\tconst button = event.target.closest('[id^=\"btn-expandir-\"]');\n\n\t\t\tif (!button) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tevent.preventDefault();\n\t\t\tevent.stopPropagation();\n\n\t\t\tconst dialogID = button.id.replace(\"btn-expandir-\", \"\");\n\t\t\tconst content = document.getElementById(\"modal-content-\" + dialogID);\n\t\t\tconst icon = document.getElementById(\"icon-expandir-\" + dialogID);\n\n\t\t\tif (!content) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tconst expandido = content.dataset.expanded === \"true\";\n\n\t\t\tif (expandido) {\n\t\t\t\tcontent.style.width = \"\";\n\t\t\t\tcontent.style.maxWidth = \"\";\n\n\t\t\t\tcontent.dataset.expanded = \"false\";\n\n\t\t\t\tif (icon) {\n\t\t\t\t\ticon.textContent = \"⛶\";\n\t\t\t\t\ticon.title = \"Expandir\";\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tcontent.style.width = \"90vw\";\n\t\t\t\tcontent.style.maxWidth = \"90vw\";\n\n\t\t\t\tcontent.dataset.expanded = \"true\";\n\n\t\t\t\tif (icon) {\n\t\t\t\t\ticon.textContent = \"⛶\";\n\t\t\t\t\ticon.title = \"Restaurar\";\n\t\t\t\t}\n\t\t\t}\n\t\t});\n\t}\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -467,11 +496,32 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 	})
 }
 
-func modalDialogClass(class string) string {
+func modalContentClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "max-h-[90vh] flex flex-col z-[99999]"
+	return "px-0 py-0 max-h-[90vh] flex flex-col z-[99999]"
+}
+
+func modalHeaderClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+}
+
+func modalFooterClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "bg-[var(--xdialog-footer)] px-4 py-3"
+}
+
+func modalBodyClass(class string) string {
+	if class != "" {
+		return class
+	}
+	return "overflow-y-auto flex-1 px-3"
 }
 
 var _ = templruntime.GeneratedTemplate
