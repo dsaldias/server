@@ -58,7 +58,7 @@ templ TablaAdmin(
 	</div>
 	<div
 		id={ props.ListaID }
-		class="rounded-xl border border-border shadow-sm overflow-hidden bg-background px-1"
+		class="shadow-sm overflow-hidden bg-background px-1"
 		data-tabla-contextual="true"
 		if props.Ordenable {
 			data-tabla-ordenable="true"
@@ -184,7 +184,9 @@ templ TablaAdminPaginacion(lista_id string) {
 
 templ TablaAdminLista() {
 	<div>
-		@card.Card() {
+		@card.Card(card.Props{
+			Class: "",
+		}) {
 			@card.Content() {
 				{ children... }
 			}
