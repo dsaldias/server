@@ -8,6 +8,7 @@ import (
 
 templ MainPageLayout(
 	titulo string,
+	subtitulo string,
 	unidadid string,
 	menus []*MenuGrupo,
 	roles []*model.ResponseRolMe,
@@ -18,7 +19,7 @@ templ MainPageLayout(
 ) {
 	@Layout(titulo, config) {
 		@sidebar.Layout() {
-			@Sidebar(titulo, current_path, menus, usuario, config, AssetVersion)
+			@Sidebar(titulo, subtitulo, current_path, menus, usuario, config, AssetVersion)
 			@sidebar.Inset() {
 				<div class={ config.WithDefaults().ShellClass }>
 					@Header(roles, unidadid, config)

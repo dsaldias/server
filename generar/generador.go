@@ -188,6 +188,7 @@ func RutasFront(db *sql.DB) []*utils.Handlers2 {
 
 	conf := mainlayout.LayoutConfig{
 		Title: "Hola Mundo!!!",
+		Subtitle:     "Sistema admin"
 		// ###### Personaliza clases, colores y asset desde el proyecto consumidor.
 		// Stylesheet: "/asset/css/output.css",
 		// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",

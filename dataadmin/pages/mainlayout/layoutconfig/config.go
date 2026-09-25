@@ -8,6 +8,7 @@ type JSLink struct {
 
 type Config struct {
 	Title        string
+	Subtitle     string
 	ThemeColor   string
 	Stylesheet   string
 	BodyClass    string
@@ -22,6 +23,7 @@ type Config struct {
 func Default() Config {
 	return Config{
 		Title:        "Panel Admin",
+		Subtitle:     "Sistema admin",
 		ThemeColor:   "#081027",
 		Stylesheet:   "/assets/css/output.css",
 		BodyClass:    "min-h-screen bg-background text-foreground",
@@ -36,6 +38,9 @@ func (c Config) WithDefaults() Config {
 	defaults := Default()
 	if c.Title == "" {
 		c.Title = defaults.Title
+	}
+	if c.Subtitle == "" {
+		c.Subtitle = defaults.Subtitle
 	}
 	if c.ThemeColor == "" {
 		c.ThemeColor = defaults.ThemeColor

@@ -75,9 +75,11 @@ func (c *MainController) RenderLayout(
 
 	config := c.Config.WithDefaults()
 	title := config.Title
+	subtitle := config.Subtitle
 
 	principal.MainPageLayout(
 		title,
+		subtitle,
 		unidadid,
 		mens,
 		rols,

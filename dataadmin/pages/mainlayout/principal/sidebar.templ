@@ -13,7 +13,7 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-templ Sidebar(titulo, current_path string, menus []*MenuGrupo, usuario *xm.ResponseUsuario, config layoutconfig.Config, asset_version string) {
+templ Sidebar(titulo, subtitulo, current_path string, menus []*MenuGrupo, usuario *xm.ResponseUsuario, config layoutconfig.Config, asset_version string) {
 	@dropdown.Script()
 	@sidebar.Script()
 	@collapsible.Script()
@@ -40,7 +40,7 @@ templ Sidebar(titulo, current_path string, menus []*MenuGrupo, usuario *xm.Respo
 							ID:    "ws_badge_indicator",
 							Class: "bg-[#479066] text-white",
 							Attributes: templ.Attributes{
-								"title":                     "Se pone en el websocket.js",
+								"title":                 "Se pone en el websocket.js",
 								"data-conectados-badge": "true",
 							},
 						}) {
@@ -51,13 +51,18 @@ templ Sidebar(titulo, current_path string, menus []*MenuGrupo, usuario *xm.Respo
 									data-ws-status
 									class="size-2 rounded-full bg-green-500"
 								></span>
-								<span id="ws_total_conectados" data-conectados-1 >0</span>
+								<span id="ws_total_conectados" data-conectados-1>0</span>
 							</p>
 						}
 						// 
-						<span class="font-semibold">
-							{ titulo }
-						</span>
+						<div class="flex flex-col leading-tight">
+							<span class="font-semibold">
+								{ titulo }
+							</span>
+							<span class="text-xs text-muted-foreground">
+								{ subtitulo }
+							</span>
+						</div>
 					}
 				}
 			}
@@ -157,7 +162,6 @@ templ Script(asset_version string) {
 	<script src={ "/assets/websocket.js?v=" + asset_version }></script>
 }
 
-
 func foto_url(s *string) string {
 	if s == nil {
 		return "https://avatars.githubusercontent.com/u/26936893?v=4"
@@ -182,4 +186,3 @@ func correo(usuario *xm.ResponseUsuario) string {
 func rutaActiva(currentPath, menuPath string) bool {
 	return currentPath == menuPath
 }
-
