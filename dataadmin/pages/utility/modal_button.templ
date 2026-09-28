@@ -119,7 +119,8 @@ func sizeBtn(p BtnProps) button.Size {
 
 func classBtn(p BtnProps) string {
 	if p.Class == "" {
-		return "btn-neon"
+		// return "btn-neon"
+		return "btn-neon border-border bg-card text-card-foreground hover:bg-muted hover:text-foreground"
 	}
 
 	return "btn-neon " + p.Class

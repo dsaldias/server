@@ -29,28 +29,34 @@ templ TablaAdmin(
 ) {
 	<div
 		if props.HeaderClass == "" {
-			class="bg-[var(--header-xtable)] px-3 py-1 mb-1"
+			class="px-3 py-1 mb-1"
 		} else {
 			class={ props.HeaderClass }
 		}
 	>
-		<div class="mb-2 grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
-			<div class="text-left">
-				<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
-				<p class="text-sm text-muted-foreground">
-					{ props.Descripcion }
-				</p>
-			</div>
-			<div class="md:flex md:items-center md:justify-end">
-				@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
-					if props.Acciones != nil {
-						@props.Acciones
-					}
+		@card.Card(card.Props{
+			Class: "border-border bg-card",
+		}) {
+			@card.Content() {
+				<div class="mb-2 grid grid-cols-1 md:grid-cols-2 md:items-center">
+					<div class="text-left">
+						<h2 class="text-lg font-semibold">{ props.Titulo }</h2>
+						<p class="text-sm text-muted-foreground">
+							{ props.Descripcion }
+						</p>
+					</div>
+					<div class="md:flex md:items-center md:justify-end">
+						@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
+							if props.Acciones != nil {
+								@props.Acciones
+							}
+						}
+					</div>
+				</div>
+				if props.Busqueda {
+					@TablaAdminBusqueda(props.ListaID)
 				}
-			</div>
-		</div>
-		if props.Busqueda {
-			@TablaAdminBusqueda(props.ListaID)
+			}
 		}
 		@ModalGenerico(ModalGenericoX{
 			DialogID:           props.DialogID,
@@ -60,24 +66,8 @@ templ TablaAdmin(
 			DialogFooterClass:  props.DialogFooterClass,
 		})
 	</div>
-	<div
-		id={ props.ListaID }
-		class="shadow-sm overflow-hidden bg-background px-1"
-		data-tabla-contextual="true"
-		if props.Ordenable {
-			data-tabla-ordenable="true"
-		}
-		if props.FilasPorPagina > 0 {
-			data-tabla-paginable="true"
-			data-filas-por-pagina={ fmt.Sprint(props.FilasPorPagina) }
-		}
-	>
-		@TablaAdminLista() {
-			{ children... }
-		}
-	</div>
-	if props.FilasPorPagina > 0 {
-		@TablaAdminPaginacion(props.ListaID)
+	@TablaAdminLista(props) {
+		{ children... }
 	}
 }
 
@@ -104,7 +94,7 @@ templ TablaAdminHeaderAcciones(
 			@button.Button(button.Props{
 				Variant: button.VariantOutline,
 				Size:    button.SizeSm,
-				Class:   "hover:bg-[#e8f2f1]",
+				Class:   "border-border bg-card text-card-foreground hover:bg-muted hover:text-foreground",
 				Attributes: templ.Attributes{
 					"hx-get":          url_refresh,
 					"hx-disabled-elt": "this",
@@ -128,7 +118,7 @@ templ TablaAdminAcciones(
 			TriggerType: popover.TriggerTypeHover,
 		}) {
 			@button.Button(button.Props{
-				Class:   "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200",
+				Class:   "border-border bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground",
 				Variant: button.VariantOutline,
 				Size:    button.SizeIcon,
 			}) {
@@ -136,12 +126,13 @@ templ TablaAdminAcciones(
 			}
 		}
 		@popover.Content(popover.ContentProps{
+			Class:         "border border-border",
 			Placement:     popover.PlacementLeft,
 			ShowArrow:     true,
 			HoverOutDelay: 500,
 		}) {
-			<div class="p-4 space-y-4 min-w-56 bg-background">
-				<div class="border-b pb-3">
+			<div class="min-w-56 space-y-4 rounded-md border border-border bg-card p-4 text-card-foreground shadow-lg">
+				<div class="border-b border-border pb-3">
 					<p class="text-sm font-semibold">
 						Menú de opciones
 					</p>
@@ -160,9 +151,9 @@ templ TablaAdminAcciones(
 templ TablaAdminContextual(t string) {
 	<div
 		data-contextual-menu
-		class="hidden fixed z-[9999] w-56 rounded-md border bg-background p-2 shadow-lg"
+		class="hidden fixed z-[9999] w-56 rounded-md border border-border bg-card text-card-foreground p-2 shadow-lg"
 	>
-		<div class="border-b px-3 py-2">
+		<div class="border-b border-border px-3 py-2">
 			<p class="text-sm font-semibold">
 				Menú de opciones
 			</p>
@@ -170,7 +161,7 @@ templ TablaAdminContextual(t string) {
 				{ t }
 			</p>
 		</div>
-		<div class="flex items-center gap-2 mt-2">
+		<div class="mt-2 flex items-center gap-2">
 			{ children... }
 		</div>
 	</div>
@@ -178,22 +169,68 @@ templ TablaAdminContextual(t string) {
 
 templ TablaAdminPaginacion(lista_id string) {
 	<div
-		class="flex items-center justify-between mt-4"
+		class="mt-3 mr-2 flex items-center justify-between border-t border-border/50 pt-2"
 		data-tabla-paginacion={ lista_id }
 	>
-		<div class="text-sm text-muted-foreground ml-2" data-paginacion-info></div>
-		<div class="flex items-center gap-1" data-paginacion-controles></div>
+		<div
+			class="ml-2 text-sm text-muted-foreground"
+			data-paginacion-info
+		></div>
+		<div
+			class="flex items-center gap-1"
+			data-paginacion-controles
+		></div>
 	</div>
 }
 
-templ TablaAdminLista() {
-	<div>
+templ TablaAdminLista(props MiTablaProps) {
+	<div class="overflow-hidden mx-2">
 		@card.Card(card.Props{
-			Class: "",
+			Class: `
+			border-border bg-card
+			[&_table_thead]:bg-table-header
+			[&_table_thead]:border-0
+			[&_table_thead_tr]:border-0
+			[&_table_thead_th]:border-0
+
+			[&_table_tbody_tr]:border-b
+			[&_table_tbody_tr]:border-border/50
+			[&_table_tbody_tr:nth-child(even)]:bg-table-row-even
+			[&_table_tbody_tr:nth-child(odd)]:bg-table-row-odd
+
+			[&_table_tbody_td]:border-0
+			[&_table_tbody_td]:py-1
+			[&_table_tbody_td]:px-2
+			`,
 		}) {
-			@card.Content() {
+			@card.Content(card.ContentProps{
+				ID: props.ListaID,
+				Attributes: templ.Attributes{
+					"data-tabla-contextual": "true",
+					"data-tabla-ordenable":  isSorted(props),
+					"data-filas-por-pagina": fmt.Sprint(props.FilasPorPagina),
+					"data-tabla-paginable":  isPaged(props),
+				},
+			}) {
 				{ children... }
+			}
+			if props.FilasPorPagina > 0 {
+				@TablaAdminPaginacion(props.ListaID)
 			}
 		}
 	</div>
+}
+
+func isSorted(props MiTablaProps) string {
+	if props.Ordenable {
+		return "true"
+	}
+	return "false"
+}
+
+func isPaged(props MiTablaProps) string {
+	if props.FilasPorPagina > 0 {
+		return "true"
+	}
+	return "false"
 }

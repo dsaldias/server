@@ -408,7 +408,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						templ_7745c5c3_Err = button.Button(button.Props{
 							Variant: button.VariantOutline,
 							Type:    "button",
-							Class:   "bg-[var(--xdialog-cancel)] text-white border-[var(--xdialog-cancel)] hover:bg-[var(--xdialog-cancel-hover)]",
+							Class:   "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -447,7 +447,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 						ID:      "btn-submit-" + p.DialogID,
 						Variant: button.VariantOutline,
 						Type:    "submit",
-						Class:   "bg-[var(--xdialog-accept)] text-white border-[var(--xdialog-accept)] hover:bg-[var(--xdialog-accept-hover)]",
+						Class:   "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
 						Form:    "xform-" + p.DialogID,
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {

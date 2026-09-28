@@ -73,10 +73,7 @@ templ ListaRoles(roles []*model.ResponseRoles) {
 					}
 					@table.Cell() {
 						{ rol.Usuarios }
-					}
-					@table.Cell() {
-						{ rol.Jerarquia }
-					}
+					} 
 					@table.Cell(table.CellProps{Class: "m-0 p-0"}) {
 						@utility.TablaAdminAcciones(
 							rol.Nombre,

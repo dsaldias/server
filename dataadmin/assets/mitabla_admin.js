@@ -264,7 +264,6 @@ document.addEventListener("htmx:afterSwap", inicializarMenusContextuales);
 // ============================================================
 
 function actualizarPaginacion(contenedor) {
-
   const listaId = contenedor.id;
 
   const paginacion = document.querySelector(
@@ -373,7 +372,7 @@ function actualizarPaginacion(contenedor) {
     boton.textContent = texto;
 
     boton.className =
-      "inline-flex h-8 min-w-8 items-center justify-center rounded-md border px-2 text-sm hover:bg-muted disabled:pointer-events-none disabled:opacity-50";
+      "inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-border bg-card px-2 text-sm text-card-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50";
 
     boton.disabled = disabled;
 
