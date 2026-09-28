@@ -2914,6 +2914,12 @@
       border-color: color-mix(in oklab, var(--border) 50%, transparent);
     }
   }
+  .\[\&_table_tbody_tr\:hover\]\:bg-table-row-hover table tbody tr:hover {
+    background-color: var(--table-row-hover);
+  }
+  .\[\&_table_tbody_tr\:hover_td\]\:bg-table-row-hover table tbody tr:hover td {
+    background-color: var(--table-row-hover);
+  }
   .\[\&_table_tbody_tr\:nth-child\(even\)\]\:bg-table-row-even table tbody tr:nth-child(even) {
     background-color: var(--table-row-even);
   }
@@ -3080,6 +3086,7 @@
   --table-header: #eaebef;
   --table-row-even: #ffffff;
   --table-row-odd: #f9fafc;
+  --table-row-hover: #eef2f7;
 }
 .dark {
   --background: #081027;
@@ -3114,6 +3121,7 @@
   --table-header: #101a31;
   --table-row-even: #081027;
   --table-row-odd: #0c1630;
+  --table-row-hover: #14233d;
 }
 @property --tw-translate-x {
   syntax: "*";

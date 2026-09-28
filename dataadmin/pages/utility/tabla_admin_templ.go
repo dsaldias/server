@@ -680,6 +680,8 @@ func TablaAdminLista(props MiTablaProps) templ.Component {
 			[&_table_tbody_tr]:border-border/50
 			[&_table_tbody_tr:nth-child(even)]:bg-table-row-even
 			[&_table_tbody_tr:nth-child(odd)]:bg-table-row-odd
+			[&_table_tbody_tr:hover]:bg-table-row-hover
+			[&_table_tbody_tr:hover_td]:bg-table-row-hover
 
 			[&_table_tbody_td]:border-0
 			[&_table_tbody_td]:py-1

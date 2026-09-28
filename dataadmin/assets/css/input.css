@@ -52,6 +52,7 @@
   --color-table-header: var(--table-header);
   --color-table-row-even: var(--table-row-even);
   --color-table-row-odd: var(--table-row-odd);
+  --color-table-row-hover: var(--table-row-hover);
 }
 
 :root {
@@ -108,6 +109,7 @@
   --table-header: #eaebef;
   --table-row-even: #ffffff;
   --table-row-odd: #f9fafc;
+  --table-row-hover: #eef2f7;
 }
 
 .dark {
@@ -170,4 +172,5 @@
   --table-header: #101a31;
   --table-row-even: #081027;
   --table-row-odd: #0c1630;
+  --table-row-hover: #14233d;
 }
