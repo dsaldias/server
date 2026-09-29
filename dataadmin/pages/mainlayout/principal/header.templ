@@ -30,8 +30,13 @@ func nombreUnidadRol(roles []*xm.ResponseRolMe, unidadid string) RolUnidadNombre
 		rol:    "",
 	}
 }
+templ Header(isFromIframe bool, roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Config){
+	if !isFromIframe {
+		@HeaderRow(isFromIframe, roles, unidadid, config)
+	}
+}
 
-templ Header(isFromIframe bool, roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Config) {
+templ HeaderRow(isFromIframe bool, roles []*xm.ResponseRolMe, unidadid string, config layoutconfig.Config) {
 	<header class={ config.WithDefaults().HeaderClass }>
 		<div class="flex items-center gap-3">
 			@sidebar.Trigger(sidebar.TriggerProps{
