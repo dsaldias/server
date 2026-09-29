@@ -2,8 +2,6 @@ package mainlayout
 
 import (
 	"database/sql"
-	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -73,15 +71,6 @@ func (c *MainController) RenderLayout(
 		return
 	}
 
-	cookie, err := utils.CtxGetCookie(r)
-	if err != nil {
-		t := fmt.Sprintf("Error Cookie:: %s", err.Error())
-		er := errors.New(t)
-		utility.ErrorResponse(w, r, er, nil)
-		return
-	}
-
-	isIframe := cookie.IsFromIframe
 	ruta := r.URL.Path
 
 	config := c.Config.WithDefaults()
@@ -89,7 +78,6 @@ func (c *MainController) RenderLayout(
 	subtitle := config.Subtitle
 
 	principal.MainPageLayout(
-		isIframe,
 		title,
 		subtitle,
 		unidadid,

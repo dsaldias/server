@@ -1,7 +1,27 @@
 const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 const wsUrl = `${protocol}//${window.location.host}/ws`;
 
+const hide_partes = () => {
+  const dentroDeIframe = window.self !== window.top;
+  if (dentroDeIframe) {
+    console.log("dentroDeIframe...", dentroDeIframe);
+    const footer_side = document.querySelector("#xsidebar-footer");
+    const header_side = document.querySelector("#xsidebar-header");
+    const header_page = document.querySelector("#xheader-page");
+    if (footer_side) {
+      footer_side.style = "display:none";
+    }
+    if (header_side) {
+      header_side.style = "display:none";
+    }
+    if (header_page) {
+      header_page.style = "display:none";
+    }
+  }
+};
+
 console.log("[WS] Conectando a:", wsUrl);
+hide_partes(); // llamamos por primera ves y luego cuando el ws se conecta
 
 const client = graphqlWs.createClient({
   url: wsUrl,
@@ -26,6 +46,7 @@ const client = graphqlWs.createClient({
 
     opened: () => {
       console.log("[WS] Conexión establecida");
+      hide_partes();
       cambiar_estado_ws("conectado");
     },
 
@@ -79,7 +100,7 @@ const procesar_mensajes = (data) => {
       contadores.forEach((contador) => {
         contador.textContent = conectados;
       });
-      
+
       badges.forEach((indicador) => {
         indicador.title = `Conectados: ${total}`;
       });
@@ -149,7 +170,7 @@ const mostrar_notificacion_ws = (mensaje) => {
     duration: 3000,
     gravity: "top",
     position: "right",
-    close: true, 
+    close: true,
     style: {
       background: "#21ba45",
     },
@@ -161,7 +182,7 @@ const cambiar_estado_ws = (estado) => {
 
   if (!badges) return;
 
-  for(let i=0;i<badges.length;i++){
+  for (let i = 0; i < badges.length; i++) {
     const badge = badges[i];
     badge.classList.remove("bg-orange-500", "bg-[#479066]", "bg-red-500");
     const punto = badge?.querySelector("[data-ws-status]");
@@ -172,12 +193,12 @@ const cambiar_estado_ws = (estado) => {
         badge.classList.add("bg-orange-500");
         punto.classList.add("bg-orange-500");
         break;
-  
+
       case "conectado":
         badge.classList.add("bg-[#01c4fb]");
         punto.classList.add("bg-green-500");
         break;
-  
+
       case "error":
         badge.classList.add("bg-red-500");
         punto.classList.add("bg-red-500");

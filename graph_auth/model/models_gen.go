@@ -109,16 +109,14 @@ type NewChatMensajeStatus struct {
 }
 
 type NewLogin struct {
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Iv64          string `json:"iv64"`
-	XIsFromIframe bool   `json:"x_is_from_iframe"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Iv64     string `json:"iv64"`
 }
 
 type NewLogin2 struct {
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	XIsFromIframe bool   `json:"x_is_from_iframe"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type NewNotificacion struct {

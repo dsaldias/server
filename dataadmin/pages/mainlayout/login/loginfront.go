@@ -37,12 +37,10 @@ func (c *Logincontroller) Login() http.Handler {
 		usuario := r.FormValue("usuario")
 		clave := r.FormValue("clave")
 		xis_relogin := r.FormValue("xis_relogin") == "true"
-		isIframe := r.URL.Query().Get("iframe") == "true"
 
 		data := model.NewLogin2{
-			Username:      usuario,
-			Password:      clave,
-			XIsFromIframe: isIframe,
+			Username: usuario,
+			Password: clave,
 		}
 
 		logindata, err := repo.LoginV2(r.Context(), c.DB, data)
@@ -72,9 +70,6 @@ func (c *Logincontroller) Login() http.Handler {
 
 		if !xis_relogin {
 			url_main := "/adminx/main"
-			if isIframe {
-				url_main += "?iframe=true"
-			}
 			w.Header().Set("HX-Redirect", url_main)
 		}
 

@@ -10476,11 +10476,7 @@ func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any)
 		asMap[k] = v
 	}
 
-	if _, present := asMap["x_is_from_iframe"]; !present {
-		asMap["x_is_from_iframe"] = false
-	}
-
-	fieldsInOrder := [...]string{"username", "password", "iv64", "x_is_from_iframe"}
+	fieldsInOrder := [...]string{"username", "password", "iv64"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10508,13 +10504,6 @@ func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any)
 				return it, err
 			}
 			it.Iv64 = data
-		case "x_is_from_iframe":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("x_is_from_iframe"))
-			data, err := ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.XIsFromIframe = data
 		}
 	}
 	return it, nil
@@ -10531,11 +10520,7 @@ func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any
 		asMap[k] = v
 	}
 
-	if _, present := asMap["x_is_from_iframe"]; !present {
-		asMap["x_is_from_iframe"] = false
-	}
-
-	fieldsInOrder := [...]string{"username", "password", "x_is_from_iframe"}
+	fieldsInOrder := [...]string{"username", "password"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10556,13 +10541,6 @@ func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any
 				return it, err
 			}
 			it.Password = data
-		case "x_is_from_iframe":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("x_is_from_iframe"))
-			data, err := ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.XIsFromIframe = data
 		}
 	}
 	return it, nil

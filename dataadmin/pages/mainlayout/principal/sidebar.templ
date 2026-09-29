@@ -14,7 +14,6 @@ import (
 )
 
 templ Sidebar(
-	isFromIframe bool,
 	titulo,
 	subtitulo,
 	current_path string,
@@ -35,9 +34,7 @@ templ Sidebar(
 		Variant:     sidebar.VariantSidebar,
 		Class:       config.WithDefaults().SidebarClass,
 	}) {
-		if !isFromIframe {
-			@SideHeader(titulo, subtitulo)
-		}
+		@SideHeader(titulo, subtitulo)
 		@sidebar.Content() {
 			@sidebar.Group() {
 				@sidebar.GroupLabel() {
@@ -53,15 +50,15 @@ templ Sidebar(
 			}
 			@sidebar.Separator()
 		}
-		if !isFromIframe {
-			@SideFooter(usuario)
-		}
+		@SideFooter(usuario)
 	}
 	@Script(asset_version)
 }
 
 templ SideHeader(titulo, subtitulo string) {
-	@sidebar.Header() {
+	@sidebar.Header(sidebar.HeaderProps{
+		ID: "xsidebar-header",
+	}) {
 		@sidebar.Menu() {
 			@sidebar.MenuItem() {
 				@sidebar.MenuButton(sidebar.MenuButtonProps{
@@ -100,7 +97,9 @@ templ SideHeader(titulo, subtitulo string) {
 }
 
 templ SideFooter(usuario *xm.ResponseUsuario) {
-	@sidebar.Footer() {
+	@sidebar.Footer(sidebar.FooterProps{
+		ID: "xsidebar-footer",
+	}) {
 		@sidebar.Menu() {
 			@sidebar.MenuItem() {
 				@dropdown.Dropdown() {

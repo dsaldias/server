@@ -82,13 +82,6 @@ templ Login(url_login string) {
 						hx-swap="innerHTML"
 						class="space-y-5"
 						hx-on::before-request="
-							const dentroDeIframe = window.self !== window.top;
-							console.log('dentroDeIframe>',dentroDeIframe)
-							if (dentroDeIframe) {
-								const url = new URL(this.getAttribute('hx-post'), window.location.origin);
-								url.searchParams.set('iframe', 'true');
-								this.setAttribute('hx-post', url.pathname + url.search);
-							}
 							const form = this;
 							const button = form.querySelector('button[type=submit]');
 
