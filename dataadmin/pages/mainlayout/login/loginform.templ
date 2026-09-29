@@ -83,6 +83,7 @@ templ Login(url_login string) {
 						class="space-y-5"
 						hx-on::before-request="
 							const dentroDeIframe = window.self !== window.top;
+							console.log('dentroDeIframe',dentroDeIframe)
 							if (dentroDeIframe) {
 								const url = new URL(this.getAttribute('hx-post'), window.location.origin);
 								url.searchParams.set('iframe', 'true');
