@@ -83,7 +83,7 @@ templ Login(url_login string) {
 						class="space-y-5"
 						hx-on::before-request="
 							const dentroDeIframe = window.self !== window.top;
-							console.log('dentroDeIframe::',dentroDeIframe)
+							console.log('dentroDeIframe:::',dentroDeIframe)
 							if (dentroDeIframe) {
 								const input = form.querySelector('input[name='x_is_from_iframe']');
 								if (!input) {
