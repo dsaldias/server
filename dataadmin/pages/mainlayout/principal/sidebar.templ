@@ -35,41 +35,8 @@ templ Sidebar(
 		Variant:     sidebar.VariantSidebar,
 		Class:       config.WithDefaults().SidebarClass,
 	}) {
-		@sidebar.Header() {
-			@sidebar.Menu() {
-				@sidebar.MenuItem() {
-					@sidebar.MenuButton(sidebar.MenuButtonProps{
-						Href:    "/adminx/main",
-						Tooltip: titulo,
-					}) {
-						// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
-						@badge.Badge(badge.Props{
-							ID:    "ws_badge_indicator",
-							Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
-							Attributes: templ.Attributes{
-								"title":                 "Se pone en el websocket.js",
-								"data-conectados-badge": "true",
-							},
-						}) {
-							<p id="ws_tabs_conectados">
-								<span
-									data-ws-status
-									class="size-2 rounded-full bg-green-500"
-								></span>
-								<span id="ws_total_conectados" data-conectados-1>0</span>
-							</p>
-						}
-						<div class="flex flex-col leading-tight">
-							<span class="font-semibold text-sidebar-foreground">
-								{ titulo }
-							</span>
-							<span class="text-xs text-sidebar-foreground/70">
-								{ subtitulo }
-							</span>
-						</div>
-					}
-				}
-			}
+		if !isFromIframe {
+			@SideHeader(titulo, subtitulo)
 		}
 		@sidebar.Content() {
 			@sidebar.Group() {
@@ -91,6 +58,45 @@ templ Sidebar(
 		}
 	}
 	@Script(asset_version)
+}
+
+templ SideHeader(titulo, subtitulo string) {
+	@sidebar.Header() {
+		@sidebar.Menu() {
+			@sidebar.MenuItem() {
+				@sidebar.MenuButton(sidebar.MenuButtonProps{
+					Href:    "/adminx/main",
+					Tooltip: titulo,
+				}) {
+					// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
+					@badge.Badge(badge.Props{
+						ID:    "ws_badge_indicator",
+						Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
+						Attributes: templ.Attributes{
+							"title":                 "Se pone en el websocket.js",
+							"data-conectados-badge": "true",
+						},
+					}) {
+						<p id="ws_tabs_conectados">
+							<span
+								data-ws-status
+								class="size-2 rounded-full bg-green-500"
+							></span>
+							<span id="ws_total_conectados" data-conectados-1>0</span>
+						</p>
+					}
+					<div class="flex flex-col leading-tight">
+						<span class="font-semibold text-sidebar-foreground">
+							{ titulo }
+						</span>
+						<span class="text-xs text-sidebar-foreground/70">
+							{ subtitulo }
+						</span>
+					</div>
+				}
+			}
+		}
+	}
 }
 
 templ SideFooter(usuario *xm.ResponseUsuario) {
