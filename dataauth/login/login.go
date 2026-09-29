@@ -18,8 +18,9 @@ import (
 
 func Login2(ctx context.Context, db *sql.DB, input model.NewLogin2) (*model.ResponseLogin, error) {
 	inp := model.NewLogin{
-		Username: input.Username,
-		Password: input.Password,
+		Username:      input.Username,
+		Password:      input.Password,
+		XIsFromIframe: input.XIsFromIframe,
 	}
 	return Login(ctx, db, inp, true)
 }
@@ -91,12 +92,13 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 
 	// funcionalidad nueva para cookie
 	cd := utils.CookieData{
-		Token:    sesion.Key,
-		UserID:   us.ID,
-		Username: us.Username,
-		RolID:    rol,
-		UnidadID: uni,
-		Expires:  exp,
+		Token:        sesion.Key,
+		UserID:       us.ID,
+		Username:     us.Username,
+		RolID:        rol,
+		UnidadID:     uni,
+		IsFromIframe: input.XIsFromIframe,
+		Expires:      exp,
 	}
 	utils.CtxSetCookie(ctx, cd)
 

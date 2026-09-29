@@ -33,12 +33,13 @@ type AuthData struct {
 }
 
 type CookieData struct {
-	Token    string
-	Username string
-	UserID   string
-	RolID    string
-	UnidadID string
-	Expires  time.Time
+	Token        string
+	Username     string
+	UserID       string
+	RolID        string
+	UnidadID     string
+	IsFromIframe bool
+	Expires      time.Time
 }
 
 var jwtSecret = []byte(getJwtSecret())
@@ -203,12 +204,17 @@ func MiddlewareCookie(next http.Handler) http.Handler {
 }
 
 func CtxSetCookie(ctx context.Context, data CookieData) {
+	iframe := "false"
+	if data.IsFromIframe {
+		iframe = "true"
+	}
 	resultado := strings.Join([]string{
 		data.Token,
 		data.UserID,
 		data.Username,
 		data.RolID,
 		data.UnidadID,
+		iframe,
 	}, "|")
 
 	w := ctx.Value("responseWriterCookie").(http.ResponseWriter)
@@ -239,6 +245,9 @@ func CtxGetCookie(r *http.Request) (*CookieData, error) {
 		RolID:    partes[3],
 		UnidadID: partes[4],
 		Expires:  cookie.Expires,
+	}
+	if len(partes) > 5 {
+		data.IsFromIframe = partes[5] == "true"
 	}
 	return &data, nil
 }

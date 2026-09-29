@@ -312,11 +312,13 @@ input NewLogin {
   username: String!
   password: String! 
   iv64: String!
+  x_is_from_iframe: Boolean! = false
 }
 
 input NewLogin2 {
   username: String!
   password: String!  
+  x_is_from_iframe: Boolean! = false
 }
 
 input NewNotificacion { 

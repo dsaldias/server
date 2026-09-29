@@ -109,14 +109,16 @@ type NewChatMensajeStatus struct {
 }
 
 type NewLogin struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Iv64     string `json:"iv64"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	Iv64          string `json:"iv64"`
+	XIsFromIframe bool   `json:"x_is_from_iframe"`
 }
 
 type NewLogin2 struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	XIsFromIframe bool   `json:"x_is_from_iframe"`
 }
 
 type NewNotificacion struct {
@@ -514,7 +516,7 @@ func (e *ChatConversacionTipo) UnmarshalGQL(v any) error {
 }
 
 func (e ChatConversacionTipo) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *ChatConversacionTipo) UnmarshalJSON(b []byte) error {
@@ -571,7 +573,7 @@ func (e *ChatMensajeStatusTipo) UnmarshalGQL(v any) error {
 }
 
 func (e ChatMensajeStatusTipo) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *ChatMensajeStatusTipo) UnmarshalJSON(b []byte) error {
@@ -636,7 +638,7 @@ func (e *ChatMensajeTipo) UnmarshalGQL(v any) error {
 }
 
 func (e ChatMensajeTipo) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	_, _ = fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 func (e *ChatMensajeTipo) UnmarshalJSON(b []byte) error {

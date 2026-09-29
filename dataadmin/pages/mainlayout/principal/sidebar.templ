@@ -13,7 +13,16 @@ import (
 	xm "github.com/dsaldias/server/graph_auth/model"
 )
 
-templ Sidebar(titulo, subtitulo, current_path string, menus []*MenuGrupo, usuario *xm.ResponseUsuario, config layoutconfig.Config, asset_version string) {
+templ Sidebar(
+	isFromIframe bool,
+	titulo,
+	subtitulo,
+	current_path string,
+	menus []*MenuGrupo,
+	usuario *xm.ResponseUsuario,
+	config layoutconfig.Config,
+	asset_version string,
+) {
 	@dropdown.Script()
 	@sidebar.Script()
 	@collapsible.Script()
@@ -77,81 +86,87 @@ templ Sidebar(titulo, subtitulo, current_path string, menus []*MenuGrupo, usuari
 			}
 			@sidebar.Separator()
 		}
-		@sidebar.Footer() {
-			@sidebar.Menu() {
-				@sidebar.MenuItem() {
-					@dropdown.Dropdown() {
-						@dropdown.Trigger() {
-							@sidebar.MenuButton(sidebar.MenuButtonProps{
-								Size: sidebar.MenuButtonSizeLg,
-							}) {
-								@avatar.Avatar(avatar.Props{
-									Class: "size-8 rounded-lg",
-								}) {
-									@avatar.Image(avatar.ImageProps{
-										Src: foto_url(usuario.FotoURL),
-									})
-								}
-								<div class="grid flex-1 text-left text-sm leading-tight">
-									<span class="truncate font-medium text-sidebar-foreground">
-										{ usuario.Nombres } { usuario.Apellido1 }
-										{ segundoAp(usuario) }
-									</span>
-									<span class="truncate text-xs text-sidebar-foreground/60">
-										{ correo(usuario) }
-									</span>
-								</div>
-								@icon.ChevronsUpDown(icon.Props{
-									Class: "ml-auto size-4 text-sidebar-foreground/60",
-								})
-							}
-						}
-						@dropdown.Content(dropdown.ContentProps{
-							Class:     "w-56",
-							Placement: dropdown.PlacementTopStart,
+		if !isFromIframe {
+			@SideFooter(usuario)
+		}
+	}
+	@Script(asset_version)
+}
+
+templ SideFooter(usuario *xm.ResponseUsuario) {
+	@sidebar.Footer() {
+		@sidebar.Menu() {
+			@sidebar.MenuItem() {
+				@dropdown.Dropdown() {
+					@dropdown.Trigger() {
+						@sidebar.MenuButton(sidebar.MenuButtonProps{
+							Size: sidebar.MenuButtonSizeLg,
 						}) {
-							@dropdown.Label() {
-								{ usuario.Nombres } { usuario.Apellido1 }
-								{ segundoAp(usuario) }
-							}
-							@dropdown.Separator()
-							@dropdown.Item() {
-								@utility.ModalButton(utility.BtnProps{
-									ModalTitle:    "Editar perfil",
-									HtmxGet:       "/adminx/usuarios/getperfil",
-									HtmxPost:      "/adminx/usuarios/setperfil",
-									Class:         "w-full justify-start text-left bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
-									DialogID:      "x-modal-perfil",
-									BtnText:       "Perfil",
-									Icon:          icon.PersonStanding(),
-									NoSwapContent: true,
+							@avatar.Avatar(avatar.Props{
+								Class: "size-8 rounded-lg",
+							}) {
+								@avatar.Image(avatar.ImageProps{
+									Src: foto_url(usuario.FotoURL),
 								})
 							}
-							@dropdown.Separator()
-							@dropdown.Item(dropdown.ItemProps{
-								Attributes: templ.Attributes{
-									"href":    "#",
-									"hx-get":  "/adminx/logout",
-									"hx-swap": "none",
-									"hx-on::after-request": `
+							<div class="grid flex-1 text-left text-sm leading-tight">
+								<span class="truncate font-medium text-sidebar-foreground">
+									{ usuario.Nombres } { usuario.Apellido1 }
+									{ segundoAp(usuario) }
+								</span>
+								<span class="truncate text-xs text-sidebar-foreground/60">
+									{ correo(usuario) }
+								</span>
+							</div>
+							@icon.ChevronsUpDown(icon.Props{
+								Class: "ml-auto size-4 text-sidebar-foreground/60",
+							})
+						}
+					}
+					@dropdown.Content(dropdown.ContentProps{
+						Class:     "w-56",
+						Placement: dropdown.PlacementTopStart,
+					}) {
+						@dropdown.Label() {
+							{ usuario.Nombres } { usuario.Apellido1 }
+							{ segundoAp(usuario) }
+						}
+						@dropdown.Separator()
+						@dropdown.Item() {
+							@utility.ModalButton(utility.BtnProps{
+								ModalTitle:    "Editar perfil",
+								HtmxGet:       "/adminx/usuarios/getperfil",
+								HtmxPost:      "/adminx/usuarios/setperfil",
+								Class:         "w-full justify-start text-left bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
+								DialogID:      "x-modal-perfil",
+								BtnText:       "Perfil",
+								Icon:          icon.PersonStanding(),
+								NoSwapContent: true,
+							})
+						}
+						@dropdown.Separator()
+						@dropdown.Item(dropdown.ItemProps{
+							Attributes: templ.Attributes{
+								"href":    "#",
+								"hx-get":  "/adminx/logout",
+								"hx-swap": "none",
+								"hx-on::after-request": `
             				window.location.replace('/adminx/');
         					`,
-								},
-							}) {
-								<span class="flex items-center">
-									@icon.LogOut(icon.Props{
-										Class: "size-4 mr-2",
-									})
-									Cerrar sesion
-								</span>
-							}
+							},
+						}) {
+							<span class="flex items-center">
+								@icon.LogOut(icon.Props{
+									Class: "size-4 mr-2",
+								})
+								Cerrar sesion
+							</span>
 						}
 					}
 				}
 			}
 		}
 	}
-	@Script(asset_version)
 }
 
 templ Script(asset_version string) {

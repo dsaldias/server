@@ -5,9 +5,9 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 )
 
-templ Inicio(asset_version string) {
+templ Inicio(asset_version string, url_login string) {
 	@principal.Layout("Iniciar sesión", layoutconfig.Default()) {
-		@Login()
+		@Login(url_login)
 	}
 	@Script(asset_version)
 }

@@ -10476,7 +10476,11 @@ func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any)
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"username", "password", "iv64"}
+	if _, present := asMap["x_is_from_iframe"]; !present {
+		asMap["x_is_from_iframe"] = false
+	}
+
+	fieldsInOrder := [...]string{"username", "password", "iv64", "x_is_from_iframe"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10504,6 +10508,13 @@ func (ec *executionContext) unmarshalInputNewLogin(ctx context.Context, obj any)
 				return it, err
 			}
 			it.Iv64 = data
+		case "x_is_from_iframe":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("x_is_from_iframe"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.XIsFromIframe = data
 		}
 	}
 	return it, nil
@@ -10520,7 +10531,11 @@ func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"username", "password"}
+	if _, present := asMap["x_is_from_iframe"]; !present {
+		asMap["x_is_from_iframe"] = false
+	}
+
+	fieldsInOrder := [...]string{"username", "password", "x_is_from_iframe"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10541,6 +10556,13 @@ func (ec *executionContext) unmarshalInputNewLogin2(ctx context.Context, obj any
 				return it, err
 			}
 			it.Password = data
+		case "x_is_from_iframe":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("x_is_from_iframe"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.XIsFromIframe = data
 		}
 	}
 	return it, nil
@@ -14553,10 +14575,6 @@ func (ec *executionContext) unmarshalNChatEnviarMensajeInput2githubᚗcomᚋdsal
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNChatMensaje2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐChatMensaje(ctx context.Context, sel ast.SelectionSet, v model.ChatMensaje) graphql.Marshaler {
-	return ec._ChatMensaje(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNChatMensaje2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐChatMensajeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChatMensaje) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
@@ -14774,10 +14792,6 @@ func (ec *executionContext) unmarshalNNewUsuarioOauth2githubᚗcomᚋdsaldiasᚋ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacion(ctx context.Context, sel ast.SelectionSet, v model.Notificacion) graphql.Marshaler {
-	return ec._Notificacion(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNNotificacion2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐNotificacionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Notificacion) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
@@ -14892,10 +14906,6 @@ func (ec *executionContext) marshalNResponseChatConversacion2ᚖgithubᚗcomᚋd
 	return ec._ResponseChatConversacion(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseLogin2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v model.ResponseLogin) graphql.Marshaler {
-	return ec._ResponseLogin(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNResponseLogin2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseLogin(ctx context.Context, sel ast.SelectionSet, v *model.ResponseLogin) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -14904,10 +14914,6 @@ func (ec *executionContext) marshalNResponseLogin2ᚖgithubᚗcomᚋdsaldiasᚋs
 		return graphql.Null
 	}
 	return ec._ResponseLogin(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResponseMe2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v model.ResponseMe) graphql.Marshaler {
-	return ec._ResponseMe(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNResponseMe2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseMe(ctx context.Context, sel ast.SelectionSet, v *model.ResponseMe) graphql.Marshaler {
@@ -15096,10 +15102,6 @@ func (ec *executionContext) marshalNResponseRoles2ᚖgithubᚗcomᚋdsaldiasᚋs
 	return ec._ResponseRoles(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResponseUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v model.ResponseUsuario) graphql.Marshaler {
-	return ec._ResponseUsuario(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNResponseUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐResponseUsuario(ctx context.Context, sel ast.SelectionSet, v *model.ResponseUsuario) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -15108,10 +15110,6 @@ func (ec *executionContext) marshalNResponseUsuario2ᚖgithubᚗcomᚋdsaldias�
 		return graphql.Null
 	}
 	return ec._ResponseUsuario(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNRol2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v model.Rol) graphql.Marshaler {
-	return ec._Rol(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNRol2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐRol(ctx context.Context, sel ast.SelectionSet, v *model.Rol) graphql.Marshaler {
@@ -15198,10 +15196,6 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTicket2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v model.Ticket) graphql.Marshaler {
-	return ec._Ticket(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNTicket2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐTicket(ctx context.Context, sel ast.SelectionSet, v *model.Ticket) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -15252,10 +15246,6 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNUnidad2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidad(ctx context.Context, sel ast.SelectionSet, v model.Unidad) graphql.Marshaler {
-	return ec._Unidad(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Unidad) graphql.Marshaler {
@@ -15309,10 +15299,6 @@ func (ec *executionContext) unmarshalNUpdateUsuario2githubᚗcomᚋdsaldiasᚋse
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUsuario2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuario(ctx context.Context, sel ast.SelectionSet, v model.Usuario) graphql.Marshaler {
-	return ec._Usuario(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNUsuario2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUsuarioᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Usuario) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
@@ -15337,10 +15323,6 @@ func (ec *executionContext) marshalNUsuario2ᚖgithubᚗcomᚋdsaldiasᚋserver�
 		return graphql.Null
 	}
 	return ec._Usuario(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNXNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v model.XNotificacion) graphql.Marshaler {
-	return ec._XNotificacion(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNXNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐXNotificacion(ctx context.Context, sel ast.SelectionSet, v *model.XNotificacion) graphql.Marshaler {

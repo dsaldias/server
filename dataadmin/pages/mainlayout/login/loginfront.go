@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/dsaldias/server/dataadmin/pages/utility"
-	"github.com/dsaldias/server/dataauth/login"
+	"github.com/dsaldias/server/dataauth/repo"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
 type Logincontroller struct {
-	DB *sql.DB
+	DB           *sql.DB
+	AssetVersion string
 }
 
 func (c *Logincontroller) Logout(w http.ResponseWriter, r *http.Request) {
@@ -36,12 +37,15 @@ func (c *Logincontroller) Login() http.Handler {
 		usuario := r.FormValue("usuario")
 		clave := r.FormValue("clave")
 		xis_relogin := r.FormValue("xis_relogin") == "true"
+		isIframe := r.URL.Query().Get("iframe") == "true"
 
 		data := model.NewLogin2{
-			Username: usuario,
-			Password: clave,
+			Username:      usuario,
+			Password:      clave,
+			XIsFromIframe: isIframe,
 		}
-		logindata, err := login.Login2(r.Context(), c.DB, data)
+
+		logindata, err := repo.LoginV2(r.Context(), c.DB, data)
 		if err != nil {
 			utility.ErrorTpl(err.Error()).Render(r.Context(), w)
 			return
@@ -67,10 +71,23 @@ func (c *Logincontroller) Login() http.Handler {
 		}
 
 		if !xis_relogin {
-			w.Header().Set("HX-Redirect", "/adminx/main")
+			url_main := "/adminx/main"
+			if isIframe {
+				url_main += "?iframe=true"
+			}
+			w.Header().Set("HX-Redirect", url_main)
 		}
 
 		w.WriteHeader(http.StatusNoContent)
 
 	})
+}
+
+func (c *Logincontroller) LoginView(w http.ResponseWriter, r *http.Request) {
+	url_login := "/adminx/login"
+	isIframe := r.URL.Query().Get("iframe") == "true"
+	if isIframe {
+		url_login += "?iframe=true"
+	}
+	Inicio(c.AssetVersion, url_login).Render(r.Context(), w)
 }

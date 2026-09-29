@@ -15,6 +15,7 @@ import (
 )
 
 func MainPageLayout(
+	isFromIframe bool,
 	titulo string,
 	subtitulo string,
 	unidadid string,
@@ -69,7 +70,7 @@ func MainPageLayout(
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = Sidebar(titulo, subtitulo, current_path, menus, usuario, config, AssetVersion).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = Sidebar(isFromIframe, titulo, subtitulo, current_path, menus, usuario, config, AssetVersion).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -111,7 +112,7 @@ func MainPageLayout(
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = Header(roles, unidadid, config).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = Header(isFromIframe, roles, unidadid, config).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

@@ -7,6 +7,7 @@ import (
 )
 
 templ MainPageLayout(
+	isFromIframe bool,
 	titulo string,
 	subtitulo string,
 	unidadid string,
@@ -19,10 +20,10 @@ templ MainPageLayout(
 ) {
 	@Layout(titulo, config) {
 		@sidebar.Layout() {
-			@Sidebar(titulo, subtitulo, current_path, menus, usuario, config, AssetVersion)
+			@Sidebar(isFromIframe,titulo, subtitulo, current_path, menus, usuario, config, AssetVersion)
 			@sidebar.Inset() {
 				<div class={ config.WithDefaults().ShellClass }>
-					@Header(roles, unidadid, config)
+					@Header(isFromIframe,roles, unidadid, config)
 					<main
 						id="contenido"
 						class={ config.WithDefaults().MainClass }

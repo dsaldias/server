@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"net/http"
 
-	"github.com/a-h/templ"
 	"github.com/dsaldias/server/dataadmin/pages/avisos"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	xlogin "github.com/dsaldias/server/dataadmin/pages/mainlayout/login"
@@ -67,7 +66,7 @@ var (
 func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handlers2 {
 	ssr := []*utils.Handlers2{}
 	umain := mainlayout.MainController{DB: db, Config: config}
-	cont_login := xlogin.Logincontroller{DB: db}
+	cont_login := xlogin.Logincontroller{DB: db, AssetVersion: principal.AssetVersion}
 
 	ucontroller := usuarios.UsuariosController{DB: db, C: &umain}
 	rcontroller := roles.RolesController{DB: db, C: &umain}
@@ -89,8 +88,8 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGOUT, H: http.HandlerFunc(cont_login.Logout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_LOGIN, H: cont_login.Login()})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: templ.Handler(xlogin.Inicio(principal.AssetVersion))})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE2, H: templ.Handler(xlogin.Inicio(principal.AssetVersion))})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(cont_login.LoginView)})
+	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE2, H: http.HandlerFunc(cont_login.LoginView)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_MAIN, H: http.HandlerFunc(umain.MainLayout)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_SET_COOKIE_UNIDAD, H: http.HandlerFunc(umain.SetCookieUnidadId)})
 
