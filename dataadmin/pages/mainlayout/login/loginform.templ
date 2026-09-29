@@ -83,11 +83,16 @@ templ Login(url_login string) {
 						class="space-y-5"
 						hx-on::before-request="
 							const dentroDeIframe = window.self !== window.top;
-							console.log('dentroDeIframe',dentroDeIframe)
+							console.log('dentroDeIframe::',dentroDeIframe)
 							if (dentroDeIframe) {
-								const url = new URL(this.getAttribute('hx-post'), window.location.origin);
-								url.searchParams.set('iframe', 'true');
-								this.setAttribute('hx-post', url.pathname + url.search);
+								const input = form.querySelector('input[name='x_is_from_iframe']');
+								if (!input) {
+									const hidden = document.createElement('input');
+									hidden.type = 'hidden';
+									hidden.name = 'x_is_from_iframe';
+									hidden.value = 'true';
+									form.appendChild(hidden);
+								}
 							}
 							const form = this;
 							const button = form.querySelector('button[type=submit]');
