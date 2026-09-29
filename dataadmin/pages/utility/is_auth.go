@@ -21,12 +21,7 @@ func Is_Auth(
 			return nil, err
 		}
 
-		isIframe := r.URL.Query().Get("iframe") == "true"
 		enlace_principal := "/adminx/"
-		if isIframe {
-			enlace_principal += "?iframe=true"
-		}
-
 		http.Redirect(w, r, enlace_principal, http.StatusSeeOther)
 		return nil, err
 	}
