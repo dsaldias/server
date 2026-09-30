@@ -23,20 +23,27 @@ func (c *UsuariosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pag := utility.GetPaginacion(r, 1, "#lista-usuarios")
+	pagina, size := utility.GetPaginacionParams(r)
 
-	us, err := repo.Usuarios(r.Context(), c.DB, model.QueryUsuarios{})
+	q := model.QueryUsuarios{
+		Pagina: pagina,
+		Size:   size,
+	}
+
+	us, err := repo.Usuarios2(r.Context(), c.DB, q)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
+	pag := utility.GetPaginacion(r, us.Paginacion.Paginas, "#lista-usuarios")
+
 	if utility.IsOnlyHtmx(r) {
-		ListaUsuarios(us, pag).Render(r.Context(), w)
+		ListaUsuarios(us.Datos, pag).Render(r.Context(), w)
 		return
 	}
 
-	contenido := Usuarios(us, pag, "?xrefresh=1")
+	contenido := Usuarios(us.Datos, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 }
 

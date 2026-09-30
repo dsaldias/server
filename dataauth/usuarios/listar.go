@@ -11,12 +11,21 @@ import (
 	"github.com/dsaldias/server/dataauth/menus"
 	"github.com/dsaldias/server/dataauth/permisos"
 	"github.com/dsaldias/server/dataauth/roles"
+	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 )
 
 var WRONG_PASS = "usuario o clave incorrectos"
 
 func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error) {
+	if query.Pagina < 1 {
+		return nil, errors.New("la página debe ser superior a 0")
+	}
+	if query.Size < 1 {
+		return nil, errors.New("el tamaño debe ser superior a 0")
+	}
+	offset := (query.Pagina - 1) * query.Size
+
 	filter_by_rol := ""
 	if query.Rol != nil {
 		filter_by_rol = "where id in (select usuario_id from rbac_rol_usuario_unidades where rol_id='%s')"
@@ -25,6 +34,8 @@ func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error
 
 	sql := `select id, nombres,apellido1,apellido2,documento,celular,correo,sexo,direccion,estado,username,last_login,oauth_id,foto_url,ST_X(ubicacion) AS latitud,ST_Y(ubicacion) AS longitud,fecha_registro,fecha_update from rbac_usuarios %s`
 	sql = fmt.Sprintf(sql, filter_by_rol)
+	sql += fmt.Sprintf("LIMIT %d OFFSET %d", query.Size, offset)
+
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, err
@@ -47,6 +58,40 @@ func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error
 	}
 
 	return us, nil
+}
+
+func GetUsuarios2(db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado, error) {
+	us, err := GetUsuarios(db, query)
+	if err != nil {
+		return nil, err
+	}
+
+	filter_by_rol := ""
+	if query.Rol != nil {
+		filter_by_rol = "where id in (select usuario_id from rbac_rol_usuario_unidades where rol_id='%s')"
+		filter_by_rol = fmt.Sprintf(filter_by_rol, *query.Rol)
+	}
+	queryTotal := ` select count(*) from rbac_usuarios %s`
+	queryTotal = fmt.Sprintf(queryTotal, filter_by_rol)
+
+	var total int32
+	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
+		return nil, err
+	}
+	paginas := utils.CalcularPaginas(total, int32(query.Size))
+	pagina := model.Pagina{
+		Pagina:    query.Pagina,
+		Size:      query.Size,
+		Paginas:   paginas,
+		Registros: total,
+	}
+
+	dt := model.UsuarioPaginado{
+		Paginacion: &pagina,
+		Datos:      us,
+	}
+
+	return &dt, nil
 }
 
 func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {

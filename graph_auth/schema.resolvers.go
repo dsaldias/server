@@ -107,6 +107,11 @@ func (r *queryResolver) Roles(ctx context.Context) ([]*model.ResponseRoles, erro
 	return repo.Roles(ctx, r.DB)
 }
 
+// Roles2 is the resolver for the roles2 field.
+func (r *queryResolver) Roles2(ctx context.Context, q model.QueryRoles) (*model.RolPaginado, error) {
+	return repo.Roles2(ctx, r.DB, q)
+}
+
 // Permisos is the resolver for the permisos field.
 func (r *queryResolver) Permisos(ctx context.Context) ([]*model.Permiso, error) {
 	return repo.Permisos(ctx, r.DB)
@@ -115,6 +120,11 @@ func (r *queryResolver) Permisos(ctx context.Context) ([]*model.Permiso, error) 
 // Usuarios is the resolver for the usuarios field.
 func (r *queryResolver) Usuarios(ctx context.Context, query model.QueryUsuarios) ([]*model.Usuario, error) {
 	return repo.Usuarios(ctx, r.DB, query)
+}
+
+// Usuarios2 is the resolver for the usuarios2 field.
+func (r *queryResolver) Usuarios2(ctx context.Context, query model.QueryUsuarios) (*model.UsuarioPaginado, error) {
+	return repo.Usuarios2(ctx, r.DB, query)
 }
 
 // UsuariosConectados is the resolver for the usuarios_conectados field.

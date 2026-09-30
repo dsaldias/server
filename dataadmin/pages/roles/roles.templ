@@ -18,11 +18,11 @@ templ Roles(roles []*model.ResponseRoles,paginacion utility.MiPaginacion, url_re
 		DialogID:    "xdialog-form-rol",
 		Acciones:    HeaderAcciones(),
 	}, paginacion) {
-		@ListaRoles(roles)
+		@ListaRoles(roles,paginacion)
 	}
 }
 
-templ ListaRoles(roles []*model.ResponseRoles) {
+templ ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) {
 	@table.Table() {
 		@table.Header() {
 			@table.Row() {
@@ -99,6 +99,7 @@ templ ListaRoles(roles []*model.ResponseRoles) {
 			}
 		}
 	}
+	@utility.AdminTablePaginacion(paginacion)
 }
 
 templ HeaderAcciones() {

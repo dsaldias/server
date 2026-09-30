@@ -211,6 +211,11 @@ type Permiso struct {
 type Query struct {
 }
 
+type QueryRoles struct {
+	Pagina int32 `json:"pagina"`
+	Size   int32 `json:"size"`
+}
+
 type QueryTickets struct {
 	Estado *string `json:"estado,omitempty"`
 }
@@ -221,7 +226,9 @@ type QueryUnidades struct {
 }
 
 type QueryUsuarios struct {
-	Rol *string `json:"rol,omitempty"`
+	Pagina int32   `json:"pagina"`
+	Size   int32   `json:"size"`
+	Rol    *string `json:"rol,omitempty"`
 }
 
 type RespTickets struct {
@@ -352,6 +359,11 @@ type RolMe struct {
 	Descripcion   *string   `json:"descripcion,omitempty"`
 	Jerarquia     int32     `json:"jerarquia"`
 	FechaRegistro time.Time `json:"fecha_registro"`
+}
+
+type RolPaginado struct {
+	Paginacion *Pagina          `json:"paginacion"`
+	Datos      []*ResponseRoles `json:"datos"`
 }
 
 type RolUnidad struct {
@@ -486,6 +498,11 @@ type Usuario struct {
 	Latitud       *float64   `json:"latitud,omitempty"`
 	Longitud      *float64   `json:"longitud,omitempty"`
 	Conexiones    int32      `json:"conexiones"`
+}
+
+type UsuarioPaginado struct {
+	Paginacion *Pagina    `json:"paginacion"`
+	Datos      []*Usuario `json:"datos"`
 }
 
 type XNotificacion struct {

@@ -1,4 +1,4 @@
-package unidades
+package roles
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
-func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) {
+func GetRoles2(db *sql.DB, q model.QueryRoles) (*model.RolPaginado, error) {
 	if q.Pagina < 1 {
 		return nil, errors.New("la página debe ser superior a 0")
 	}
@@ -18,15 +18,23 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 
 	offset := (q.Pagina - 1) * q.Size
 
-	sql := `select 
-	id, 
-	nombre, 
-	descripcion, 
-	orden,
-	ST_X(ubicacion) AS latitud, 
-	ST_Y(ubicacion) AS longitud, 
-	fecha_registro 
-	from rbac_unidades order by id, orden
+	sql := `
+	SELECT  
+		r.id,r.nombre,r.descripcion,r.jerarquia,r.fecha_registro,
+		COUNT(DISTINCT rm.id) AS total_menus,
+		COUNT(DISTINCT rp.metodo) AS total_permisos,
+		COUNT(DISTINCT ru.usuario_id) AS total_usuarios
+	FROM
+		rbac_roles r
+	LEFT JOIN 
+		rbac_rol_menus rm ON r.id = rm.rol_id
+	LEFT JOIN 
+		rbac_rol_permiso rp ON r.id = rp.rol_id
+	LEFT JOIN 
+		rbac_rol_usuario_unidades ru ON r.id = ru.rol_id
+	GROUP BY 
+		r.id,r.nombre,r.descripcion,r.jerarquia,r.fecha_registro
+	order by r.jerarquia asc, r.id
 	LIMIT ? OFFSET ?
 	`
 	rows, err := db.Query(sql, q.Size, offset)
@@ -34,19 +42,19 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 		return nil, err
 	}
 	defer rows.Close()
+	rs := []*model.ResponseRoles{}
 
-	rs := []*model.Unidad{}
 	for rows.Next() {
-		u := model.Unidad{}
-		er := parseRows(rows, &u)
+		r := model.ResponseRoles{}
+		er := parseRes(rows, &r)
 		if er != nil {
 			return nil, er
 		}
-		rs = append(rs, &u)
+		rs = append(rs, &r)
 	}
 
 	var total int32
-	queryTotal := ` select count(*) from rbac_unidades `
+	queryTotal := ` select count(*) from rbac_roles `
 	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
 		return nil, err
 	}
@@ -58,7 +66,7 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 		Registros: total,
 	}
 
-	dt := model.UnidadPaginada{
+	dt := model.RolPaginado{
 		Paginacion: &pagina,
 		Datos:      rs,
 	}

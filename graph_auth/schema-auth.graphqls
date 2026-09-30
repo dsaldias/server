@@ -49,11 +49,6 @@ type Unidad {
   fecha_registro: Time!  
 } 
 
-type UnidadPaginada {
-  paginacion: Pagina!
-  datos: [Unidad!]!
-}
-
 type Menus {
     id: ID!
     label: String!
@@ -114,6 +109,20 @@ type TicketsRespuestas {
   fecha_registro: Time! 
 }
 
+type UnidadPaginada {
+  paginacion: Pagina!
+  datos: [Unidad!]!
+}
+
+type UsuarioPaginado {
+  paginacion: Pagina!
+  datos: [Usuario!]!
+}
+
+type RolPaginado {
+  paginacion: Pagina!
+  datos: [ResponseRoles!]!
+}
 
 # 
 # ===============================================
@@ -376,6 +385,8 @@ input RolUnidad {
 }
 
 input QueryUsuarios {
+  pagina: Int!
+  size: Int!
   rol: ID
 }
 
@@ -393,6 +404,11 @@ input NewTicketRespuesta {
 }
 
 input QueryUnidades {
+  pagina: Int!
+  size: Int!
+}
+
+input QueryRoles {
   pagina: Int!
   size: Int!
 }

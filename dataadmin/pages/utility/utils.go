@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	PAGDefault = 2
+)
+
 func TemplUIJS(templuiPath string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -104,7 +108,7 @@ func GetPaginacionParams(r *http.Request) (int32, int32) {
 	xtam := r.URL.Query().Get("size")
 
 	pagina := int32(1)
-	tam := int32(10)
+	tam := int32(PAGDefault)
 	pag, err := strconv.ParseInt(xpagina, 10, 32)
 	if err == nil {
 		pagina = int32(pag)
@@ -121,7 +125,7 @@ func GetPaginacion(r *http.Request, paginas int32, targetHtmx string) MiPaginaci
 	xtam := r.URL.Query().Get("size")
 
 	pagina := int32(1)
-	tam := int32(10)
+	tam := int32(PAGDefault)
 	pag, err := strconv.ParseInt(xpagina, 10, 32)
 	if err == nil {
 		pagina = int32(pag)

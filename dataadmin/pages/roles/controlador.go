@@ -23,23 +23,26 @@ func (c *RolesController) ListarRoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	roles, err := repo.Roles(r.Context(), c.DB)
+	pagina, size := utility.GetPaginacionParams(r)
+
+	q := model.QueryRoles{
+		Pagina: pagina,
+		Size:   size,
+	}
+
+	rs, err := repo.Roles2(r.Context(), c.DB, q)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	if r.URL.Query().Get("xrefresh") != "" {
-		ListaRoles(roles).Render(r.Context(), w)
+	pag := utility.GetPaginacion(r, rs.Paginacion.Paginas, "#tabla-roles")
+	if utility.IsOnlyHtmx(r) {
+		ListaRoles(rs.Datos, pag).Render(r.Context(), w)
 		return
 	}
 
-	pag := utility.MiPaginacion{
-		Paginas: 11,
-		Pagina:  0,
-		Size:    10,
-	}
-	contenido := Roles(roles, pag, "?xrefresh=1")
+	contenido := Roles(rs.Datos, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 
 }

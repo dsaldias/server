@@ -18,8 +18,10 @@
 type Query {
   me(input:InputMe!): ResponseMe!
   roles: [ResponseRoles!]!
+  roles2(q: QueryRoles!): RolPaginado!
   permisos: [Permiso!]!
   usuarios(query:QueryUsuarios!): [Usuario!]!
+  usuarios2(query:QueryUsuarios!): UsuarioPaginado!
   usuarios_conectados: [Usuario!]!
   usuario_by_id(id:ID!): ResponseUsuario!
   rol_by_id(id:ID!): Rol!

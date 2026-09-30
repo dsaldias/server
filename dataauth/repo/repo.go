@@ -176,6 +176,14 @@ func Roles(ctx context.Context, db *sql.DB) ([]*model.ResponseRoles, error) {
 	return roles.GetRoles(db)
 }
 
+func Roles2(ctx context.Context, db *sql.DB, q model.QueryRoles) (*model.RolPaginado, error) {
+	_, err := utils.CtxValue(ctx, db, "roles")
+	if err != nil {
+		return nil, err
+	}
+	return roles.GetRoles2(db, q)
+}
+
 // Permisos is the resolver for the permisos field.
 func Permisos(ctx context.Context, db *sql.DB) ([]*model.Permiso, error) {
 	_, err := utils.CtxValue(ctx, db, "permisos")
@@ -192,6 +200,14 @@ func Usuarios(ctx context.Context, db *sql.DB, query model.QueryUsuarios) ([]*mo
 		return nil, err
 	}
 	return usuarios.GetUsuarios(db, query)
+}
+
+func Usuarios2(ctx context.Context, db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado, error) {
+	_, err := utils.CtxValue(ctx, db, "usuarios")
+	if err != nil {
+		return nil, err
+	}
+	return usuarios.GetUsuarios2(db, query)
 }
 
 // UsuariosConectados is the resolver for the usuarios_conectados field.
