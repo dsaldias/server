@@ -36,7 +36,12 @@ func (c *AvisosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contenido := Avisos(us, "?xrefresh=1")
+	pag := utility.MiPaginacion{
+		Paginas: 11,
+		Pagina:  0,
+		Size:    10,
+	}
+	contenido := Avisos(us, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 }
 

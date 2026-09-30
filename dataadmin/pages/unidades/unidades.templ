@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-templ Unidades(unidades []*model.Unidad, url_refresh string) {
+templ Unidades(unidades []*model.Unidad, paginacion utility.MiPaginacion, url_refresh string) {
 	@selectbox.Script()
 	@utility.TablaAdmin(utility.MiTablaProps{
 		Titulo:         "Unidades",
@@ -21,7 +21,7 @@ templ Unidades(unidades []*model.Unidad, url_refresh string) {
 		Acciones:       HeaderAcciones(),
 		Busqueda:       true,
 		FilasPorPagina: 16,
-	}) {
+	}, paginacion) {
 		@ListaUnidades(unidades)
 	}
 }

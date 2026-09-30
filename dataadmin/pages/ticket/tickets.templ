@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-templ Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all string) {
+templ Tickets(tickets, alls []*model.RespTickets, paginacion utility.MiPaginacion, url_refresh, url_refresh_all string) {
 	@tabs.Script()
 	@tabs.Tabs(tabs.Props{
 		ID:    "account-tabs",
@@ -43,7 +43,7 @@ templ Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all s
 					ListaID:     "lista-tickets",
 					DialogID:    "xdialog-form-ticket",
 					Acciones:    HeaderAcciones(),
-				}) {
+				}, paginacion) {
 					@ListaTickets(tickets)
 				}
 			}
@@ -51,7 +51,7 @@ templ Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all s
 			@tabs.Content(tabs.ContentProps{
 				Value: "password",
 			}) {
-				@TicketsAll(alls, url_refresh_all)
+				@TicketsAll(alls,paginacion, url_refresh_all)
 			}
 		</div>
 	}

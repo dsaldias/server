@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-templ Usuarios(usuarios []*model.Usuario, url_refresh string) {
+templ Usuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion, url_refresh string) {
 	@selectbox.Script()
 	@utility.TablaAdmin(utility.MiTablaProps{
 		Titulo:         "Usuarios registrados",
@@ -22,7 +22,7 @@ templ Usuarios(usuarios []*model.Usuario, url_refresh string) {
 		Busqueda:       true,
 		Ordenable:      true,
 		FilasPorPagina: 5,
-	}) {
+	},paginacion) {
 		@ListaUsuarios(usuarios)
 	}
 }

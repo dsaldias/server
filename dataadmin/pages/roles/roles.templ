@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-templ Roles(roles []*model.ResponseRoles, url_refresh string) {
+templ Roles(roles []*model.ResponseRoles,paginacion utility.MiPaginacion, url_refresh string) {
 	@utility.TablaAdmin(utility.MiTablaProps{
 		Titulo:      "Roles",
 		Descripcion: "Administración y gestión de roles de acceso al sistema",
@@ -17,7 +17,7 @@ templ Roles(roles []*model.ResponseRoles, url_refresh string) {
 		ListaID:     "tabla-roles",
 		DialogID:    "xdialog-form-rol",
 		Acciones:    HeaderAcciones(),
-	}) {
+	}, paginacion) {
 		@ListaRoles(roles)
 	}
 }

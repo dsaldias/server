@@ -9,7 +9,7 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 )
 
-templ Avisos(avisos []*model.Notificacion, url_refresh string) {
+templ Avisos(avisos []*model.Notificacion,paginacion utility.MiPaginacion, url_refresh string) {
 	@utility.TablaAdmin(utility.MiTablaProps{
 		Titulo:      "Avisos y notificaciones",
 		Descripcion: "Administración y gestión de avisos y alertas del sistema",
@@ -17,7 +17,7 @@ templ Avisos(avisos []*model.Notificacion, url_refresh string) {
 		ListaID:     "lista-avisos",
 		DialogID:    "xdialog-form-aviso",
 		Acciones:    HeaderAcciones(),
-	}) {
+	}, paginacion) {
 		@ListaAvisos(avisos)
 	}
 }

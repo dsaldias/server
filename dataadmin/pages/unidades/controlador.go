@@ -23,18 +23,29 @@ func (c *UnidadesController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	us, err := repo.Unidades(r.Context(), c.DB)
+	pagina, size := utility.GetPaginacion(r)
+
+	q := model.QueryUnidades{
+		Pagina: pagina,
+		Size:   size,
+	}
+	unpag, err := repo.Unidades2(r.Context(), c.DB, q)
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
 	if r.URL.Query().Get("xrefresh") != "" {
-		ListaUnidades(us).Render(r.Context(), w)
+		ListaUnidades(unpag.Datos).Render(r.Context(), w)
 		return
 	}
 
-	contenido := Unidades(us, "?xrefresh=1")
+	pag := utility.MiPaginacion{
+		Paginas: int(unpag.Paginacion.Paginas),
+		Pagina:  0,
+		Size:    10,
+	}
+	contenido := Unidades(unpag.Datos, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 }
 

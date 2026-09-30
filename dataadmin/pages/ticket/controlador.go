@@ -43,7 +43,12 @@ func (c *TicketController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contenido := Tickets(us, all, "?xrefresh=1", "?xrefresh=2")
+	pag := utility.MiPaginacion{
+		Paginas: 11,
+		Pagina:  0,
+		Size:    10,
+	}
+	contenido := Tickets(us, all, pag, "?xrefresh=1", "?xrefresh=2")
 	c.C.RenderPage(w, r, contenido)
 }
 

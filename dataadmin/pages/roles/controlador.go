@@ -34,7 +34,12 @@ func (c *RolesController) ListarRoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contenido := Roles(roles, "?xrefresh=1")
+	pag := utility.MiPaginacion{
+		Paginas: 11,
+		Pagina:  0,
+		Size:    10,
+	}
+	contenido := Roles(roles, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 
 }

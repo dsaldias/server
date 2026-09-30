@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func Avisos(avisos []*model.Notificacion, url_refresh string) templ.Component {
+func Avisos(avisos []*model.Notificacion, paginacion utility.MiPaginacion, url_refresh string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -63,7 +63,7 @@ func Avisos(avisos []*model.Notificacion, url_refresh string) templ.Component {
 			ListaID:     "lista-avisos",
 			DialogID:    "xdialog-form-aviso",
 			Acciones:    HeaderAcciones(),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		}, paginacion).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

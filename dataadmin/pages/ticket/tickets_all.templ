@@ -8,7 +8,7 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 )
 
-templ TicketsAll(tickets []*model.RespTickets, url_refresh string) {
+templ TicketsAll(tickets []*model.RespTickets,paginacion utility.MiPaginacion, url_refresh string) {
 	@utility.TablaAdmin(utility.MiTablaProps{
 		Titulo:      "Todos los tickets",
 		Descripcion: "Administración y gestión de todos los tickets de soporte",
@@ -16,7 +16,7 @@ templ TicketsAll(tickets []*model.RespTickets, url_refresh string) {
 		ListaID:     "lista-tickets-all",
 		DialogID:    "xdialog-form-ticket-all",
 		Acciones:    nil,
-	}) {
+	},paginacion) {
 		@ListaTicketsAll(tickets)
 	}
 }

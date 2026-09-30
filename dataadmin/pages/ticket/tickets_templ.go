@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all string) templ.Component {
+func Tickets(tickets, alls []*model.RespTickets, paginacion utility.MiPaginacion, url_refresh, url_refresh_all string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -169,7 +169,7 @@ func Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all st
 					ListaID:     "lista-tickets",
 					DialogID:    "xdialog-form-ticket",
 					Acciones:    HeaderAcciones(),
-				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+				}, paginacion).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -194,7 +194,7 @@ func Tickets(tickets, alls []*model.RespTickets, url_refresh, url_refresh_all st
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = TicketsAll(alls, url_refresh_all).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = TicketsAll(alls, paginacion, url_refresh_all).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

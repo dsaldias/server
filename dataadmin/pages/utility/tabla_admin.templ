@@ -5,6 +5,7 @@ import (
 	"github.com/templui/templui/components/button"
 	"github.com/templui/templui/components/card"
 	"github.com/templui/templui/components/icon"
+	"github.com/templui/templui/components/pagination"
 	"github.com/templui/templui/components/popover"
 )
 
@@ -24,8 +25,21 @@ type MiTablaProps struct {
 	FilasPorPagina     int
 }
 
+type MiPaginacion struct {
+	Paginas int
+	Pagina  int
+	Size    int
+}
+
+type ItemPaginacion struct {
+	Pagina   int
+	EsActual bool
+	EsSalto  bool
+}
+
 templ TablaAdmin(
 	props MiTablaProps,
+	paginacion MiPaginacion,
 ) {
 	<div
 		if props.HeaderClass == "" {
@@ -66,7 +80,7 @@ templ TablaAdmin(
 			DialogFooterClass:  props.DialogFooterClass,
 		})
 	</div>
-	@TablaAdminLista(props) {
+	@TablaAdminLista(props, paginacion) {
 		{ children... }
 	}
 }
@@ -183,7 +197,7 @@ templ TablaAdminPaginacion(lista_id string) {
 	</div>
 }
 
-templ TablaAdminLista(props MiTablaProps) {
+templ TablaAdminLista(props MiTablaProps, paginacion MiPaginacion) {
 	<div class="overflow-hidden mx-2">
 		@card.Card(card.Props{
 			Class: `
@@ -216,6 +230,56 @@ templ TablaAdminLista(props MiTablaProps) {
 			}) {
 				{ children... }
 			}
+			// 
+			@pagination.Pagination(pagination.Props{
+				Class: "mt-8",
+			}) {
+				@pagination.Content() {
+					@pagination.Item() {
+						@pagination.Previous(pagination.PreviousProps{
+							Href: fmt.Sprintf(
+								"?page=%d&size=%d",
+								paginacion.Pagina-1,
+								paginacion.Size,
+							),
+							Disabled: paginacion.Pagina <= 1,
+							Label:    "Anterior",
+						})
+					}
+					for _, item := range GenerarPaginas(paginacion) {
+						if item.EsSalto {
+							@pagination.Item() {
+								<span class="px-2">...</span>
+							}
+						} else {
+							@pagination.Item() {
+								@pagination.Link(pagination.LinkProps{
+									Href: fmt.Sprintf(
+										"?page=%d&size=%d",
+										item.Pagina,
+										paginacion.Size,
+									),
+									IsActive: item.EsActual,
+								}) {
+									{ fmt.Sprintf("%d", item.Pagina) }
+								}
+							}
+						}
+					}
+					@pagination.Item() {
+						@pagination.Next(pagination.NextProps{
+							Href: fmt.Sprintf(
+								"?page=%d&size=%d",
+								paginacion.Pagina+1,
+								paginacion.Size,
+							),
+							Disabled: paginacion.Pagina >= paginacion.Paginas,
+							Label:    "Siguiente",
+						})
+					}
+				}
+			}
+			// 
 			if props.FilasPorPagina > 0 {
 				@TablaAdminPaginacion(props.ListaID)
 			}
@@ -235,4 +299,54 @@ func isPaged(props MiTablaProps) string {
 		return "true"
 	}
 	return "false"
+}
+
+func GenerarPaginas(p MiPaginacion) []ItemPaginacion {
+	if p.Paginas <= 0 {
+		return nil
+	}
+
+	resultado := []ItemPaginacion{}
+
+	incluir := func(n int) {
+		resultado = append(resultado, ItemPaginacion{
+			Pagina:   n,
+			EsActual: n == p.Pagina,
+		})
+	}
+
+	incluir(1)
+
+	inicio := p.Pagina - 2
+	fin := p.Pagina + 2
+
+	if inicio < 2 {
+		inicio = 2
+	}
+
+	if fin > p.Paginas-1 {
+		fin = p.Paginas - 1
+	}
+
+	if inicio > 2 {
+		resultado = append(resultado, ItemPaginacion{
+			EsSalto: true,
+		})
+	}
+
+	for i := inicio; i <= fin; i++ {
+		incluir(i)
+	}
+
+	if fin < p.Paginas-1 {
+		resultado = append(resultado, ItemPaginacion{
+			EsSalto: true,
+		})
+	}
+
+	if p.Paginas > 1 {
+		incluir(p.Paginas)
+	}
+
+	return resultado
 }

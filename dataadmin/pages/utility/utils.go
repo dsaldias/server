@@ -98,6 +98,24 @@ func ErrorResponse(w http.ResponseWriter, r *http.Request, err error, status *in
 	}
 }
 
+func GetPaginacion(r *http.Request) (int32, int32) {
+	xpagina := r.URL.Query().Get("page")
+	xtam := r.URL.Query().Get("size")
+
+	pagina := int32(1)
+	tam := int32(10)
+	pag, err := strconv.ParseInt(xpagina, 10, 32)
+	if err == nil {
+		pagina = int32(pag)
+	}
+	siz, err := strconv.ParseInt(xtam, 10, 32)
+	if err == nil {
+		tam = int32(siz)
+	}
+
+	return pagina, tam
+}
+
 /* func RenderPage(
 	w http.ResponseWriter,
 	r *http.Request,
