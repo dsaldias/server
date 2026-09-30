@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	PAGDefault = 2
+	PAGDefault = 10
 )
 
 func TemplUIJS(templuiPath string) http.Handler {
