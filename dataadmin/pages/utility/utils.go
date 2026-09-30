@@ -120,7 +120,7 @@ func GetPaginacionParams(r *http.Request) (int32, int32) {
 
 	return pagina, tam
 }
-func GetPaginacion(r *http.Request, paginas int32, targetHtmx string) MiPaginacion {
+func GetPaginacion(r *http.Request, paginas int32, targetHtmx, tab string) MiPaginacion {
 	xpagina := r.URL.Query().Get("page")
 	xtam := r.URL.Query().Get("size")
 
@@ -140,6 +140,7 @@ func GetPaginacion(r *http.Request, paginas int32, targetHtmx string) MiPaginaci
 		Pagina:     int(pagina),
 		Size:       int(tam),
 		TargetHtmx: targetHtmx,
+		Tab:        tab,
 	}
 
 	return pagi

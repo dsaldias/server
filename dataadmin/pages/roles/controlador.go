@@ -36,7 +36,7 @@ func (c *RolesController) ListarRoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pag := utility.GetPaginacion(r, rs.Paginacion.Paginas, "#tabla-roles")
+	pag := utility.GetPaginacion(r, rs.Paginacion.Paginas, "#tabla-roles", "")
 	if utility.IsOnlyHtmx(r) {
 		ListaRoles(rs.Datos, pag).Render(r.Context(), w)
 		return

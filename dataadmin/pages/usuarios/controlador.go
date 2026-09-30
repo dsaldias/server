@@ -36,7 +36,7 @@ func (c *UsuariosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pag := utility.GetPaginacion(r, us.Paginacion.Paginas, "#lista-usuarios")
+	pag := utility.GetPaginacion(r, us.Paginacion.Paginas, "#lista-usuarios", "")
 
 	if utility.IsOnlyHtmx(r) {
 		ListaUsuarios(us.Datos, pag).Render(r.Context(), w)
