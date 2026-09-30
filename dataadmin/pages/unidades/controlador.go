@@ -23,7 +23,7 @@ func (c *UnidadesController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pagina, size := utility.GetPaginacion(r)
+	pagina, size := utility.GetPaginacionParams(r)
 
 	q := model.QueryUnidades{
 		Pagina: pagina,
@@ -35,16 +35,14 @@ func (c *UnidadesController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.URL.Query().Get("xrefresh") != "" {
-		ListaUnidades(unpag.Datos).Render(r.Context(), w)
+	pag := utility.GetPaginacion(r, unpag.Paginacion.Paginas)
+	pag.TargetHtmx = "#lista-unidades"
+
+	if utility.IsOnlyHtmx(r) {
+		TablaUnidades(unpag.Datos, pag).Render(r.Context(), w)
 		return
 	}
 
-	pag := utility.MiPaginacion{
-		Paginas: int(unpag.Paginacion.Paginas),
-		Pagina:  0,
-		Size:    10,
-	}
 	contenido := Unidades(unpag.Datos, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 }

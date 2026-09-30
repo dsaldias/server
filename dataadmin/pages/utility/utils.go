@@ -2,11 +2,14 @@ package utility
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/a-h/templ"
 )
 
 func TemplUIJS(templuiPath string) http.Handler {
@@ -98,7 +101,7 @@ func ErrorResponse(w http.ResponseWriter, r *http.Request, err error, status *in
 	}
 }
 
-func GetPaginacion(r *http.Request) (int32, int32) {
+func GetPaginacionParams(r *http.Request) (int32, int32) {
 	xpagina := r.URL.Query().Get("page")
 	xtam := r.URL.Query().Get("size")
 
@@ -115,17 +118,118 @@ func GetPaginacion(r *http.Request) (int32, int32) {
 
 	return pagina, tam
 }
+func GetPaginacion(r *http.Request, paginas int32) MiPaginacion {
+	xpagina := r.URL.Query().Get("page")
+	xtam := r.URL.Query().Get("size")
 
-/* func RenderPage(
-	w http.ResponseWriter,
-	r *http.Request,
-	layout *mainlayout.MainController,
-	contenido templ.Component,
-) {
-	if r.Header.Get("HX-Request") == "true" {
-		contenido.Render(r.Context(), w)
-		return
+	pagina := int32(1)
+	tam := int32(10)
+	pag, err := strconv.ParseInt(xpagina, 10, 32)
+	if err == nil {
+		pagina = int32(pag)
+	}
+	siz, err := strconv.ParseInt(xtam, 10, 32)
+	if err == nil {
+		tam = int32(siz)
 	}
 
-	layout.RenderLayout(w, r, contenido)
-} */
+	pagi := MiPaginacion{
+		Paginas: int(paginas),
+		Pagina:  int(pagina),
+		Size:    int(tam),
+	}
+
+	return pagi
+}
+
+func generarPaginas(p MiPaginacion) []ItemPaginacion {
+	if p.Paginas <= 0 {
+		return nil
+	}
+
+	resultado := []ItemPaginacion{}
+
+	incluir := func(n int) {
+		resultado = append(resultado, ItemPaginacion{
+			Pagina:   n,
+			EsActual: n == p.Pagina,
+		})
+	}
+
+	incluir(1)
+
+	inicio := p.Pagina - 2
+	fin := p.Pagina + 2
+
+	if inicio < 2 {
+		inicio = 2
+	}
+
+	if fin > p.Paginas-1 {
+		fin = p.Paginas - 1
+	}
+
+	if inicio > 2 {
+		resultado = append(resultado, ItemPaginacion{
+			EsSalto: true,
+		})
+	}
+
+	for i := inicio; i <= fin; i++ {
+		incluir(i)
+	}
+
+	if fin < p.Paginas-1 {
+		resultado = append(resultado, ItemPaginacion{
+			EsSalto: true,
+		})
+	}
+
+	if p.Paginas > 1 {
+		incluir(p.Paginas)
+	}
+
+	return resultado
+}
+
+func paginaURL(pagina, size int) string {
+	return fmt.Sprintf(
+		"?page=%d&size=%d",
+		pagina,
+		size,
+	)
+}
+
+func isSorted(props MiTablaProps) string {
+	if props.Ordenable {
+		return "true"
+	}
+	return "false"
+}
+
+func isPaged(props MiTablaProps) string {
+	if props.FilasPorPagina > 0 {
+		return "true"
+	}
+	return "false"
+}
+
+func IsOnlyHtmx(r *http.Request) bool {
+	xpagina := r.URL.Query().Get("page")
+	xref := r.URL.Query().Get("xrefresh")
+
+	if xref != "" || xpagina != "" {
+		if r.Header.Get("HX-Request") == "true" {
+			return true
+		}
+	}
+	return false
+}
+
+func atributosTablaHTMX(url, target string) templ.Attributes {
+	return templ.Attributes{
+		"hx-get":    url,
+		"hx-target": target,
+		"hx-swap":   "innerHTML",
+	}
+}

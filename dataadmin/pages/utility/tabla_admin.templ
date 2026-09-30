@@ -26,9 +26,10 @@ type MiTablaProps struct {
 }
 
 type MiPaginacion struct {
-	Paginas int
-	Pagina  int
-	Size    int
+	Paginas    int
+	Pagina     int
+	Size       int
+	TargetHtmx string
 }
 
 type ItemPaginacion struct {
@@ -181,22 +182,6 @@ templ TablaAdminContextual(t string) {
 	</div>
 }
 
-templ TablaAdminPaginacion(lista_id string) {
-	<div
-		class="mt-3 mr-2 flex items-center justify-between border-t border-border/50 pt-2"
-		data-tabla-paginacion={ lista_id }
-	>
-		<div
-			class="ml-2 text-sm text-muted-foreground"
-			data-paginacion-info
-		></div>
-		<div
-			class="flex items-center gap-1"
-			data-paginacion-controles
-		></div>
-	</div>
-}
-
 templ TablaAdminLista(props MiTablaProps, paginacion MiPaginacion) {
 	<div class="overflow-hidden mx-2">
 		@card.Card(card.Props{
@@ -230,123 +215,61 @@ templ TablaAdminLista(props MiTablaProps, paginacion MiPaginacion) {
 			}) {
 				{ children... }
 			}
-			// 
-			@pagination.Pagination(pagination.Props{
-				Class: "mt-8",
-			}) {
-				@pagination.Content() {
-					@pagination.Item() {
-						@pagination.Previous(pagination.PreviousProps{
-							Href: fmt.Sprintf(
-								"?page=%d&size=%d",
-								paginacion.Pagina-1,
-								paginacion.Size,
-							),
-							Disabled: paginacion.Pagina <= 1,
-							Label:    "Anterior",
-						})
-					}
-					for _, item := range GenerarPaginas(paginacion) {
-						if item.EsSalto {
-							@pagination.Item() {
-								<span class="px-2">...</span>
-							}
-						} else {
-							@pagination.Item() {
-								@pagination.Link(pagination.LinkProps{
-									Href: fmt.Sprintf(
-										"?page=%d&size=%d",
-										item.Pagina,
-										paginacion.Size,
-									),
-									IsActive: item.EsActual,
-								}) {
-									{ fmt.Sprintf("%d", item.Pagina) }
-								}
-							}
-						}
-					}
-					@pagination.Item() {
-						@pagination.Next(pagination.NextProps{
-							Href: fmt.Sprintf(
-								"?page=%d&size=%d",
-								paginacion.Pagina+1,
-								paginacion.Size,
-							),
-							Disabled: paginacion.Pagina >= paginacion.Paginas,
-							Label:    "Siguiente",
-						})
-					}
-				}
-			}
-			// 
-			if props.FilasPorPagina > 0 {
-				@TablaAdminPaginacion(props.ListaID)
-			}
 		}
 	</div>
 }
 
-func isSorted(props MiTablaProps) string {
-	if props.Ordenable {
-		return "true"
+templ AdminTablePaginacion(paginacion MiPaginacion) {
+	@pagination.Pagination(pagination.Props{
+		Class: "mt-8 mb-2",
+	}) {
+		@pagination.Content() {
+			@pagination.Item() {
+				@pagination.Previous(pagination.PreviousProps{
+					Href:     paginaURL(paginacion.Pagina-1, paginacion.Size),
+					Disabled: paginacion.Pagina <= 1,
+					Label:    "Anterior",
+					Attributes: templ.Attributes{
+						"hx-get":    paginaURL(paginacion.Pagina-1, paginacion.Size),
+						"hx-target": paginacion.TargetHtmx,
+						"hx-swap":   "innerHTML",
+						"hx-push-url": "true",
+					},
+				})
+			}
+			for _, item := range generarPaginas(paginacion) {
+				if item.EsSalto {
+					@pagination.Item() {
+						<span class="px-2">...</span>
+					}
+				} else {
+					@pagination.Link(pagination.LinkProps{
+						Href:     paginaURL(item.Pagina, paginacion.Size),
+						IsActive: item.EsActual,
+						Attributes: templ.Attributes{
+							"hx-get":    paginaURL(item.Pagina, paginacion.Size),
+							"hx-target": paginacion.TargetHtmx,
+							"hx-swap":   "innerHTML",
+							"hx-push-url": "true",
+						},
+					}) {
+						{ fmt.Sprintf("%d", item.Pagina) }
+					}
+				}
+			}
+			@pagination.Item() {
+				@pagination.Next(pagination.NextProps{
+					Href:     paginaURL(paginacion.Pagina+1, paginacion.Size),
+					Disabled: paginacion.Pagina >= paginacion.Paginas,
+					Label:    "Siguiente",
+					Attributes: templ.Attributes{
+						"hx-get":    paginaURL(paginacion.Pagina+1, paginacion.Size),
+						"hx-target": paginacion.TargetHtmx,
+						"hx-swap":   "innerHTML",
+						"hx-push-url": "true",
+					},
+				})
+			}
+		}
 	}
-	return "false"
-}
-
-func isPaged(props MiTablaProps) string {
-	if props.FilasPorPagina > 0 {
-		return "true"
-	}
-	return "false"
-}
-
-func GenerarPaginas(p MiPaginacion) []ItemPaginacion {
-	if p.Paginas <= 0 {
-		return nil
-	}
-
-	resultado := []ItemPaginacion{}
-
-	incluir := func(n int) {
-		resultado = append(resultado, ItemPaginacion{
-			Pagina:   n,
-			EsActual: n == p.Pagina,
-		})
-	}
-
-	incluir(1)
-
-	inicio := p.Pagina - 2
-	fin := p.Pagina + 2
-
-	if inicio < 2 {
-		inicio = 2
-	}
-
-	if fin > p.Paginas-1 {
-		fin = p.Paginas - 1
-	}
-
-	if inicio > 2 {
-		resultado = append(resultado, ItemPaginacion{
-			EsSalto: true,
-		})
-	}
-
-	for i := inicio; i <= fin; i++ {
-		incluir(i)
-	}
-
-	if fin < p.Paginas-1 {
-		resultado = append(resultado, ItemPaginacion{
-			EsSalto: true,
-		})
-	}
-
-	if p.Paginas > 1 {
-		incluir(p.Paginas)
-	}
-
-	return resultado
 }

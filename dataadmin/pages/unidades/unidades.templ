@@ -2,11 +2,11 @@ package unidades
 
 import (
 	"fmt"
+	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/selectbox"
 	"github.com/templui/templui/components/table"
-	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"time"
 )
 
@@ -22,11 +22,11 @@ templ Unidades(unidades []*model.Unidad, paginacion utility.MiPaginacion, url_re
 		Busqueda:       true,
 		FilasPorPagina: 16,
 	}, paginacion) {
-		@ListaUnidades(unidades)
+		@TablaUnidades(unidades, paginacion)
 	}
 }
 
-templ ListaUnidades(unidades []*model.Unidad) {
+templ TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) {
 	@table.Table() {
 		@table.Header() {
 			@table.Row() {
@@ -91,6 +91,7 @@ templ ListaUnidades(unidades []*model.Unidad) {
 			}
 		}
 	}
+	@utility.AdminTablePaginacion(paginacion)
 }
 
 templ HeaderAcciones() {
