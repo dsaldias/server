@@ -35,8 +35,7 @@ func (c *UnidadesController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pag := utility.GetPaginacion(r, unpag.Paginacion.Paginas)
-	pag.TargetHtmx = "#lista-unidades"
+	pag := utility.GetPaginacion(r, unpag.Paginacion.Paginas, "#lista-unidades")
 
 	if utility.IsOnlyHtmx(r) {
 		TablaUnidades(unpag.Datos, pag).Render(r.Context(), w)

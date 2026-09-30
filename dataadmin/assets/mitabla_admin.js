@@ -35,13 +35,13 @@ document.addEventListener("input", function (e) {
 
   contenedor.dataset.paginaActual = "1";
 
-  if (contenedor.hasAttribute("data-tabla-paginable")) {
+  /* if (contenedor.hasAttribute("data-tabla-paginable")) {
     actualizarPaginacion(contenedor);
   } else {
     filas.forEach((fila) => {
       fila.style.display = fila.dataset.filtroVisible === "true" ? "" : "none";
     });
-  }
+  } */
 });
 
 // ============================================================
@@ -158,11 +158,11 @@ document.addEventListener("click", function (e) {
 
   actualizarIndicadoresOrden(tabla);
 
-  const contenedor = tabla.closest("[data-tabla-paginable]");
+  /* const contenedor = tabla.closest("[data-tabla-paginable]");
 
   if (contenedor) {
     actualizarPaginacion(contenedor);
-  }
+  } */
 });
 
 function inicializarTablasOrdenables() {
@@ -262,7 +262,7 @@ document.addEventListener("htmx:afterSwap", inicializarMenusContextuales);
 // ============================================================
 // PAGINACIÓN
 // ============================================================
-
+/*
 function actualizarPaginacion(contenedor) {
   const listaId = contenedor.id;
 
@@ -402,7 +402,7 @@ function actualizarPaginacion(contenedor) {
   controles.appendChild(
     crearBoton("›", paginaActual + 1, paginaActual === totalPaginas),
   );
-}
+}*/
 function inicializarFilasTabla(contenedor) {
   const filas = contenedor.querySelectorAll("tbody tr");
 
@@ -413,6 +413,7 @@ function inicializarFilasTabla(contenedor) {
   });
 }
 
+/*
 function inicializarTablasPaginables() {
   document.querySelectorAll("[data-tabla-paginable]").forEach((contenedor) => {
     const tabla = contenedor.querySelector("table");
@@ -433,10 +434,10 @@ function inicializarTablasPaginables() {
       contenedor.dataset.paginaActual = "1";
     }
 
-    actualizarPaginacion(contenedor);
+    // actualizarPaginacion(contenedor);
   });
-}
+}*/
 
-document.addEventListener("DOMContentLoaded", inicializarTablasPaginables);
+// document.addEventListener("DOMContentLoaded", inicializarTablasPaginables);
 
-document.addEventListener("htmx:afterSwap", inicializarTablasPaginables);
+// document.addEventListener("htmx:afterSwap", inicializarTablasPaginables);

@@ -22,7 +22,7 @@ type MiTablaProps struct {
 	Acciones           templ.Component
 	Busqueda           bool
 	Ordenable          bool
-	FilasPorPagina     int
+	// FilasPorPagina     int
 }
 
 type MiPaginacion struct {
@@ -209,8 +209,8 @@ templ TablaAdminLista(props MiTablaProps, paginacion MiPaginacion) {
 				Attributes: templ.Attributes{
 					"data-tabla-contextual": "true",
 					"data-tabla-ordenable":  isSorted(props),
-					"data-filas-por-pagina": fmt.Sprint(props.FilasPorPagina),
-					"data-tabla-paginable":  isPaged(props),
+					/* "data-filas-por-pagina": fmt.Sprint(props.FilasPorPagina),
+					"data-tabla-paginable":  isPaged(props), */
 				},
 			}) {
 				{ children... }

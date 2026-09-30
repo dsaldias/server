@@ -62,14 +62,13 @@ func Unidades(unidades []*model.Unidad, paginacion utility.MiPaginacion, url_ref
 			return nil
 		})
 		templ_7745c5c3_Err = utility.TablaAdmin(utility.MiTablaProps{
-			Titulo:         "Unidades",
-			Descripcion:    "Administración y gestión de unidades del sistema",
-			UrlRefresh:     url_refresh,
-			ListaID:        "lista-unidades",
-			DialogID:       "xdialog-form-unidad",
-			Acciones:       HeaderAcciones(),
-			Busqueda:       true,
-			FilasPorPagina: 16,
+			Titulo:      "Unidades",
+			Descripcion: "Administración y gestión de unidades del sistema",
+			UrlRefresh:  url_refresh,
+			ListaID:     "lista-unidades",
+			DialogID:    "xdialog-form-unidad",
+			Acciones:    HeaderAcciones(),
+			Busqueda:    true,
 		}, paginacion).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -325,7 +324,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var15 string
 							templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(un.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 55, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 54, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 							if templ_7745c5c3_Err != nil {
@@ -356,7 +355,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(un.Nombre)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 58, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 57, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -387,7 +386,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var19 string
 							templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(un.Descripcion))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 61, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 60, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 							if templ_7745c5c3_Err != nil {
@@ -418,7 +417,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var21 string
 							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(un.Orden)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 64, Col: 16}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 63, Col: 16}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -449,7 +448,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var23 string
 							templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.FechaRegistro))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 67, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 66, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 							if templ_7745c5c3_Err != nil {

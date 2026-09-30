@@ -23,22 +23,19 @@ func (c *UsuariosController) Listar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pag := utility.GetPaginacion(r, 1, "#lista-usuarios")
+
 	us, err := repo.Usuarios(r.Context(), c.DB, model.QueryUsuarios{})
 	if err != nil {
 		utility.ErrorResponse(w, r, err, nil)
 		return
 	}
 
-	if r.URL.Query().Get("xrefresh") != "" {
-		ListaUsuarios(us).Render(r.Context(), w)
+	if utility.IsOnlyHtmx(r) {
+		ListaUsuarios(us, pag).Render(r.Context(), w)
 		return
 	}
 
-	pag := utility.MiPaginacion{
-		Paginas: 11,
-		Pagina:  0,
-		Size:    10,
-	}
 	contenido := Usuarios(us, pag, "?xrefresh=1")
 	c.C.RenderPage(w, r, contenido)
 }

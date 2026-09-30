@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-
-	"github.com/a-h/templ"
 )
 
 func TemplUIJS(templuiPath string) http.Handler {
@@ -118,7 +116,7 @@ func GetPaginacionParams(r *http.Request) (int32, int32) {
 
 	return pagina, tam
 }
-func GetPaginacion(r *http.Request, paginas int32) MiPaginacion {
+func GetPaginacion(r *http.Request, paginas int32, targetHtmx string) MiPaginacion {
 	xpagina := r.URL.Query().Get("page")
 	xtam := r.URL.Query().Get("size")
 
@@ -134,9 +132,10 @@ func GetPaginacion(r *http.Request, paginas int32) MiPaginacion {
 	}
 
 	pagi := MiPaginacion{
-		Paginas: int(paginas),
-		Pagina:  int(pagina),
-		Size:    int(tam),
+		Paginas:    int(paginas),
+		Pagina:     int(pagina),
+		Size:       int(tam),
+		TargetHtmx: targetHtmx,
 	}
 
 	return pagi
@@ -207,13 +206,6 @@ func isSorted(props MiTablaProps) string {
 	return "false"
 }
 
-func isPaged(props MiTablaProps) string {
-	if props.FilasPorPagina > 0 {
-		return "true"
-	}
-	return "false"
-}
-
 func IsOnlyHtmx(r *http.Request) bool {
 	xpagina := r.URL.Query().Get("page")
 	xref := r.URL.Query().Get("xrefresh")
@@ -224,12 +216,4 @@ func IsOnlyHtmx(r *http.Request) bool {
 		}
 	}
 	return false
-}
-
-func atributosTablaHTMX(url, target string) templ.Attributes {
-	return templ.Attributes{
-		"hx-get":    url,
-		"hx-target": target,
-		"hx-swap":   "innerHTML",
-	}
 }

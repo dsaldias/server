@@ -30,7 +30,7 @@ type MiTablaProps struct {
 	Acciones           templ.Component
 	Busqueda           bool
 	Ordenable          bool
-	FilasPorPagina     int
+	// FilasPorPagina     int
 }
 
 type MiPaginacion struct {
@@ -622,8 +622,8 @@ func TablaAdminLista(props MiTablaProps, paginacion MiPaginacion) templ.Componen
 				Attributes: templ.Attributes{
 					"data-tabla-contextual": "true",
 					"data-tabla-ordenable":  isSorted(props),
-					"data-filas-por-pagina": fmt.Sprint(props.FilasPorPagina),
-					"data-tabla-paginable":  isPaged(props),
+					/* "data-filas-por-pagina": fmt.Sprint(props.FilasPorPagina),
+					"data-tabla-paginable":  isPaged(props), */
 				},
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
