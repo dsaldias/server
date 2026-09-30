@@ -126,6 +126,13 @@ type ComplexityRoot struct {
 		Mensaje       func(childComplexity int) int
 	}
 
+	Pagina struct {
+		Pagina    func(childComplexity int) int
+		Paginas   func(childComplexity int) int
+		Registros func(childComplexity int) int
+		Size      func(childComplexity int) int
+	}
+
 	Permiso struct {
 		Descripcion   func(childComplexity int) int
 		FechaRegistro func(childComplexity int) int
@@ -152,6 +159,7 @@ type ComplexityRoot struct {
 		RolByID            func(childComplexity int, id string) int
 		Roles              func(childComplexity int) int
 		Unidades           func(childComplexity int) int
+		Unidades2          func(childComplexity int, q model.QueryUnidades) int
 		UsuarioByID        func(childComplexity int, id string) int
 		Usuarios           func(childComplexity int, query model.QueryUsuarios) int
 		UsuariosConectados func(childComplexity int) int
@@ -329,6 +337,11 @@ type ComplexityRoot struct {
 		Orden         func(childComplexity int) int
 	}
 
+	UnidadPaginada struct {
+		Datos      func(childComplexity int) int
+		Paginacion func(childComplexity int) int
+	}
+
 	Usuario struct {
 		Apellido1     func(childComplexity int) int
 		Apellido2     func(childComplexity int) int
@@ -390,6 +403,7 @@ type QueryResolver interface {
 	RolByID(ctx context.Context, id string) (*model.Rol, error)
 	Menus(ctx context.Context) ([]*model.Menus, error)
 	Unidades(ctx context.Context) ([]*model.Unidad, error)
+	Unidades2(ctx context.Context, q model.QueryUnidades) (*model.UnidadPaginada, error)
 	GetImagen(ctx context.Context, url string) (string, error)
 	ConexionesWs(ctx context.Context) (string, error)
 	Notificaciones(ctx context.Context) ([]*model.Notificacion, error)
@@ -896,6 +910,31 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.Notificacion.Mensaje(childComplexity), true
 
+	case "Pagina.pagina":
+		if e.ComplexityRoot.Pagina.Pagina == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Pagina.Pagina(childComplexity), true
+	case "Pagina.paginas":
+		if e.ComplexityRoot.Pagina.Paginas == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Pagina.Paginas(childComplexity), true
+	case "Pagina.registros":
+		if e.ComplexityRoot.Pagina.Registros == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Pagina.Registros(childComplexity), true
+	case "Pagina.size":
+		if e.ComplexityRoot.Pagina.Size == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Pagina.Size(childComplexity), true
+
 	case "Permiso.descripcion":
 		if e.ComplexityRoot.Permiso.Descripcion == nil {
 			break
@@ -1065,6 +1104,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.Unidades(childComplexity), true
+	case "Query.unidades2":
+		if e.ComplexityRoot.Query.Unidades2 == nil {
+			break
+		}
+
+		args, err := ec.field_Query_unidades2_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.Unidades2(childComplexity, args["q"].(model.QueryUnidades)), true
 	case "Query.usuario_by_id":
 		if e.ComplexityRoot.Query.UsuarioByID == nil {
 			break
@@ -1808,6 +1858,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.Unidad.Orden(childComplexity), true
 
+	case "UnidadPaginada.datos":
+		if e.ComplexityRoot.UnidadPaginada.Datos == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UnidadPaginada.Datos(childComplexity), true
+	case "UnidadPaginada.paginacion":
+		if e.ComplexityRoot.UnidadPaginada.Paginacion == nil {
+			break
+		}
+
+		return e.ComplexityRoot.UnidadPaginada.Paginacion(childComplexity), true
+
 	case "Usuario.apellido1":
 		if e.ComplexityRoot.Usuario.Apellido1 == nil {
 			break
@@ -1961,6 +2024,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewUsuario,
 		ec.unmarshalInputNewUsuarioOauth,
 		ec.unmarshalInputQueryTickets,
+		ec.unmarshalInputQueryUnidades,
 		ec.unmarshalInputQueryUsuarios,
 		ec.unmarshalInputRolUnidad,
 		ec.unmarshalInputUpdNotificacion,
@@ -2161,6 +2225,20 @@ func (ec *executionContext) childFields_Notificacion(ctx context.Context, field 
 		return ec.fieldContext_Notificacion_fecha_registro(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Notificacion", field.Name)
+}
+
+func (ec *executionContext) childFields_Pagina(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "pagina":
+		return ec.fieldContext_Pagina_pagina(ctx, field)
+	case "size":
+		return ec.fieldContext_Pagina_size(ctx, field)
+	case "paginas":
+		return ec.fieldContext_Pagina_paginas(ctx, field)
+	case "registros":
+		return ec.fieldContext_Pagina_registros(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Pagina", field.Name)
 }
 
 func (ec *executionContext) childFields_Permiso(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
@@ -2491,6 +2569,16 @@ func (ec *executionContext) childFields_Unidad(ctx context.Context, field graphq
 		return ec.fieldContext_Unidad_fecha_registro(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Unidad", field.Name)
+}
+
+func (ec *executionContext) childFields_UnidadPaginada(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "paginacion":
+		return ec.fieldContext_UnidadPaginada_paginacion(ctx, field)
+	case "datos":
+		return ec.fieldContext_UnidadPaginada_datos(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type UnidadPaginada", field.Name)
 }
 
 func (ec *executionContext) childFields_Usuario(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
@@ -3010,6 +3098,20 @@ func (ec *executionContext) field_Query_rol_by_id_args(ctx context.Context, rawA
 		return nil, err
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_unidades2_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "q",
+		func(ctx context.Context, v any) (model.QueryUnidades, error) {
+			return ec.unmarshalNQueryUnidades2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryUnidades(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["q"] = arg0
 	return args, nil
 }
 
@@ -4921,6 +5023,98 @@ func (ec *executionContext) fieldContext_Notificacion_fecha_registro(_ context.C
 	return graphql.NewScalarFieldContext("Notificacion", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
+func (ec *executionContext) _Pagina_pagina(ctx context.Context, field graphql.CollectedField, obj *model.Pagina) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Pagina_pagina(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Pagina, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int32) graphql.Marshaler {
+			return ec.marshalNInt2int32(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Pagina_pagina(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Pagina", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _Pagina_size(ctx context.Context, field graphql.CollectedField, obj *model.Pagina) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Pagina_size(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Size, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int32) graphql.Marshaler {
+			return ec.marshalNInt2int32(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Pagina_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Pagina", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _Pagina_paginas(ctx context.Context, field graphql.CollectedField, obj *model.Pagina) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Pagina_paginas(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Paginas, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int32) graphql.Marshaler {
+			return ec.marshalNInt2int32(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Pagina_paginas(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Pagina", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
+func (ec *executionContext) _Pagina_registros(ctx context.Context, field graphql.CollectedField, obj *model.Pagina) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Pagina_registros(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Registros, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v int32) graphql.Marshaler {
+			return ec.marshalNInt2int32(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Pagina_registros(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Pagina", field, false, false, errors.New("field of type Int does not have child fields"))
+}
+
 func (ec *executionContext) _Permiso_metodo(ctx context.Context, field graphql.CollectedField, obj *model.Permiso) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -5368,6 +5562,50 @@ func (ec *executionContext) fieldContext_Query_unidades(_ context.Context, field
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return ec.childFields_Unidad(ctx, field)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_unidades2(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_unidades2(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().Unidades2(ctx, fc.Args["q"].(model.QueryUnidades))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.UnidadPaginada) graphql.Marshaler {
+			return ec.marshalNUnidadPaginada2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadPaginada(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_unidades2(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_UnidadPaginada(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_unidades2_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -8652,6 +8890,70 @@ func (ec *executionContext) fieldContext_Unidad_fecha_registro(_ context.Context
 	return graphql.NewScalarFieldContext("Unidad", field, false, false, errors.New("field of type Time does not have child fields"))
 }
 
+func (ec *executionContext) _UnidadPaginada_paginacion(ctx context.Context, field graphql.CollectedField, obj *model.UnidadPaginada) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UnidadPaginada_paginacion(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Paginacion, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *model.Pagina) graphql.Marshaler {
+			return ec.marshalNPagina2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPagina(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_UnidadPaginada_paginacion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UnidadPaginada",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Pagina(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UnidadPaginada_datos(ctx context.Context, field graphql.CollectedField, obj *model.UnidadPaginada) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_UnidadPaginada_datos(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Datos, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*model.Unidad) graphql.Marshaler {
+			return ec.marshalNUnidad2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_UnidadPaginada_datos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UnidadPaginada",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Unidad(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Usuario_id(ctx context.Context, field graphql.CollectedField, obj *model.Usuario) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -11051,6 +11353,43 @@ func (ec *executionContext) unmarshalInputQueryTickets(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputQueryUnidades(ctx context.Context, obj any) (model.QueryUnidades, error) {
+	var it model.QueryUnidades
+	if obj == nil {
+		return it, nil
+	}
+
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"pagina", "size"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "pagina":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagina"))
+			data, err := ec.unmarshalNInt2int32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Pagina = data
+		case "size":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
+			data, err := ec.unmarshalNInt2int32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Size = data
+		}
+	}
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputQueryUsuarios(ctx context.Context, obj any) (model.QueryUsuarios, error) {
 	var it model.QueryUsuarios
 	if obj == nil {
@@ -12195,6 +12534,59 @@ func (ec *executionContext) _Notificacion(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var paginaImplementors = []string{"Pagina"}
+
+func (ec *executionContext) _Pagina(ctx context.Context, sel ast.SelectionSet, obj *model.Pagina) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, paginaImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Pagina")
+		case "pagina":
+			out.Values[i] = ec._Pagina_pagina(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "size":
+			out.Values[i] = ec._Pagina_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "paginas":
+			out.Values[i] = ec._Pagina_paginas(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "registros":
+			out.Values[i] = ec._Pagina_registros(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
 var permisoImplementors = []string{"Permiso"}
 
 func (ec *executionContext) _Permiso(ctx context.Context, sel ast.SelectionSet, obj *model.Permiso) graphql.Marshaler {
@@ -12459,6 +12851,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_unidades(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "unidades2":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_unidades2(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -13949,6 +14363,49 @@ func (ec *executionContext) _Unidad(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var unidadPaginadaImplementors = []string{"UnidadPaginada"}
+
+func (ec *executionContext) _UnidadPaginada(ctx context.Context, sel ast.SelectionSet, obj *model.UnidadPaginada) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, unidadPaginadaImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UnidadPaginada")
+		case "paginacion":
+			out.Values[i] = ec._UnidadPaginada_paginacion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "datos":
+			out.Values[i] = ec._UnidadPaginada_datos(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
+
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
+
+	return out
+}
+
 var usuarioImplementors = []string{"Usuario"}
 
 func (ec *executionContext) _Usuario(ctx context.Context, sel ast.SelectionSet, obj *model.Usuario) graphql.Marshaler {
@@ -14796,6 +15253,16 @@ func (ec *executionContext) marshalNNotificacion2ᚖgithubᚗcomᚋdsaldiasᚋse
 	return ec._Notificacion(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNPagina2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPagina(ctx context.Context, sel ast.SelectionSet, v *model.Pagina) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Pagina(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNPermiso2ᚕᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐPermisoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Permiso) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
@@ -14824,6 +15291,11 @@ func (ec *executionContext) marshalNPermiso2ᚖgithubᚗcomᚋdsaldiasᚋserver�
 
 func (ec *executionContext) unmarshalNQueryTickets2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryTickets(ctx context.Context, v any) (model.QueryTickets, error) {
 	res, err := ec.unmarshalInputQueryTickets(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNQueryUnidades2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐQueryUnidades(ctx context.Context, v any) (model.QueryUnidades, error) {
+	res, err := ec.unmarshalInputQueryUnidades(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -15250,6 +15722,16 @@ func (ec *executionContext) marshalNUnidad2ᚖgithubᚗcomᚋdsaldiasᚋserver�
 		return graphql.Null
 	}
 	return ec._Unidad(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUnidadPaginada2ᚖgithubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUnidadPaginada(ctx context.Context, sel ast.SelectionSet, v *model.UnidadPaginada) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UnidadPaginada(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUpdNotificacion2githubᚗcomᚋdsaldiasᚋserverᚋgraph_authᚋmodelᚐUpdNotificacion(ctx context.Context, v any) (model.UpdNotificacion, error) {

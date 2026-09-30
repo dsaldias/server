@@ -1,5 +1,12 @@
 scalar Time
 
+type Pagina {
+  pagina: Int!
+  size: Int!
+  paginas: Int!
+  registros: Int!
+}
+
 type Usuario {
   id: ID!
   nombres: String!
@@ -41,6 +48,11 @@ type Unidad {
   orden: Int! 
   fecha_registro: Time!  
 } 
+
+type UnidadPaginada {
+  paginacion: Pagina!
+  datos: [Unidad!]!
+}
 
 type Menus {
     id: ID!
@@ -378,4 +390,9 @@ input NewTicket {
 input NewTicketRespuesta { 
   tickets_id: ID! 
   respuesta: String! 
+}
+
+input QueryUnidades {
+  pagina: Int!
+  size: Int!
 }

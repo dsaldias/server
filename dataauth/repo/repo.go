@@ -243,6 +243,14 @@ func Unidades(ctx context.Context, db *sql.DB) ([]*model.Unidad, error) {
 	return unidades.Listar(db)
 }
 
+func Unidades2(ctx context.Context, db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) {
+	_, err := utils.CtxValue(ctx, db, "unidades")
+	if err != nil {
+		return nil, err
+	}
+	return unidades.ListarV2(db, q)
+}
+
 func UnidadByID(ctx context.Context, db *sql.DB, id string) (*model.Unidad, error) {
 	_, err := utils.CtxValue(ctx, db, "")
 	if err != nil {

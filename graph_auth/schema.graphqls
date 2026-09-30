@@ -25,6 +25,7 @@ type Query {
   rol_by_id(id:ID!): Rol!
   menus: [Menus!]!
   unidades: [Unidad!]!
+  unidades2(q: QueryUnidades!): UnidadPaginada!
   get_imagen(url:String!): String! 
   conexiones_ws: String!
   notificaciones: [Notificacion!]!

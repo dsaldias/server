@@ -193,6 +193,13 @@ type Notificacion struct {
 	FechaRegistro time.Time `json:"fecha_registro"`
 }
 
+type Pagina struct {
+	Pagina    int32 `json:"pagina"`
+	Size      int32 `json:"size"`
+	Paginas   int32 `json:"paginas"`
+	Registros int32 `json:"registros"`
+}
+
 type Permiso struct {
 	Metodo        string    `json:"metodo"`
 	Nombre        string    `json:"nombre"`
@@ -206,6 +213,11 @@ type Query struct {
 
 type QueryTickets struct {
 	Estado *string `json:"estado,omitempty"`
+}
+
+type QueryUnidades struct {
+	Pagina int32 `json:"pagina"`
+	Size   int32 `json:"size"`
 }
 
 type QueryUsuarios struct {
@@ -385,6 +397,11 @@ type Unidad struct {
 	Longitud      *float64  `json:"longitud,omitempty"`
 	Orden         int32     `json:"orden"`
 	FechaRegistro time.Time `json:"fecha_registro"`
+}
+
+type UnidadPaginada struct {
+	Paginacion *Pagina   `json:"paginacion"`
+	Datos      []*Unidad `json:"datos"`
 }
 
 type UpdNotificacion struct {

@@ -142,6 +142,11 @@ func (r *queryResolver) Unidades(ctx context.Context) ([]*model.Unidad, error) {
 	return repo.Unidades(ctx, r.DB)
 }
 
+// Unidades2 is the resolver for the unidades2 field.
+func (r *queryResolver) Unidades2(ctx context.Context, q model.QueryUnidades) (*model.UnidadPaginada, error) {
+	return repo.Unidades2(ctx, r.DB, q)
+}
+
 // GetImagen is the resolver for the get_imagen field.
 func (r *queryResolver) GetImagen(ctx context.Context, url string) (string, error) {
 	return repo.GetImagen(ctx, r.DB, url)
