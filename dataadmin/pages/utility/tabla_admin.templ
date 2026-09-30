@@ -29,6 +29,7 @@ type MiPaginacion struct {
 	Paginas    int
 	Pagina     int
 	Size       int
+	Tab        string
 	TargetHtmx string
 }
 
@@ -226,13 +227,13 @@ templ AdminTablePaginacion(paginacion MiPaginacion) {
 		@pagination.Content() {
 			@pagination.Item() {
 				@pagination.Previous(pagination.PreviousProps{
-					Href:     paginaURL(paginacion.Pagina-1, paginacion.Size),
+					Href:     paginaURL(paginacion.Pagina-1, paginacion.Size, paginacion.Tab),
 					Disabled: paginacion.Pagina <= 1,
 					Label:    "Anterior",
 					Attributes: templ.Attributes{
-						"hx-get":    paginaURL(paginacion.Pagina-1, paginacion.Size),
-						"hx-target": paginacion.TargetHtmx,
-						"hx-swap":   "innerHTML",
+						"hx-get":      paginaURL(paginacion.Pagina-1, paginacion.Size, paginacion.Tab),
+						"hx-target":   paginacion.TargetHtmx,
+						"hx-swap":     "innerHTML",
 						"hx-push-url": "true",
 					},
 				})
@@ -244,12 +245,12 @@ templ AdminTablePaginacion(paginacion MiPaginacion) {
 					}
 				} else {
 					@pagination.Link(pagination.LinkProps{
-						Href:     paginaURL(item.Pagina, paginacion.Size),
+						Href:     paginaURL(item.Pagina, paginacion.Size, paginacion.Tab),
 						IsActive: item.EsActual,
 						Attributes: templ.Attributes{
-							"hx-get":    paginaURL(item.Pagina, paginacion.Size),
-							"hx-target": paginacion.TargetHtmx,
-							"hx-swap":   "innerHTML",
+							"hx-get":      paginaURL(item.Pagina, paginacion.Size, paginacion.Tab),
+							"hx-target":   paginacion.TargetHtmx,
+							"hx-swap":     "innerHTML",
 							"hx-push-url": "true",
 						},
 					}) {
@@ -259,13 +260,13 @@ templ AdminTablePaginacion(paginacion MiPaginacion) {
 			}
 			@pagination.Item() {
 				@pagination.Next(pagination.NextProps{
-					Href:     paginaURL(paginacion.Pagina+1, paginacion.Size),
+					Href:     paginaURL(paginacion.Pagina+1, paginacion.Size, paginacion.Tab),
 					Disabled: paginacion.Pagina >= paginacion.Paginas,
 					Label:    "Siguiente",
 					Attributes: templ.Attributes{
-						"hx-get":    paginaURL(paginacion.Pagina+1, paginacion.Size),
-						"hx-target": paginacion.TargetHtmx,
-						"hx-swap":   "innerHTML",
+						"hx-get":      paginaURL(paginacion.Pagina+1, paginacion.Size, paginacion.Tab),
+						"hx-target":   paginacion.TargetHtmx,
+						"hx-swap":     "innerHTML",
 						"hx-push-url": "true",
 					},
 				})

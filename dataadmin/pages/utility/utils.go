@@ -195,11 +195,12 @@ func generarPaginas(p MiPaginacion) []ItemPaginacion {
 	return resultado
 }
 
-func paginaURL(pagina, size int) string {
+func paginaURL(pagina, size int, tab string) string {
 	return fmt.Sprintf(
-		"?page=%d&size=%d",
+		"?page=%d&size=%d&tab=%s",
 		pagina,
 		size,
+		tab,
 	)
 }
 

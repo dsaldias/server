@@ -37,6 +37,7 @@ type MiPaginacion struct {
 	Paginas    int
 	Pagina     int
 	Size       int
+	Tab        string
 	TargetHtmx string
 }
 
@@ -138,7 +139,7 @@ func TablaAdmin(
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Titulo)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 58, Col: 54}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 59, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -151,7 +152,7 @@ func TablaAdmin(
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Descripcion)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 60, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 61, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -277,7 +278,7 @@ func TablaAdminBusqueda(lista_id string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(lista_id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 96, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 97, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -473,7 +474,7 @@ func TablaAdminAcciones(
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(nombre)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 155, Col: 14}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 156, Col: 14}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -540,7 +541,7 @@ func TablaAdminContextual(t string) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(t)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 176, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 177, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -720,11 +721,11 @@ func AdminTablePaginacion(paginacion MiPaginacion) templ.Component {
 					}
 					ctx = templ.InitializeContext(ctx)
 					templ_7745c5c3_Err = pagination.Previous(pagination.PreviousProps{
-						Href:     paginaURL(paginacion.Pagina-1, paginacion.Size),
+						Href:     paginaURL(paginacion.Pagina-1, paginacion.Size, paginacion.Tab),
 						Disabled: paginacion.Pagina <= 1,
 						Label:    "Anterior",
 						Attributes: templ.Attributes{
-							"hx-get":      paginaURL(paginacion.Pagina-1, paginacion.Size),
+							"hx-get":      paginaURL(paginacion.Pagina-1, paginacion.Size, paginacion.Tab),
 							"hx-target":   paginacion.TargetHtmx,
 							"hx-swap":     "innerHTML",
 							"hx-push-url": "true",
@@ -779,7 +780,7 @@ func AdminTablePaginacion(paginacion MiPaginacion) templ.Component {
 							var templ_7745c5c3_Var31 string
 							templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", item.Pagina))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 256, Col: 38}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/tabla_admin.templ`, Line: 257, Col: 38}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 							if templ_7745c5c3_Err != nil {
@@ -788,10 +789,10 @@ func AdminTablePaginacion(paginacion MiPaginacion) templ.Component {
 							return nil
 						})
 						templ_7745c5c3_Err = pagination.Link(pagination.LinkProps{
-							Href:     paginaURL(item.Pagina, paginacion.Size),
+							Href:     paginaURL(item.Pagina, paginacion.Size, paginacion.Tab),
 							IsActive: item.EsActual,
 							Attributes: templ.Attributes{
-								"hx-get":      paginaURL(item.Pagina, paginacion.Size),
+								"hx-get":      paginaURL(item.Pagina, paginacion.Size, paginacion.Tab),
 								"hx-target":   paginacion.TargetHtmx,
 								"hx-swap":     "innerHTML",
 								"hx-push-url": "true",
@@ -819,11 +820,11 @@ func AdminTablePaginacion(paginacion MiPaginacion) templ.Component {
 					}
 					ctx = templ.InitializeContext(ctx)
 					templ_7745c5c3_Err = pagination.Next(pagination.NextProps{
-						Href:     paginaURL(paginacion.Pagina+1, paginacion.Size),
+						Href:     paginaURL(paginacion.Pagina+1, paginacion.Size, paginacion.Tab),
 						Disabled: paginacion.Pagina >= paginacion.Paginas,
 						Label:    "Siguiente",
 						Attributes: templ.Attributes{
-							"hx-get":      paginaURL(paginacion.Pagina+1, paginacion.Size),
+							"hx-get":      paginaURL(paginacion.Pagina+1, paginacion.Size, paginacion.Tab),
 							"hx-target":   paginacion.TargetHtmx,
 							"hx-swap":     "innerHTML",
 							"hx-push-url": "true",
