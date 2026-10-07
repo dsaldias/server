@@ -534,7 +534,7 @@ func TablaAdminContextual(t string) templ.Component {
 			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div data-contextual-menu class=\"hidden fixed z-[9999] w-56 rounded-md border border-border bg-card text-card-foreground p-2 shadow-lg\"><div class=\"border-b border-border px-3 py-2\"><p class=\"text-sm font-semibold\">Menú de opciones</p><p class=\"text-xs text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div data-contextual-menu class=\"hidden fixed z-[9999] w-fit rounded-md border border-border bg-card text-card-foreground p-2 shadow-lg\"><div class=\"border-b border-border px-3 py-2\"><p class=\"text-sm font-semibold\">Menú de opciones</p><p class=\"text-xs text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
