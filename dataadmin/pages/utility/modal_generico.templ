@@ -36,7 +36,7 @@ templ ModalGenerico(p ModalGenericoX) {
 		Class:            "z-[99999]",
 	}) {
 		@dialog.Content(dialog.ContentProps{
-			Class:        "relative " + modalContentClass(p.DialogContentClass),
+			Class:        "relative border-0 ring-0 shadow-none " + modalContentClass(p.DialogContentClass),
 			DisableModal: false,
 			Attributes: templ.Attributes{
 				"data-mobile-modal": "true",
@@ -79,7 +79,7 @@ templ ModalGenerico(p ModalGenericoX) {
 						hx-target={ p.TargetRefreshID }
 						hx-swap="innerHTML"
 						hx-ext="json-enc-custom"
-						class="space-y-5"
+						class="space-y-1"
 						hx-on::before-request="
 						const d = this.parentElement.parentElement;
 						this.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;
@@ -206,14 +206,16 @@ func modalHeaderClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+	// return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+	return "bg-[var(--dialog-header)] text-[var(--dialog-header-foreground)] px-4 py-3 rounded-t-xs"
 }
 
 func modalFooterClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "bg-[var(--xdialog-footer)] px-4 py-3"
+	// return "bg-[var(--xdialog-footer)] px-4 py-3"
+	return "bg-[var(--dialog-footer)] text-[var(--dialog-footer-foreground)] px-4 py-1"
 }
 
 func modalBodyClass(class string) string {

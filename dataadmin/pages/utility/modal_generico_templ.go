@@ -299,7 +299,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-5\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div id=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-swap=\"innerHTML\" hx-ext=\"json-enc-custom\" class=\"space-y-1\" hx-on::before-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tthis.dataset.submitButton = d.querySelector('button[type=submit]').innerHTML;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = true;\n\t\t\t\t\t\tbutton.innerHTML = '<span class=animate-spin inline-block>↻</span> Registrando...';\n\t\t\t\t\t\" hx-on::after-request=\"\n\t\t\t\t\t\tconst d = this.parentElement.parentElement;\n\t\t\t\t\t\tconst button = d.querySelector('button[type=submit]');\n\t\t\t\t\t\tbutton.disabled = false;\n\t\t\t\t\t\tbutton.innerHTML = this.dataset.submitButton;\n\n\t\t\t\t\t\tif (event.detail.successful) {\n\t\t\t\t\t\t\tthis.closest('dialog').close();\n\t\t\t\t\t\t\tToastify({ text: 'Operacion realizada con exito',style: {background:'green',zindex:999999}, duration: 5000, close: true, gravity: 'top', position: 'right' }).showToast()\n\t\t\t\t\t\t}\n\t\t\t\t\t\"><div id=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -468,7 +468,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 				return nil
 			})
 			templ_7745c5c3_Err = dialog.Content(dialog.ContentProps{
-				Class:        "relative " + modalContentClass(p.DialogContentClass),
+				Class:        "relative border-0 ring-0 shadow-none " + modalContentClass(p.DialogContentClass),
 				DisableModal: false,
 				Attributes: templ.Attributes{
 					"data-mobile-modal": "true",
@@ -507,14 +507,16 @@ func modalHeaderClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+	// return "bg-[var(--xdialog-header)] px-4 py-3 rounded-t-lg"
+	return "bg-[var(--dialog-header)] text-[var(--dialog-header-foreground)] px-4 py-3 rounded-t-xs"
 }
 
 func modalFooterClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "bg-[var(--xdialog-footer)] px-4 py-3"
+	// return "bg-[var(--xdialog-footer)] px-4 py-3"
+	return "bg-[var(--dialog-footer)] text-[var(--dialog-footer-foreground)] px-4 py-1"
 }
 
 func modalBodyClass(class string) string {

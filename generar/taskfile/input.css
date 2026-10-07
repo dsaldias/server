@@ -110,6 +110,12 @@
   --table-row-even: #ffffff;
   --table-row-odd: #f9fafc;
   --table-row-hover: #eef2f7;
+
+  /*  */
+  --dialog-header: #1a567c;
+  --dialog-footer: #29546e;
+  --dialog-header-foreground: #eef2f7;
+  --dialog-footer-foreground: #eef2f7;
 }
 
 .dark {
@@ -173,4 +179,10 @@
   --table-row-even: #081027;
   --table-row-odd: #0c1630;
   --table-row-hover: #14233d;
+
+  /*  */
+  --dialog-header: #101a31;
+  --dialog-footer: #0c1630;
+  --dialog-header-foreground: #eef4ff;
+  --dialog-footer-foreground: #eef4ff;
 }
