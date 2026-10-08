@@ -1268,6 +1268,9 @@
   .bg-\[\#479066\] {
     background-color: #479066;
   }
+  .bg-\[var\(--card\)\] {
+    background-color: var(--card);
+  }
   .bg-\[var\(--dialog-footer\)\] {
     background-color: var(--dialog-footer);
   }
@@ -3065,11 +3068,11 @@
 }
 :root {
   --radius: 0.65rem;
-  --background: #f6f6f6;
+  --background: #e3effb;
   --foreground: #0f172a;
-  --card: #ffffff;
+  --card: #f8fafe;
   --card-foreground: #0f172a;
-  --popover: #ffffff;
+  --popover: #f8fafe;
   --popover-foreground: #0f172a;
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
@@ -3083,15 +3086,15 @@
   --border: #e5eaf0;
   --input: #e5eaf0;
   --ring: #94a3b8;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
+  --sidebar: #1b7e86;
+  --sidebar-foreground: #ffffff;
   --sidebar-primary: #0f172a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8f4f5;
+  --sidebar-accent: #e7f6fb;
   --sidebar-accent-foreground: #0f172a;
   --sidebar-border: #dce8ea;
   --sidebar-ring: #94a3b8;
-  --header: #ffffff;
+  --header: #f8fafe;
   --header-foreground: #0f172a;
   --header-accent: #e8f4f5;
   --table-header: #eaebef;
