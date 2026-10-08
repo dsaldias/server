@@ -215,7 +215,7 @@ func ModalGenerico(p ModalGenericoX) templ.Component {
 					ID:      "btn-expandir-" + p.DialogID,
 					Variant: button.VariantGhost,
 					Type:    "button",
-					Class:   "absolute right-12 top-2 h-8 w-8 p-0 z-10",
+					Class:   "absolute right-12 top-2 h-8 w-8 p-0 z-10 text-[var(--dialog-header-foreground)]",
 				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -500,7 +500,7 @@ func modalContentClass(class string) string {
 	if class != "" {
 		return class
 	}
-	return "px-0 py-0 max-h-[90vh] bg-[var(--card)] flex flex-col z-[99999]"
+	return "px-0 py-0 max-h-[90vh] bg-[var(--card)] text-[var(--dialog-header-foreground)] flex flex-col z-[99999]"
 }
 
 func modalHeaderClass(class string) string {
