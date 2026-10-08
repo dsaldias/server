@@ -68,6 +68,12 @@ func Sidebar(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = utility.ModalGenerico(utility.ModalGenericoX{
+			DialogID: "x-modal-general-1",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -300,8 +306,9 @@ func SideHeader(titulo, subtitulo string) templ.Component {
 							return nil
 						})
 						templ_7745c5c3_Err = badge.Badge(badge.Props{
-							ID:    "ws_badge_indicator",
-							Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
+							ID: "ws_badge_indicator",
+							// Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
+							Class: "border-0 bg-orange-500 text-black",
 							Attributes: templ.Attributes{
 								"title":                 "Se pone en el websocket.js",
 								"data-conectados-badge": "true",
@@ -317,7 +324,7 @@ func SideHeader(titulo, subtitulo string) templ.Component {
 						var templ_7745c5c3_Var13 string
 						templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(titulo)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 87, Col: 15}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 93, Col: 15}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 						if templ_7745c5c3_Err != nil {
@@ -330,7 +337,7 @@ func SideHeader(titulo, subtitulo string) templ.Component {
 						var templ_7745c5c3_Var14 string
 						templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(subtitulo)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 90, Col: 18}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 96, Col: 18}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 						if templ_7745c5c3_Err != nil {
@@ -345,6 +352,7 @@ func SideHeader(titulo, subtitulo string) templ.Component {
 					templ_7745c5c3_Err = sidebar.MenuButton(sidebar.MenuButtonProps{
 						Href:    "/adminx/main",
 						Tooltip: titulo,
+						Class:   "bg-[var(--sidebar)] hover:bg-[var(--dialog-footer)]/20",
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -499,7 +507,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var23 string
 								templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(usuario.Nombres)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 119, Col: 26}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 126, Col: 26}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 								if templ_7745c5c3_Err != nil {
@@ -512,7 +520,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var24 string
 								templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(usuario.Apellido1)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 119, Col: 48}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 126, Col: 48}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 								if templ_7745c5c3_Err != nil {
@@ -525,7 +533,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var25 string
 								templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(segundoAp(usuario))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 120, Col: 29}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 127, Col: 29}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 								if templ_7745c5c3_Err != nil {
@@ -538,7 +546,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var26 string
 								templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(correo(usuario))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 123, Col: 26}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 130, Col: 26}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 								if templ_7745c5c3_Err != nil {
@@ -557,7 +565,8 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								return nil
 							})
 							templ_7745c5c3_Err = sidebar.MenuButton(sidebar.MenuButtonProps{
-								Size: sidebar.MenuButtonSizeLg,
+								Size:  sidebar.MenuButtonSizeLg,
+								Class: "bg-[var(--dialog-footer)]/50 hover:bg-[var(--dialog-header)]",
 							}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
@@ -599,7 +608,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var29 string
 								templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(usuario.Nombres)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 136, Col: 24}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 143, Col: 24}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 								if templ_7745c5c3_Err != nil {
@@ -612,7 +621,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var30 string
 								templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(usuario.Apellido1)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 136, Col: 46}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 143, Col: 46}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 								if templ_7745c5c3_Err != nil {
@@ -625,7 +634,7 @@ func SideFooter(usuario *xm.ResponseUsuario) templ.Component {
 								var templ_7745c5c3_Var31 string
 								templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(segundoAp(usuario))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 137, Col: 27}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 144, Col: 27}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 								if templ_7745c5c3_Err != nil {
@@ -800,7 +809,7 @@ func Script(asset_version string) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue("/assets/websocket.js?v=" + asset_version)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 178, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/sidebar.templ`, Line: 185, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 		if templ_7745c5c3_Err != nil {

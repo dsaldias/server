@@ -29,6 +29,10 @@ templ Sidebar(
 	@utility.ModalGenerico(utility.ModalGenericoX{
 		DialogID: "x-modal-perfil",
 	})
+	// ESTE MODAL SE PUEDE USAR PARA TODO, INVOCAR POR ID
+	@utility.ModalGenerico(utility.ModalGenericoX{
+		DialogID: "x-modal-general-1",
+	})
 	@sidebar.Sidebar(sidebar.Props{
 		Collapsible: sidebar.CollapsibleIcon,
 		Variant:     sidebar.VariantSidebar,
@@ -63,12 +67,14 @@ templ SideHeader(titulo, subtitulo string) {
 			@sidebar.MenuItem() {
 				@sidebar.MenuButton(sidebar.MenuButtonProps{
 					Href:    "/adminx/main",
-					Tooltip: titulo,
+					Tooltip: titulo, 
+					Class: "bg-[var(--sidebar)] hover:bg-[var(--dialog-footer)]/20",
 				}) {
 					// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
 					@badge.Badge(badge.Props{
 						ID:    "ws_badge_indicator",
-						Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
+						// Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
+						Class: "border-0 bg-orange-500 text-black",
 						Attributes: templ.Attributes{
 							"title":                 "Se pone en el websocket.js",
 							"data-conectados-badge": "true",
@@ -106,6 +112,7 @@ templ SideFooter(usuario *xm.ResponseUsuario) {
 					@dropdown.Trigger() {
 						@sidebar.MenuButton(sidebar.MenuButtonProps{
 							Size: sidebar.MenuButtonSizeLg,
+							Class: "bg-[var(--dialog-footer)]/50 hover:bg-[var(--dialog-header)]",
 						}) {
 							@avatar.Avatar(avatar.Props{
 								Class: "size-8 rounded-lg",

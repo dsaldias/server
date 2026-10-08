@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/selectbox"
 	"github.com/templui/templui/components/table"
 	"time"
@@ -303,7 +302,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var14 string
 							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(us.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 56, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 55, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 							if templ_7745c5c3_Err != nil {
@@ -334,7 +333,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var16 string
 							templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(us.Nombres)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 59, Col: 18}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 58, Col: 18}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 							if templ_7745c5c3_Err != nil {
@@ -347,7 +346,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(us.Apellido1)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 59, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 58, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -360,7 +359,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var18 string
 							templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(us.Apellido2))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 60, Col: 33}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 59, Col: 33}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 							if templ_7745c5c3_Err != nil {
@@ -391,7 +390,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var20 string
 							templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(us.Conexiones)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 63, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 62, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 							if templ_7745c5c3_Err != nil {
@@ -422,7 +421,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var22 string
 							templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(us.LastLogin))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 66, Col: 31}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/usuarios/usuarios.templ`, Line: 65, Col: 31}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 							if templ_7745c5c3_Err != nil {
@@ -462,13 +461,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Ver usuario",
-									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
-									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									DialogID:   "xdialog-form-usuario",
-									Icon:       icon.Eye(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnVerUsuario(us).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -476,14 +469,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Editar Usuario",
-									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
-									HtmxPost:   "/adminx/usuarios/crear",
-									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									DialogID:   "xdialog-form-usuario",
-									Icon:       icon.PenLine(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnEditarUsuario(us).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -511,13 +497,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Ver usuario",
-									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
-									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									DialogID:   "xdialog-form-usuario",
-									Icon:       icon.Eye(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnVerUsuario(us).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -525,14 +505,7 @@ func ListaUsuarios(usuarios []*model.Usuario, paginacion utility.MiPaginacion) t
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Editar Usuario",
-									HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
-									HtmxPost:   "/adminx/usuarios/crear",
-									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									DialogID:   "xdialog-form-usuario",
-									Icon:       icon.PenLine(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnEditarUsuario(us).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -598,14 +571,7 @@ func HeaderAcciones() templ.Component {
 			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-			ModalTitle: "Registrar Nuevo usuario",
-			HtmxGet:    "/adminx/usuarios/formnew",
-			HtmxPost:   "/adminx/usuarios/crear",
-			BtnText:    "Registrar usuario",
-			DialogID:   "xdialog-form-usuario",
-			Icon:       icon.Newspaper(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = utility.BtnNewUsuario().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

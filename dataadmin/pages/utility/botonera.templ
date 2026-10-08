@@ -1,0 +1,39 @@
+package utility 
+
+import (
+	"fmt"
+	"github.com/dsaldias/server/graph_auth/model"
+	"github.com/templui/templui/components/icon"
+)
+
+templ BtnVerUsuario(us *model.Usuario) {
+	@ModalButton(BtnProps{
+		ModalTitle: "Ver usuario",
+		HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
+		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		DialogID:   "x-modal-general-1",
+		Icon:       icon.Eye(),
+	})
+}
+
+templ BtnEditarUsuario(us *model.Usuario) {
+	@ModalButton(BtnProps{
+		ModalTitle: "Editar Usuario",
+		HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
+		HtmxPost:   "/adminx/usuarios/crear",
+		Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+		DialogID:   "x-modal-general-1",
+		Icon:       icon.PenLine(),
+	})
+}
+
+templ BtnNewUsuario() {
+	@ModalButton(BtnProps{
+		ModalTitle: "Registrar Nuevo usuario",
+		HtmxGet:    "/adminx/usuarios/formnew",
+		HtmxPost:   "/adminx/usuarios/crear",
+		BtnText:    "Registrar usuario",
+		DialogID:   "x-modal-general-1",
+		Icon:       icon.Newspaper(),
+	})
+}

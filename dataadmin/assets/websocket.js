@@ -184,7 +184,7 @@ const cambiar_estado_ws = (estado) => {
 
   for (let i = 0; i < badges.length; i++) {
     const badge = badges[i];
-    badge.classList.remove("bg-orange-500", "bg-[#479066]", "bg-red-500");
+    badge.classList.remove("bg-orange-500", "bg-[#e3effb]", "bg-red-500");
     const punto = badge?.querySelector("[data-ws-status]");
     if (!punto) continue;
     punto.classList.remove("bg-orange-500", "bg-green-500", "bg-red-500");
@@ -195,7 +195,7 @@ const cambiar_estado_ws = (estado) => {
         break;
 
       case "conectado":
-        badge.classList.add("bg-[#01c4fb]");
+        badge.classList.add("bg-[#e3effb]");
         punto.classList.add("bg-green-500");
         break;
 
