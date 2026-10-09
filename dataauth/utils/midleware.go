@@ -16,12 +16,13 @@ import (
 	"github.com/dsaldias/server/dataauth/permisos"
 	"github.com/dsaldias/server/dataauth/sessionkey"
 
-	"github.com/dgrijalva/jwt-go"
+	// "github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type JwtCustomClaim struct {
 	USERID string `json:"id"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 type AuthData struct {
@@ -54,9 +55,9 @@ func getJwtSecret() string {
 func jwtGenerate(userID string, tim time.Time) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, &JwtCustomClaim{
 		USERID: userID,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: tim.Unix(),
-			IssuedAt:  time.Now().Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(tim),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	})
 
@@ -68,13 +69,26 @@ func jwtGenerate(userID string, tim time.Time) (string, error) {
 	return token, nil
 }
 
-func JwtValidate(token string) (*jwt.Token, error) {
+/* func JwtValidate(token string) (*jwt.Token, error) {
 	return jwt.ParseWithClaims(token, &JwtCustomClaim{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("there's a problem with the signing method")
 		}
 		return jwtSecret, nil
 	})
+} */
+
+func JwtValidate(token string) (*jwt.Token, error) {
+	return jwt.ParseWithClaims(
+		token,
+		&JwtCustomClaim{},
+		func(t *jwt.Token) (interface{}, error) {
+			return jwtSecret, nil
+		},
+		jwt.WithValidMethods([]string{
+			jwt.SigningMethodHS256.Alg(),
+		}),
+	)
 }
 
 type authString string
@@ -164,7 +178,7 @@ func CtxValue(ctx context.Context, db *sql.DB, metodo string) (*AuthData, error)
 	if clains == nil {
 		return nil, errors.New("debes iniciar session")
 	}
-	validate, err := JwtValidate(clains.TOKEN)
+	/* validate, err := JwtValidate(clains.TOKEN)
 	if err != nil || !validate.Valid {
 		txt := err.Error()
 		if strings.HasPrefix(txt, "token is expired by") {
@@ -173,6 +187,17 @@ func CtxValue(ctx context.Context, db *sql.DB, metodo string) (*AuthData, error)
 		} else {
 			return nil, errors.New(txt)
 		}
+	} */
+	validate, err := JwtValidate(clains.TOKEN)
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, errors.New("tu sesión ha expirado")
+		}
+		return nil, fmt.Errorf("token inválido: %w", err)
+	}
+
+	if validate == nil || !validate.Valid {
+		return nil, errors.New("token inválido")
 	}
 	if clains.SessionKey == nil {
 		return nil, errors.New("no hay session key")
