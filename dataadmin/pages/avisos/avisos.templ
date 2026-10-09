@@ -15,7 +15,6 @@ templ Avisos(avisos []*model.Notificacion,paginacion utility.MiPaginacion, url_r
 		Descripcion: "Administración y gestión de avisos y alertas del sistema",
 		UrlRefresh:  url_refresh,
 		ListaID:     "lista-avisos",
-		DialogID:    "xdialog-form-aviso",
 		Acciones:    HeaderAcciones(),
 	}, paginacion) {
 		@ListaAvisos(avisos)
@@ -76,7 +75,6 @@ templ ListaAvisos(avisos []*model.Notificacion) {
 								ModalTitle: "Ver unidad",
 								HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", un.ID),
 								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								DialogID:   "xdialog-form-aviso",
 								Icon:       icon.Eye(),
 							})
 							@utility.ModalButton(utility.BtnProps{
@@ -84,7 +82,6 @@ templ ListaAvisos(avisos []*model.Notificacion) {
 								HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", un.ID),
 								HtmxPost:   "/adminx/avisos/crear",
 								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-								DialogID:   "xdialog-form-aviso",
 								Icon:       icon.PenLine(),
 							})
 						}
@@ -101,7 +98,6 @@ templ HeaderAcciones() {
 		HtmxGet:    "/adminx/avisos/formnew",
 		HtmxPost:   "/adminx/avisos/crear",
 		BtnText:    "Registrar nueva unidad",
-		DialogID:   "xdialog-form-aviso",
 		Icon:       icon.Newspaper(),
 	})
 }

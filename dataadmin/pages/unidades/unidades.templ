@@ -17,7 +17,6 @@ templ Unidades(unidades []*model.Unidad, paginacion utility.MiPaginacion, url_re
 		Descripcion:    "Administración y gestión de unidades del sistema",
 		UrlRefresh:     url_refresh,
 		ListaID:        "lista-unidades",
-		DialogID:       "xdialog-form-unidad",
 		Acciones:       HeaderAcciones(),
 		Busqueda:       true,
 	}, paginacion) {
@@ -73,7 +72,6 @@ templ TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) {
 								ModalTitle: "Ver unidad",
 								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
 								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								DialogID:   "xdialog-form-unidad",
 								Icon:       icon.Eye(),
 							})
 							@utility.ModalButton(utility.BtnProps{
@@ -81,7 +79,6 @@ templ TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) {
 								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
 								HtmxPost:   "/adminx/unidades/crear",
 								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-								DialogID:   "xdialog-form-unidad",
 								Icon:       icon.PenLine(),
 							})
 						}
@@ -99,7 +96,6 @@ templ HeaderAcciones() {
 		HtmxGet:    "/adminx/unidades/formnew",
 		HtmxPost:   "/adminx/unidades/crear",
 		BtnText:    "Registrar nueva unidad",
-		DialogID:   "xdialog-form-unidad",
 		Icon:       icon.Newspaper(),
 	})
 }

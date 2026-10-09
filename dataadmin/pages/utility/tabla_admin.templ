@@ -61,7 +61,10 @@ templ TablaAdmin(
 							{ props.Descripcion }
 						</p>
 					</div>
-					<div class="md:flex md:items-center md:justify-end">
+					<div
+						class="md:flex md:items-center md:justify-end"
+						data-modal-refresh-target={ "#" + props.ListaID }
+					>
 						@TablaAdminHeaderAcciones(props.UrlRefresh, props.ListaID) {
 							if props.Acciones != nil {
 								@props.Acciones
@@ -74,13 +77,6 @@ templ TablaAdmin(
 				}
 			}
 		}
-		@ModalGenerico(ModalGenericoX{
-			DialogID:           props.DialogID,
-			TargetRefreshID:    "#" + props.ListaID,
-			DialogContentClass: props.DialogContentClass,
-			DialogHeaderClass:  props.DialogHeaderClass,
-			DialogFooterClass:  props.DialogFooterClass,
-		})
 	</div>
 	@TablaAdminLista(props, paginacion) {
 		{ children... }

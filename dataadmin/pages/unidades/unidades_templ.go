@@ -66,7 +66,6 @@ func Unidades(unidades []*model.Unidad, paginacion utility.MiPaginacion, url_ref
 			Descripcion: "Administración y gestión de unidades del sistema",
 			UrlRefresh:  url_refresh,
 			ListaID:     "lista-unidades",
-			DialogID:    "xdialog-form-unidad",
 			Acciones:    HeaderAcciones(),
 			Busqueda:    true,
 		}, paginacion).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
@@ -324,7 +323,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var15 string
 							templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(un.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 54, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 53, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 							if templ_7745c5c3_Err != nil {
@@ -355,7 +354,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(un.Nombre)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 57, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 56, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -386,7 +385,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var19 string
 							templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(un.Descripcion))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 60, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 59, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 							if templ_7745c5c3_Err != nil {
@@ -417,7 +416,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var21 string
 							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(un.Orden)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 63, Col: 16}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 62, Col: 16}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -448,7 +447,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var23 string
 							templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.FechaRegistro))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 66, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 65, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 							if templ_7745c5c3_Err != nil {
@@ -492,7 +491,6 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 									ModalTitle: "Ver unidad",
 									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
 									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									DialogID:   "xdialog-form-unidad",
 									Icon:       icon.Eye(),
 								}).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
@@ -507,7 +505,6 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
 									HtmxPost:   "/adminx/unidades/crear",
 									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									DialogID:   "xdialog-form-unidad",
 									Icon:       icon.PenLine(),
 								}).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
@@ -580,7 +577,6 @@ func HeaderAcciones() templ.Component {
 			HtmxGet:    "/adminx/unidades/formnew",
 			HtmxPost:   "/adminx/unidades/crear",
 			BtnText:    "Registrar nueva unidad",
-			DialogID:   "xdialog-form-unidad",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

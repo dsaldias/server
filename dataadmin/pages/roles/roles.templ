@@ -15,7 +15,6 @@ templ Roles(roles []*model.ResponseRoles,paginacion utility.MiPaginacion, url_re
 		Descripcion: "Administración y gestión de roles de acceso al sistema",
 		UrlRefresh:  url_refresh,
 		ListaID:     "tabla-roles",
-		DialogID:    "xdialog-form-rol",
 		Acciones:    HeaderAcciones(),
 	}, paginacion) {
 		@ListaRoles(roles,paginacion)
@@ -82,7 +81,6 @@ templ ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) 
 								ModalTitle: "Ver rol",
 								HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
 								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								DialogID:   "xdialog-form-rol",
 								Icon:       icon.Eye(),
 							})
 							@utility.ModalButton(utility.BtnProps{
@@ -90,7 +88,6 @@ templ ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) 
 								HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
 								HtmxPost:   "/adminx/roles/crear",
 								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-								DialogID:   "xdialog-form-rol",
 								Icon:       icon.PenLine(),
 							})
 						}
@@ -108,7 +105,6 @@ templ HeaderAcciones() {
 		HtmxGet:    "/adminx/roles/formnew",
 		HtmxPost:   "/adminx/roles/crear",
 		BtnText:    "Registrar rol",
-		DialogID:   "xdialog-form-rol",
 		Icon:       icon.Newspaper(),
 	})
 }

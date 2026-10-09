@@ -41,7 +41,6 @@ templ Tickets(tickets, alls []*model.RespTickets, paginacion utility.MiPaginacio
 					Descripcion: "Administración y gestión de tickets de soporte",
 					UrlRefresh:  url_refresh,
 					ListaID:     "lista-tickets",
-					DialogID:    "xdialog-form-ticket",
 					Acciones:    HeaderAcciones(),
 				}, paginacion) {
 					@ListaTickets(tickets)
@@ -105,7 +104,6 @@ templ ListaTickets(tickets []*model.RespTickets) {
 								// ModalTitle: "Ver detalles del ticket",
 								HtmxGet:  fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
 								Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								DialogID: "xdialog-form-ticket",
 								Icon:     icon.Eye(),
 							})
 							@utility.ModalButton(utility.BtnProps{
@@ -114,7 +112,6 @@ templ ListaTickets(tickets []*model.RespTickets) {
 								HtmxPost:      "/adminx/tickets/responder",
 								BtnSubmitText: "responder",
 								Class:         "bg-green-100 text-green-700 hover:bg-green-200",
-								DialogID:      "xdialog-form-ticket",
 								Icon:          icon.PenLine(),
 							})
 						}
@@ -131,7 +128,6 @@ templ HeaderAcciones() {
 		HtmxGet:    "/adminx/tickets/formnew",
 		HtmxPost:   "/adminx/tickets/crear",
 		BtnText:    "Sacar ticket",
-		DialogID:   "xdialog-form-ticket",
 		Icon:       icon.Newspaper(),
 	})
 }

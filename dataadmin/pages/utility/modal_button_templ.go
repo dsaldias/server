@@ -10,6 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "github.com/templui/templui/components/button"
 
+const DefaultModalID = "x-modal-general-1"
+
 type BtnProps struct {
 	ModalTitle       string
 	ModalTooltip     string
@@ -76,7 +78,7 @@ func ModalButton(p BtnProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.BtnText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 101, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 108, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -96,7 +98,7 @@ func ModalButton(p BtnProps) templ.Component {
 			Attributes: templ.Attributes{
 				"title":     tooltip(p.ModalTitle, p.ModalTooltip),
 				"hx-get":    p.HtmxGet,
-				"hx-target": "#xcontenido-" + p.DialogID,
+				"hx-target": "#xcontenido-" + modalIDOrDefault(p.DialogID),
 				"hx-swap":   "innerHTML",
 
 				"hx-on::before-request": `
@@ -122,12 +124,14 @@ func ModalButton(p BtnProps) templ.Component {
 				this.innerHTML = this.dataset.originalContent;
 
 				if (event.detail.successful) {
-					const dialog = document.getElementById("` + p.DialogID + `");
-					const titulo = dialog.querySelector("#titulo-` + p.DialogID + `");
-					const descripcion = dialog.querySelector("#descripcion-` + p.DialogID + `");
-					const btn_submit = dialog.querySelector("#btn-submit-` + p.DialogID + `");
-					const btn_cancel = dialog.querySelector("#btn-cerrar-` + p.DialogID + `");
-					const form = dialog.querySelector("#xform-` + p.DialogID + `");
+					const dialog = document.getElementById("` + modalIDOrDefault(p.DialogID) + `");
+					const titulo = dialog.querySelector("#titulo-` + modalIDOrDefault(p.DialogID) + `");
+					const descripcion = dialog.querySelector("#descripcion-` + modalIDOrDefault(p.DialogID) + `");
+					const btn_submit = dialog.querySelector("#btn-submit-` + modalIDOrDefault(p.DialogID) + `");
+					const btn_cancel = dialog.querySelector("#btn-cerrar-` + modalIDOrDefault(p.DialogID) + `");
+					const form = dialog.querySelector("#xform-` + modalIDOrDefault(p.DialogID) + `");
+					const refreshTarget = this.closest("[data-modal-refresh-target]")?.dataset.modalRefreshTarget
+						|| this.closest("[data-tabla-contextual]")?.id;
 
 					if (titulo) {
             titulo.textContent = "` + p.ModalTitle + `";
@@ -155,12 +159,15 @@ func ModalButton(p BtnProps) templ.Component {
         	}
 					if (form) {
 						form.setAttribute("hx-post", "` + p.HtmxPost + `");
+						if (refreshTarget) {
+							form.setAttribute("hx-target", refreshTarget.startsWith("#") ? refreshTarget : "#" + refreshTarget);
+						}
 						if ("` + isTrue(p.NoSwapContent) + `" == "1") {
 							form.setAttribute("hx-swap", "none");
 						} 
 						htmx.process(form);
 					}
-					window.tui.dialog.open("` + p.DialogID + `");
+					window.tui.dialog.open("` + modalIDOrDefault(p.DialogID) + `");
 				}
 			`,
 			},
@@ -170,6 +177,13 @@ func ModalButton(p BtnProps) templ.Component {
 		}
 		return nil
 	})
+}
+
+func modalIDOrDefault(id string) string {
+	if id == "" {
+		return DefaultModalID
+	}
+	return id
 }
 
 func modalBtnSubmitDisplay(p BtnProps) string {

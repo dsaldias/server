@@ -167,7 +167,6 @@ func Tickets(tickets, alls []*model.RespTickets, paginacion utility.MiPaginacion
 					Descripcion: "Administración y gestión de tickets de soporte",
 					UrlRefresh:  url_refresh,
 					ListaID:     "lista-tickets",
-					DialogID:    "xdialog-form-ticket",
 					Acciones:    HeaderAcciones(),
 				}, paginacion).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -470,7 +469,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 							var templ_7745c5c3_Var21 string
 							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(ti.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 86, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 85, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -501,7 +500,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 							var templ_7745c5c3_Var23 string
 							templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(ti.Problema)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 89, Col: 19}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 88, Col: 19}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 							if templ_7745c5c3_Err != nil {
@@ -532,7 +531,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 							var templ_7745c5c3_Var25 string
 							templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(ti.Respuesta))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 92, Col: 33}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 91, Col: 33}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 							if templ_7745c5c3_Err != nil {
@@ -563,7 +562,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 							var templ_7745c5c3_Var27 string
 							templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(ti.Estado)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 95, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 94, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 							if templ_7745c5c3_Err != nil {
@@ -594,7 +593,7 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 							var templ_7745c5c3_Var29 string
 							templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(ti.FechaRegistro))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 98, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/ticket/tickets.templ`, Line: 97, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 							if templ_7745c5c3_Err != nil {
@@ -636,10 +635,9 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 								ctx = templ.InitializeContext(ctx)
 								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
 									// ModalTitle: "Ver detalles del ticket",
-									HtmxGet:  fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
-									Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									DialogID: "xdialog-form-ticket",
-									Icon:     icon.Eye(),
+									HtmxGet: fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
+									Class:   "bg-blue-100 text-blue-700 hover:bg-blue-200",
+									Icon:    icon.Eye(),
 								}).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
@@ -654,7 +652,6 @@ func ListaTickets(tickets []*model.RespTickets) templ.Component {
 									HtmxPost:      "/adminx/tickets/responder",
 									BtnSubmitText: "responder",
 									Class:         "bg-green-100 text-green-700 hover:bg-green-200",
-									DialogID:      "xdialog-form-ticket",
 									Icon:          icon.PenLine(),
 								}).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
@@ -723,7 +720,6 @@ func HeaderAcciones() templ.Component {
 			HtmxGet:    "/adminx/tickets/formnew",
 			HtmxPost:   "/adminx/tickets/crear",
 			BtnText:    "Sacar ticket",
-			DialogID:   "xdialog-form-ticket",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
