@@ -10,7 +10,7 @@ templ BtnVerUsuario(us *model.Usuario) {
 	@ModalButton(BtnProps{
 		ModalTitle: "Ver usuario",
 		HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
-		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 		Icon:       icon.Eye(),
 	})
 }
@@ -20,7 +20,7 @@ templ BtnEditarUsuario(us *model.Usuario) {
 		ModalTitle: "Editar Usuario",
 		HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
 		HtmxPost:   "/adminx/usuarios/crear",
-		Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 		Icon:       icon.PenLine(),
 	})
 }
@@ -31,6 +31,7 @@ templ BtnNewUsuario() {
 		HtmxGet:    "/adminx/usuarios/formnew",
 		HtmxPost:   "/adminx/usuarios/crear",
 		BtnText:    "Registrar usuario",
+		Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 		Icon:       icon.Newspaper(),
 	})
 }
@@ -39,7 +40,7 @@ templ BtnVerUnidad(un *model.Unidad) {
 	@ModalButton(BtnProps{
 		ModalTitle: "Ver unidad",
 		HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
-		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 		Icon:       icon.Eye(),
 	})
 }
@@ -49,7 +50,7 @@ templ BtnEditarUnidad(un *model.Unidad) {
 		ModalTitle: "Editar unidad",
 		HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
 		HtmxPost:   "/adminx/unidades/crear",
-		Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 		Icon:       icon.PenLine(),
 	})
 }
@@ -60,6 +61,7 @@ templ BtnNuevaUnidad() {
 		HtmxGet:    "/adminx/unidades/formnew",
 		HtmxPost:   "/adminx/unidades/crear",
 		BtnText:    "Registrar nueva unidad",
+		Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 		Icon:       icon.Newspaper(),
 	})
 }
@@ -68,7 +70,7 @@ templ BtnVerRol(rol *model.ResponseRoles) {
 	@ModalButton(BtnProps{
 		ModalTitle: "Ver rol",
 		HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
-		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 		Icon:       icon.Eye(),
 	})
 }
@@ -78,7 +80,7 @@ templ BtnEditarRol(rol *model.ResponseRoles) {
 		ModalTitle: "Editar rol",
 		HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
 		HtmxPost:   "/adminx/roles/crear",
-		Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 		Icon:       icon.PenLine(),
 	})
 }
@@ -89,6 +91,7 @@ templ BtnNuevoRol() {
 		HtmxGet:    "/adminx/roles/formnew",
 		HtmxPost:   "/adminx/roles/crear",
 		BtnText:    "Registrar rol",
+		Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 		Icon:       icon.Newspaper(),
 	})
 }
@@ -97,7 +100,7 @@ templ BtnVerAviso(aviso *model.Notificacion) {
 	@ModalButton(BtnProps{
 		ModalTitle: "Ver aviso",
 		HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", aviso.ID),
-		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 		Icon:       icon.Eye(),
 	})
 }
@@ -107,7 +110,7 @@ templ BtnEditarAviso(aviso *model.Notificacion) {
 		ModalTitle: "Editar aviso",
 		HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", aviso.ID),
 		HtmxPost:   "/adminx/avisos/crear",
-		Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 		Icon:       icon.PenLine(),
 	})
 }
@@ -118,6 +121,7 @@ templ BtnNuevoAviso() {
 		HtmxGet:    "/adminx/avisos/formnew",
 		HtmxPost:   "/adminx/avisos/crear",
 		BtnText:    "Registrar nuevo aviso",
+		Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 		Icon:       icon.Newspaper(),
 	})
 }
@@ -126,7 +130,7 @@ templ BtnVerTicket(ticket *model.RespTickets) {
 	@ModalButton(BtnProps{
 		ModalTitle: "Ver detalles del ticket",
 		HtmxGet:    fmt.Sprintf("/adminx/tickets/%s/ver", ticket.ID),
-		Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+		Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 		Icon:       icon.Eye(),
 	})
 }
@@ -137,7 +141,7 @@ templ BtnResponderTicket(ticket *model.RespTickets) {
 		HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get", ticket.ID),
 		HtmxPost:      "/adminx/tickets/responder",
 		BtnSubmitText: "responder",
-		Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:         "border-amber-600 bg-amber-500 text-white hover:bg-amber-400 hover:text-slate-950",
 		Icon:          icon.PenLine(),
 	})
 }
@@ -148,7 +152,7 @@ templ BtnResponderTicketAll(ticket *model.RespTickets) {
 		HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get?is_from_all=1", ticket.ID),
 		HtmxPost:      "/adminx/tickets/responder",
 		BtnSubmitText: "responder",
-		Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+		Class:         "border-amber-600 bg-amber-500 text-white hover:bg-amber-400 hover:text-slate-950",
 		Icon:          icon.PenLine(),
 	})
 }
@@ -159,6 +163,7 @@ templ BtnNuevoTicket() {
 		HtmxGet:    "/adminx/tickets/formnew",
 		HtmxPost:   "/adminx/tickets/crear",
 		BtnText:    "Sacar ticket",
+		Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 		Icon:       icon.Newspaper(),
 	})
 }

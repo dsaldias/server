@@ -10,6 +10,9 @@
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-orange-500: oklch(70.5% 0.213 47.604);
+    --color-amber-400: oklch(82.8% 0.189 84.429);
+    --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
     --color-green-100: oklch(96.2% 0.044 156.743);
@@ -17,11 +20,18 @@
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-green-600: oklch(62.7% 0.194 149.214);
     --color-green-700: oklch(52.7% 0.154 150.069);
+    --color-emerald-500: oklch(69.6% 0.17 162.48);
+    --color-emerald-600: oklch(59.6% 0.145 163.225);
+    --color-emerald-700: oklch(50.8% 0.118 165.612);
+    --color-cyan-400: oklch(78.9% 0.154 211.53);
+    --color-cyan-500: oklch(71.5% 0.143 215.221);
+    --color-cyan-600: oklch(60.9% 0.126 221.723);
     --color-blue-100: oklch(93.2% 0.032 255.585);
     --color-blue-200: oklch(88.2% 0.059 254.128);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-700: oklch(48.8% 0.243 264.376);
+    --color-slate-950: oklch(12.9% 0.042 264.695);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
@@ -1187,8 +1197,14 @@
   .\!border-sidebar-border {
     border-color: var(--sidebar-border) !important;
   }
+  .border-\[\#155e66\] {
+    border-color: #155e66;
+  }
   .border-\[\#081027\] {
     border-color: #081027;
+  }
+  .border-amber-600 {
+    border-color: var(--color-amber-600);
   }
   .border-blue-500\/30 {
     border-color: color-mix(in srgb, oklch(62.3% 0.214 259.815) 30%, transparent);
@@ -1202,8 +1218,14 @@
   .border-current {
     border-color: currentcolor;
   }
+  .border-cyan-600 {
+    border-color: var(--color-cyan-600);
+  }
   .border-destructive {
     border-color: var(--destructive);
+  }
+  .border-emerald-700 {
+    border-color: var(--color-emerald-700);
   }
   .border-gray-500\/30 {
     border-color: color-mix(in srgb, oklch(55.1% 0.027 264.364) 30%, transparent);
@@ -1259,6 +1281,9 @@
   .border-l-transparent {
     border-left-color: transparent;
   }
+  .bg-\[\#1b7e86\] {
+    background-color: #1b7e86;
+  }
   .bg-\[\#081027\] {
     background-color: #081027;
   }
@@ -1292,6 +1317,9 @@
   .bg-\[var\(--xdialog-header\)\] {
     background-color: var(--xdialog-header);
   }
+  .bg-amber-500 {
+    background-color: var(--color-amber-500);
+  }
   .bg-background {
     background-color: var(--background);
   }
@@ -1307,9 +1335,6 @@
       background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
     }
   }
-  .bg-blue-100 {
-    background-color: var(--color-blue-100);
-  }
   .bg-blue-500\/10 {
     background-color: color-mix(in srgb, oklch(62.3% 0.214 259.815) 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1319,8 +1344,14 @@
   .bg-card {
     background-color: var(--card);
   }
+  .bg-cyan-500 {
+    background-color: var(--color-cyan-500);
+  }
   .bg-destructive {
     background-color: var(--destructive);
+  }
+  .bg-emerald-600 {
+    background-color: var(--color-emerald-600);
   }
   .bg-foreground {
     background-color: var(--foreground);
@@ -1339,9 +1370,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-gray-500) 10%, transparent);
     }
-  }
-  .bg-green-100 {
-    background-color: var(--color-green-100);
   }
   .bg-green-500 {
     background-color: var(--color-green-500);
@@ -1677,9 +1705,6 @@
   .text-blue-600 {
     color: var(--color-blue-600);
   }
-  .text-blue-700 {
-    color: var(--color-blue-700);
-  }
   .text-card-foreground {
     color: var(--card-foreground);
   }
@@ -1700,9 +1725,6 @@
   }
   .text-green-600 {
     color: var(--color-green-600);
-  }
-  .text-green-700 {
-    color: var(--color-green-700);
   }
   .text-header-foreground {
     color: var(--header-foreground);
@@ -1757,6 +1779,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--sidebar-foreground) 70%, transparent);
     }
+  }
+  .text-slate-950 {
+    color: var(--color-slate-950);
   }
   .text-white {
     color: var(--color-white);
@@ -2278,6 +2303,9 @@
     .hover\:bg-\[\#101b38\]:hover {
       background-color: #101b38;
     }
+    .hover\:bg-\[\#155e66\]:hover {
+      background-color: #155e66;
+    }
     .hover\:bg-\[var\(--dialog-footer\)\]:hover {
       background-color: var(--dialog-footer);
     }
@@ -2295,6 +2323,9 @@
     .hover\:bg-accent:hover {
       background-color: var(--accent);
     }
+    .hover\:bg-amber-400:hover {
+      background-color: var(--color-amber-400);
+    }
     .hover\:bg-black\/40:hover {
       background-color: color-mix(in srgb, #000 40%, transparent);
     }
@@ -2303,11 +2334,11 @@
         background-color: color-mix(in oklab, var(--color-black) 40%, transparent);
       }
     }
-    .hover\:bg-blue-200:hover {
-      background-color: var(--color-blue-200);
-    }
     .hover\:bg-blue-500:hover {
       background-color: var(--color-blue-500);
+    }
+    .hover\:bg-cyan-400:hover {
+      background-color: var(--color-cyan-400);
     }
     .hover\:bg-destructive\/90:hover {
       background-color: var(--destructive);
@@ -2317,6 +2348,9 @@
         background-color: color-mix(in oklab, var(--destructive) 90%, transparent);
       }
     }
+    .hover\:bg-emerald-500:hover {
+      background-color: var(--color-emerald-500);
+    }
     .hover\:bg-foreground\/50:hover {
       background-color: var(--foreground);
     }
@@ -2324,9 +2358,6 @@
       .hover\:bg-foreground\/50:hover {
         background-color: color-mix(in oklab, var(--foreground) 50%, transparent);
       }
-    }
-    .hover\:bg-green-200:hover {
-      background-color: var(--color-green-200);
     }
     .hover\:bg-header-accent:hover {
       background-color: var(--header-accent);
@@ -2380,6 +2411,9 @@
     }
     .hover\:text-sidebar-accent-foreground:hover {
       color: var(--sidebar-accent-foreground);
+    }
+    .hover\:text-slate-950:hover {
+      color: var(--color-slate-950);
     }
     .hover\:text-white:hover {
       color: var(--color-white);

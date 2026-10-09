@@ -38,7 +38,7 @@ func BtnVerUsuario(us *model.Usuario) templ.Component {
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver usuario",
 			HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
-			Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func BtnEditarUsuario(us *model.Usuario) templ.Component {
 			ModalTitle: "Editar Usuario",
 			HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
 			HtmxPost:   "/adminx/usuarios/crear",
-			Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 			Icon:       icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -109,6 +109,7 @@ func BtnNewUsuario() templ.Component {
 			HtmxGet:    "/adminx/usuarios/formnew",
 			HtmxPost:   "/adminx/usuarios/crear",
 			BtnText:    "Registrar usuario",
+			Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -142,7 +143,7 @@ func BtnVerUnidad(un *model.Unidad) templ.Component {
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver unidad",
 			HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
-			Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -177,7 +178,7 @@ func BtnEditarUnidad(un *model.Unidad) templ.Component {
 			ModalTitle: "Editar unidad",
 			HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
 			HtmxPost:   "/adminx/unidades/crear",
-			Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 			Icon:       icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -213,6 +214,7 @@ func BtnNuevaUnidad() templ.Component {
 			HtmxGet:    "/adminx/unidades/formnew",
 			HtmxPost:   "/adminx/unidades/crear",
 			BtnText:    "Registrar nueva unidad",
+			Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -246,7 +248,7 @@ func BtnVerRol(rol *model.ResponseRoles) templ.Component {
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver rol",
 			HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
-			Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -281,7 +283,7 @@ func BtnEditarRol(rol *model.ResponseRoles) templ.Component {
 			ModalTitle: "Editar rol",
 			HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
 			HtmxPost:   "/adminx/roles/crear",
-			Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 			Icon:       icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -317,6 +319,7 @@ func BtnNuevoRol() templ.Component {
 			HtmxGet:    "/adminx/roles/formnew",
 			HtmxPost:   "/adminx/roles/crear",
 			BtnText:    "Registrar rol",
+			Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -350,7 +353,7 @@ func BtnVerAviso(aviso *model.Notificacion) templ.Component {
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver aviso",
 			HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", aviso.ID),
-			Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -385,7 +388,7 @@ func BtnEditarAviso(aviso *model.Notificacion) templ.Component {
 			ModalTitle: "Editar aviso",
 			HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", aviso.ID),
 			HtmxPost:   "/adminx/avisos/crear",
-			Class:      "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
 			Icon:       icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -421,6 +424,7 @@ func BtnNuevoAviso() templ.Component {
 			HtmxGet:    "/adminx/avisos/formnew",
 			HtmxPost:   "/adminx/avisos/crear",
 			BtnText:    "Registrar nuevo aviso",
+			Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -454,7 +458,7 @@ func BtnVerTicket(ticket *model.RespTickets) templ.Component {
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver detalles del ticket",
 			HtmxGet:    fmt.Sprintf("/adminx/tickets/%s/ver", ticket.ID),
-			Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
+			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -490,7 +494,7 @@ func BtnResponderTicket(ticket *model.RespTickets) templ.Component {
 			HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get", ticket.ID),
 			HtmxPost:      "/adminx/tickets/responder",
 			BtnSubmitText: "responder",
-			Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:         "border-amber-600 bg-amber-500 text-white hover:bg-amber-400 hover:text-slate-950",
 			Icon:          icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -526,7 +530,7 @@ func BtnResponderTicketAll(ticket *model.RespTickets) templ.Component {
 			HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get?is_from_all=1", ticket.ID),
 			HtmxPost:      "/adminx/tickets/responder",
 			BtnSubmitText: "responder",
-			Class:         "bg-green-100 text-green-700 hover:bg-green-200",
+			Class:         "border-amber-600 bg-amber-500 text-white hover:bg-amber-400 hover:text-slate-950",
 			Icon:          icon.PenLine(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -562,6 +566,7 @@ func BtnNuevoTicket() templ.Component {
 			HtmxGet:    "/adminx/tickets/formnew",
 			HtmxPost:   "/adminx/tickets/crear",
 			BtnText:    "Sacar ticket",
+			Class:      "border-[#155e66] bg-[#1b7e86] text-white hover:bg-[#155e66] hover:text-white",
 			Icon:       icon.Newspaper(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
