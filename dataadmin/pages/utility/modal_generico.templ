@@ -116,7 +116,7 @@ templ ModalGenerico(p ModalGenericoX) {
 						@button.Button(button.Props{
 							Variant: button.VariantOutline,
 							Type:    "button",
-							Class:   "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground",
+							Class:   "modal-action-cancel",
 						}) {
 							@icon.PanelLeftClose()
 							<span class="btn-cerrar-text">Cerrar</span>
@@ -126,7 +126,7 @@ templ ModalGenerico(p ModalGenericoX) {
 						ID:      "btn-submit-" + p.DialogID,
 						Variant: button.VariantOutline,
 						Type:    "submit",
-						Class:   "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
+						Class:   "modal-action-confirm",
 						Form:    "xform-" + p.DialogID,
 					}) {
 						@icon.Check()

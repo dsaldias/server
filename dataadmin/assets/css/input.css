@@ -186,3 +186,27 @@
   --dialog-header-foreground: #eef4ff;
   --dialog-footer-foreground: #eef4ff;
 }
+
+@layer components {
+  .modal-action-cancel {
+    border-color: var(--border);
+    background-color: transparent;
+    color: var(--foreground);
+  }
+
+  .modal-action-cancel:hover {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+
+  .modal-action-confirm {
+    border-color: var(--sidebar);
+    background-color: var(--sidebar);
+    color: var(--sidebar-foreground);
+  }
+
+  .modal-action-confirm:hover {
+    background-color: var(--dialog-header);
+    color: var(--dialog-header-foreground);
+  }
+}
