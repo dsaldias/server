@@ -188,6 +188,11 @@
 }
 
 @layer utilities {
+  body:has(dialog[open]) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
   .modal-action-cancel {
     border-color: transparent;
     background-color: transparent;

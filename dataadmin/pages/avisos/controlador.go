@@ -12,7 +12,7 @@ import (
 	"github.com/dsaldias/server/dataauth/repo"
 
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 type AvisosController struct {

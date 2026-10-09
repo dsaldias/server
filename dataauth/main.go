@@ -17,7 +17,7 @@ import (
 	"github.com/dsaldias/server/dataauth/utils"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 	"github.com/dsaldias/server/graph_auth"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rs/cors"
