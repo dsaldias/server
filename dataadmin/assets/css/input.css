@@ -187,9 +187,9 @@
   --dialog-footer-foreground: #eef4ff;
 }
 
-@layer components {
+@layer utilities {
   .modal-action-cancel {
-    border-color: var(--border);
+    border-color: transparent;
     background-color: transparent;
     color: var(--foreground);
   }
