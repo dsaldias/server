@@ -16,6 +16,7 @@ type BtnProps struct {
 	ModalTitle       string
 	ModalTooltip     string
 	ModalDescription string
+	ModalSize        string
 	HtmxGet          string
 	HtmxPost         string
 	DialogID         string
@@ -78,7 +79,7 @@ func ModalButton(p BtnProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.BtnText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 108, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 121, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -96,10 +97,11 @@ func ModalButton(p BtnProps) templ.Component {
 			Size:    sizeBtn(p),
 			Variant: button.VariantOutline,
 			Attributes: templ.Attributes{
-				"title":     tooltip(p.ModalTitle, p.ModalTooltip),
-				"hx-get":    p.HtmxGet,
-				"hx-target": "#xcontenido-" + modalIDOrDefault(p.DialogID),
-				"hx-swap":   "innerHTML",
+				"title":           tooltip(p.ModalTitle, p.ModalTooltip),
+				"hx-get":          p.HtmxGet,
+				"hx-target":       "#xcontenido-" + modalIDOrDefault(p.DialogID),
+				"hx-swap":         "innerHTML",
+				"data-modal-size": p.ModalSize,
 
 				"hx-on::before-request": `
 				this.dataset.originalContent = this.innerHTML;
@@ -132,6 +134,17 @@ func ModalButton(p BtnProps) templ.Component {
 					const form = dialog.querySelector("#xform-` + modalIDOrDefault(p.DialogID) + `");
 					const refreshTarget = this.closest("[data-modal-refresh-target]")?.dataset.modalRefreshTarget
 						|| this.closest("[data-tabla-contextual]")?.id;
+					const modalContent = document.getElementById("modal-content-` + modalIDOrDefault(p.DialogID) + `");
+					const modalSize = this.dataset.modalSize;
+
+					if (modalContent && modalSize) {
+						modalContent.classList.remove(
+							"max-w-sm", "max-w-md", "max-w-lg", "max-w-xl", "max-w-2xl",
+							"max-w-3xl", "max-w-4xl", "max-w-5xl", "max-w-6xl", "max-w-7xl",
+							"max-w-[calc(100%-2rem)]", "sm:max-w-lg"
+						);
+						modalContent.classList.add(modalSize);
+					}
 
 					if (titulo) {
             titulo.textContent = "` + p.ModalTitle + `";

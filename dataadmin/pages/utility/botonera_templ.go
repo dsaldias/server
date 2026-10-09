@@ -37,6 +37,7 @@ func BtnVerUsuario(us *model.Usuario) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver usuario",
+			ModalSize:  ModalLG,
 			HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/ver", us.ID),
 			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
@@ -71,6 +72,7 @@ func BtnEditarUsuario(us *model.Usuario) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Editar Usuario",
+			ModalSize:  Modal3XL,
 			HtmxGet:    fmt.Sprintf("/adminx/usuarios/%s/get", us.ID),
 			HtmxPost:   "/adminx/usuarios/crear",
 			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
@@ -106,6 +108,7 @@ func BtnNewUsuario() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Registrar Nuevo usuario",
+			ModalSize:  Modal2XL,
 			HtmxGet:    "/adminx/usuarios/formnew",
 			HtmxPost:   "/adminx/usuarios/crear",
 			BtnText:    "Registrar usuario",
@@ -142,6 +145,7 @@ func BtnVerUnidad(un *model.Unidad) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver unidad",
+			ModalSize:  ModalLG,
 			HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
 			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
@@ -176,6 +180,7 @@ func BtnEditarUnidad(un *model.Unidad) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Editar unidad",
+			ModalSize:  ModalXL,
 			HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
 			HtmxPost:   "/adminx/unidades/crear",
 			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
@@ -211,6 +216,7 @@ func BtnNuevaUnidad() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Registrar Nueva unidad",
+			ModalSize:  ModalXL,
 			HtmxGet:    "/adminx/unidades/formnew",
 			HtmxPost:   "/adminx/unidades/crear",
 			BtnText:    "Registrar nueva unidad",
@@ -247,6 +253,7 @@ func BtnVerRol(rol *model.ResponseRoles) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver rol",
+			ModalSize:  ModalLG,
 			HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
 			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
@@ -281,6 +288,7 @@ func BtnEditarRol(rol *model.ResponseRoles) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Editar rol",
+			ModalSize:  Modal2XL,
 			HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
 			HtmxPost:   "/adminx/roles/crear",
 			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
@@ -316,6 +324,7 @@ func BtnNuevoRol() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Registrar Nuevo rol",
+			ModalSize:  Modal2XL,
 			HtmxGet:    "/adminx/roles/formnew",
 			HtmxPost:   "/adminx/roles/crear",
 			BtnText:    "Registrar rol",
@@ -352,6 +361,7 @@ func BtnVerAviso(aviso *model.Notificacion) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver aviso",
+			ModalSize:  ModalLG,
 			HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", aviso.ID),
 			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
@@ -386,6 +396,7 @@ func BtnEditarAviso(aviso *model.Notificacion) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Editar aviso",
+			ModalSize:  ModalXL,
 			HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", aviso.ID),
 			HtmxPost:   "/adminx/avisos/crear",
 			Class:      "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-500 hover:text-white",
@@ -421,6 +432,7 @@ func BtnNuevoAviso() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Registrar nuevo aviso",
+			ModalSize:  ModalXL,
 			HtmxGet:    "/adminx/avisos/formnew",
 			HtmxPost:   "/adminx/avisos/crear",
 			BtnText:    "Registrar nuevo aviso",
@@ -457,6 +469,7 @@ func BtnVerTicket(ticket *model.RespTickets) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Ver detalles del ticket",
+			ModalSize:  ModalXL,
 			HtmxGet:    fmt.Sprintf("/adminx/tickets/%s/ver", ticket.ID),
 			Class:      "border-cyan-600 bg-cyan-500 text-white hover:bg-cyan-400 hover:text-slate-950",
 			Icon:       icon.Eye(),
@@ -491,6 +504,7 @@ func BtnResponderTicket(ticket *model.RespTickets) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle:    "Responder",
+			ModalSize:     ModalXL,
 			HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get", ticket.ID),
 			HtmxPost:      "/adminx/tickets/responder",
 			BtnSubmitText: "responder",
@@ -527,6 +541,7 @@ func BtnResponderTicketAll(ticket *model.RespTickets) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle:    "Responder",
+			ModalSize:     ModalXL,
 			HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get?is_from_all=1", ticket.ID),
 			HtmxPost:      "/adminx/tickets/responder",
 			BtnSubmitText: "responder",
@@ -563,6 +578,7 @@ func BtnNuevoTicket() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ModalButton(BtnProps{
 			ModalTitle: "Registrar algun problema",
+			ModalSize:  ModalXL,
 			HtmxGet:    "/adminx/tickets/formnew",
 			HtmxPost:   "/adminx/tickets/crear",
 			BtnText:    "Sacar ticket",
