@@ -67,12 +67,12 @@ templ SideHeader(titulo, subtitulo string) {
 			@sidebar.MenuItem() {
 				@sidebar.MenuButton(sidebar.MenuButtonProps{
 					Href:    "/adminx/main",
-					Tooltip: titulo, 
-					Class: "bg-[var(--sidebar)] hover:bg-[var(--dialog-footer)]/20",
+					Tooltip: titulo,
+					Class:   "bg-[var(--sidebar)] hover:bg-[var(--dialog-footer)]/20",
 				}) {
 					// ESTE CAMPO ES EDITADO DESDE WEBSOCKET.JS
 					@badge.Badge(badge.Props{
-						ID:    "ws_badge_indicator",
+						ID: "ws_badge_indicator",
 						// Class: "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border",
 						Class: "border-0 bg-orange-500 text-black",
 						Attributes: templ.Attributes{
@@ -111,7 +111,7 @@ templ SideFooter(usuario *xm.ResponseUsuario) {
 				@dropdown.Dropdown() {
 					@dropdown.Trigger() {
 						@sidebar.MenuButton(sidebar.MenuButtonProps{
-							Size: sidebar.MenuButtonSizeLg,
+							Size:  sidebar.MenuButtonSizeLg,
 							Class: "bg-[var(--dialog-footer)]/50 hover:bg-[var(--dialog-header)]",
 						}) {
 							@avatar.Avatar(avatar.Props{
@@ -136,7 +136,7 @@ templ SideFooter(usuario *xm.ResponseUsuario) {
 						}
 					}
 					@dropdown.Content(dropdown.ContentProps{
-						Class:     "w-56",
+						Class:     "w-56 bg-background",
 						Placement: dropdown.PlacementTopStart,
 					}) {
 						@dropdown.Label() {
@@ -144,20 +144,19 @@ templ SideFooter(usuario *xm.ResponseUsuario) {
 							{ segundoAp(usuario) }
 						}
 						@dropdown.Separator()
-						@dropdown.Item() {
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle:    "Editar perfil",
-								HtmxGet:       "/adminx/usuarios/getperfil",
-								HtmxPost:      "/adminx/usuarios/setperfil",
-								Class:         "w-full justify-start text-left bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
-								DialogID:      "x-modal-perfil",
-								BtnText:       "Perfil",
-								Icon:          icon.PersonStanding(),
-								NoSwapContent: true,
-							})
-						}
+						@utility.ModalButton(utility.BtnProps{
+							ModalTitle:    "Editar perfil",
+							HtmxGet:       "/adminx/usuarios/getperfil",
+							HtmxPost:      "/adminx/usuarios/setperfil",
+							Class:         "w-full justify-start text-left bg-transparent border-0 text-foreground hover:bg-[var(--dialog-footer)] hover:text-white",
+							DialogID:      "x-modal-perfil",
+							BtnText:       "Perfil",
+							Icon:          icon.PersonStanding(),
+							NoSwapContent: true,
+						})
 						@dropdown.Separator()
 						@dropdown.Item(dropdown.ItemProps{
+							Class: "hover:bg-[var(--dialog-footer)] hover:text-white",
 							Attributes: templ.Attributes{
 								"href":    "#",
 								"hx-get":  "/adminx/logout",

@@ -2278,6 +2278,9 @@
     .hover\:bg-\[\#101b38\]:hover {
       background-color: #101b38;
     }
+    .hover\:bg-\[var\(--dialog-footer\)\]:hover {
+      background-color: var(--dialog-footer);
+    }
     .hover\:bg-\[var\(--dialog-footer\)\]\/20:hover {
       background-color: var(--dialog-footer);
     }
@@ -2377,6 +2380,9 @@
     }
     .hover\:text-sidebar-accent-foreground:hover {
       color: var(--sidebar-accent-foreground);
+    }
+    .hover\:text-white:hover {
+      color: var(--color-white);
     }
     .hover\:underline:hover {
       text-decoration-line: underline;
