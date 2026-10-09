@@ -79,7 +79,7 @@ func ModalButton(p BtnProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.BtnText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 121, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/utility/modal_button.templ`, Line: 125, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -136,6 +136,10 @@ func ModalButton(p BtnProps) templ.Component {
 						|| this.closest("[data-tabla-contextual]")?.id;
 					const modalContent = document.getElementById("modal-content-` + modalIDOrDefault(p.DialogID) + `");
 					const modalSize = this.dataset.modalSize;
+
+					if(modalContent && !modalSize) {
+						modalContent.classList.add('max-w-lg');
+					}
 
 					if (modalContent && modalSize) {
 						modalContent.classList.remove(

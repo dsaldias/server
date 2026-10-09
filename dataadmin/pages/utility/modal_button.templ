@@ -66,6 +66,10 @@ templ ModalButton(p BtnProps) {
 					const modalContent = document.getElementById("modal-content-` + modalIDOrDefault(p.DialogID) + `");
 					const modalSize = this.dataset.modalSize;
 
+					if(modalContent && !modalSize) {
+						modalContent.classList.add('max-w-lg');
+					}
+
 					if (modalContent && modalSize) {
 						modalContent.classList.remove(
 							"max-w-sm", "max-w-md", "max-w-lg", "max-w-xl", "max-w-2xl",
