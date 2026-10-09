@@ -257,6 +257,9 @@ func CtxGetCookie(r *http.Request) (*CookieData, error) {
 
 	// [token, userid, username, rolid, unidadid]
 	partes := strings.Split(cookie.Value, "|")
+	if len(partes) != 5 {
+		return nil, errors.New("cookie de sesión inválida, partes faltantes")
+	}
 	data := CookieData{
 		Token:    partes[0],
 		UserID:   partes[1],
