@@ -1,10 +1,8 @@
 package unidades 
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/selectbox"
 	"github.com/templui/templui/components/table"
 	"time"
@@ -68,19 +66,8 @@ templ TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) {
 						@utility.TablaAdminContextual(
 							un.Nombre,
 						) {
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle: "Ver unidad",
-								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
-								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								Icon:       icon.Eye(),
-							})
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle: "Editar unidad",
-								HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
-								HtmxPost:   "/adminx/unidades/crear",
-								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-								Icon:       icon.PenLine(),
-							})
+							@utility.BtnVerUnidad(un)
+							@utility.BtnEditarUnidad(un)
 						}
 					}
 				}
@@ -91,13 +78,7 @@ templ TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) {
 }
 
 templ HeaderAcciones() {
-	@utility.ModalButton(utility.BtnProps{
-		ModalTitle: "Registrar Nueva unidad",
-		HtmxGet:    "/adminx/unidades/formnew",
-		HtmxPost:   "/adminx/unidades/crear",
-		BtnText:    "Registrar nueva unidad",
-		Icon:       icon.Newspaper(),
-	})
+	@utility.BtnNuevaUnidad()
 }
 
 func parseTime(t time.Time) string {

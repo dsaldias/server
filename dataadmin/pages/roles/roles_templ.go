@@ -9,10 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/table"
 	"time"
 )
@@ -369,7 +367,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(rol.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 56, Col: 14}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 54, Col: 14}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -400,7 +398,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var19 string
 							templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(rol.Nombre)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 59, Col: 18}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 57, Col: 18}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 							if templ_7745c5c3_Err != nil {
@@ -431,7 +429,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var21 string
 							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(rol.Descripcion))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 62, Col: 36}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 60, Col: 36}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -462,7 +460,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var23 string
 							templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(rol.Jerarquia)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 65, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 63, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 							if templ_7745c5c3_Err != nil {
@@ -493,7 +491,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var25 string
 							templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(rol.Menus)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 68, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 66, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 							if templ_7745c5c3_Err != nil {
@@ -524,7 +522,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var27 string
 							templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(rol.Permisos)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 71, Col: 20}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 69, Col: 20}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 							if templ_7745c5c3_Err != nil {
@@ -555,7 +553,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 							var templ_7745c5c3_Var29 string
 							templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(rol.Usuarios)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 74, Col: 20}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/roles/roles.templ`, Line: 72, Col: 20}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 							if templ_7745c5c3_Err != nil {
@@ -595,12 +593,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Ver rol",
-									HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
-									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									Icon:       icon.Eye(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnVerRol(rol).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -608,13 +601,7 @@ func ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) t
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Editar rol",
-									HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
-									HtmxPost:   "/adminx/roles/crear",
-									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									Icon:       icon.PenLine(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnEditarRol(rol).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -680,13 +667,7 @@ func HeaderAcciones() templ.Component {
 			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-			ModalTitle: "Registrar Nuevo rol",
-			HtmxGet:    "/adminx/roles/formnew",
-			HtmxPost:   "/adminx/roles/crear",
-			BtnText:    "Registrar rol",
-			Icon:       icon.Newspaper(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = utility.BtnNuevoRol().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

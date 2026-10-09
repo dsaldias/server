@@ -9,10 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/selectbox"
 	"github.com/templui/templui/components/table"
 	"time"
@@ -323,7 +321,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var15 string
 							templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(un.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 53, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 51, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 							if templ_7745c5c3_Err != nil {
@@ -354,7 +352,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(un.Nombre)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 56, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 54, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -385,7 +383,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var19 string
 							templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(parseString(un.Descripcion))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 59, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 57, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 							if templ_7745c5c3_Err != nil {
@@ -416,7 +414,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var21 string
 							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(un.Orden)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 62, Col: 16}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 60, Col: 16}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -447,7 +445,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 							var templ_7745c5c3_Var23 string
 							templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.FechaRegistro))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 65, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/unidades/unidades.templ`, Line: 63, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 							if templ_7745c5c3_Err != nil {
@@ -487,12 +485,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Ver unidad",
-									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/ver", un.ID),
-									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									Icon:       icon.Eye(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnVerUnidad(un).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -500,13 +493,7 @@ func TablaUnidades(unidades []*model.Unidad, paginacion utility.MiPaginacion) te
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Editar unidad",
-									HtmxGet:    fmt.Sprintf("/adminx/unidades/%s/get", un.ID),
-									HtmxPost:   "/adminx/unidades/crear",
-									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									Icon:       icon.PenLine(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnEditarUnidad(un).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -572,13 +559,7 @@ func HeaderAcciones() templ.Component {
 			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-			ModalTitle: "Registrar Nueva unidad",
-			HtmxGet:    "/adminx/unidades/formnew",
-			HtmxPost:   "/adminx/unidades/crear",
-			BtnText:    "Registrar nueva unidad",
-			Icon:       icon.Newspaper(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = utility.BtnNuevaUnidad().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

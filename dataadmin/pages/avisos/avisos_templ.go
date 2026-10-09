@@ -9,10 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/table"
 	"time"
 )
@@ -343,7 +341,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var16 string
 							templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(un.ID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 53, Col: 13}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 51, Col: 13}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 							if templ_7745c5c3_Err != nil {
@@ -374,7 +372,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var18 string
 							templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(un.Mensaje)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 56, Col: 18}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 54, Col: 18}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 							if templ_7745c5c3_Err != nil {
@@ -405,7 +403,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var20 string
 							templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(un.CreadoPorID)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 59, Col: 22}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 57, Col: 22}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 							if templ_7745c5c3_Err != nil {
@@ -436,7 +434,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var22 string
 							templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.Desde))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 62, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 60, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 							if templ_7745c5c3_Err != nil {
@@ -467,7 +465,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var24 string
 							templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.Hasta))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 65, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 63, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 							if templ_7745c5c3_Err != nil {
@@ -498,7 +496,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 							var templ_7745c5c3_Var26 string
 							templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(parseTime(un.FechaRegistro))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 68, Col: 35}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/avisos/avisos.templ`, Line: 66, Col: 35}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 							if templ_7745c5c3_Err != nil {
@@ -538,12 +536,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Ver unidad",
-									HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/ver", un.ID),
-									Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-									Icon:       icon.Eye(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnVerAviso(un).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -551,13 +544,7 @@ func ListaAvisos(avisos []*model.Notificacion) templ.Component {
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-									ModalTitle: "Editar unidad",
-									HtmxGet:    fmt.Sprintf("/adminx/avisos/%s/get", un.ID),
-									HtmxPost:   "/adminx/avisos/crear",
-									Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-									Icon:       icon.PenLine(),
-								}).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = utility.BtnEditarAviso(un).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -619,13 +606,7 @@ func HeaderAcciones() templ.Component {
 			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = utility.ModalButton(utility.BtnProps{
-			ModalTitle: "Registrar Nueva unidad",
-			HtmxGet:    "/adminx/avisos/formnew",
-			HtmxPost:   "/adminx/avisos/crear",
-			BtnText:    "Registrar nueva unidad",
-			Icon:       icon.Newspaper(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = utility.BtnNuevoAviso().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

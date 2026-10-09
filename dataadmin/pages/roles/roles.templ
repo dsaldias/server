@@ -1,9 +1,7 @@
 package roles  
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/table"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
 	"time"
@@ -77,19 +75,8 @@ templ ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) 
 						@utility.TablaAdminAcciones(
 							rol.Nombre,
 						) {
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle: "Ver rol",
-								HtmxGet:    fmt.Sprintf("/adminx/roles/%s/ver", rol.ID),
-								Class:      "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								Icon:       icon.Eye(),
-							})
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle: "Editar rol",
-								HtmxGet:    fmt.Sprintf("/adminx/roles/%s/get", rol.ID),
-								HtmxPost:   "/adminx/roles/crear",
-								Class:      "bg-green-100 text-green-700 hover:bg-green-200",
-								Icon:       icon.PenLine(),
-							})
+							@utility.BtnVerRol(rol)
+							@utility.BtnEditarRol(rol)
 						}
 					}
 				}
@@ -100,13 +87,7 @@ templ ListaRoles(roles []*model.ResponseRoles, paginacion utility.MiPaginacion) 
 }
 
 templ HeaderAcciones() {
-	@utility.ModalButton(utility.BtnProps{
-		ModalTitle: "Registrar Nuevo rol",
-		HtmxGet:    "/adminx/roles/formnew",
-		HtmxPost:   "/adminx/roles/crear",
-		BtnText:    "Registrar rol",
-		Icon:       icon.Newspaper(),
-	})
+	@utility.BtnNuevoRol()
 }
 
 func parseTime(t *time.Time) string {

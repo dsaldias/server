@@ -1,9 +1,7 @@
 package ticket 
 
 import (
-	"fmt"
 	"github.com/dsaldias/server/graph_auth/model"
-	"github.com/templui/templui/components/icon"
 	"github.com/templui/templui/components/table"
 	"github.com/templui/templui/components/tabs"
 	"github.com/dsaldias/server/dataadmin/pages/utility"
@@ -100,20 +98,8 @@ templ ListaTickets(tickets []*model.RespTickets) {
 						@utility.TablaAdminContextual(
 							ti.Problema,
 						) {
-							@utility.ModalButton(utility.BtnProps{
-								// ModalTitle: "Ver detalles del ticket",
-								HtmxGet:  fmt.Sprintf("/adminx/tickets/%s/ver", ti.ID),
-								Class:    "bg-blue-100 text-blue-700 hover:bg-blue-200",
-								Icon:     icon.Eye(),
-							})
-							@utility.ModalButton(utility.BtnProps{
-								ModalTitle:    "Responder",
-								HtmxGet:       fmt.Sprintf("/adminx/tickets/%s/get", ti.ID),
-								HtmxPost:      "/adminx/tickets/responder",
-								BtnSubmitText: "responder",
-								Class:         "bg-green-100 text-green-700 hover:bg-green-200",
-								Icon:          icon.PenLine(),
-							})
+							@utility.BtnVerTicket(ti)
+							@utility.BtnResponderTicket(ti)
 						}
 					}
 				}
@@ -123,13 +109,7 @@ templ ListaTickets(tickets []*model.RespTickets) {
 }
 
 templ HeaderAcciones() {
-	@utility.ModalButton(utility.BtnProps{
-		ModalTitle: "Registrar algun problema",
-		HtmxGet:    "/adminx/tickets/formnew",
-		HtmxPost:   "/adminx/tickets/crear",
-		BtnText:    "Sacar ticket",
-		Icon:       icon.Newspaper(),
-	})
+	@utility.BtnNuevoTicket()
 }
 
 func parseTime(t time.Time) string {
