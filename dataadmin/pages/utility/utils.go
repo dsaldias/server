@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -53,7 +54,7 @@ func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 		return nil, err
 	}
 
-	if value, ok := data["fecha_solicitud"].(string); ok {
+	/* if value, ok := data["fecha_solicitud"].(string); ok {
 		fechaSolicitud, err := time.Parse(
 			"2006-01-02T15:04",
 			value,
@@ -63,6 +64,24 @@ func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 		}
 
 		data["fecha_solicitud"] = fechaSolicitud.Format(time.RFC3339)
+	} */
+
+	for key, value := range data {
+		if !strings.HasPrefix(key, "fecha_") {
+			continue
+		}
+
+		valor, ok := value.(string)
+		if !ok || valor == "" {
+			continue
+		}
+
+		fecha, err := time.Parse("2006-01-02T15:04", valor)
+		if err != nil {
+			return nil, fmt.Errorf("campo %s: %w", key, err)
+		}
+
+		data[key] = fecha.Format(time.RFC3339)
 	}
 
 	if value, ok := data["sede_id"].(string); ok {
