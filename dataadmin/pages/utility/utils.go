@@ -273,3 +273,10 @@ func IsOnlyHtmx(r *http.Request) bool {
 	}
 	return false
 }
+
+func GetRefreshTablaParams(r *http.Request) *http.Request {
+	q := r.URL.Query()
+	q.Set("xrefresh", "1")
+	r.URL.RawQuery = q.Encode()
+	return r
+}
