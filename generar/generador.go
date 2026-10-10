@@ -176,6 +176,22 @@ import (
 //go:embed asset/*
 var Asset embed.FS
 
+/*
+// PARA UNA RUTA PUBLICA MAPEA A UN COMPONENTE QUE CARGUE LO SIGUIENTE: 
+package publico 
+
+import ( 
+  "github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
+	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
+)
+
+templ Publico() {
+	@principal.Layout("Landing page", layoutconfig.Default()){
+    Hola bienvenidos a mi sitio web
+  }
+}
+*/
+
 var (
 	WEB_PATH_BASE = "/webc/"
 )
