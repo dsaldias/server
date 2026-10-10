@@ -47,6 +47,7 @@ func TemplUIJS(templuiPath string) http.Handler {
 	})
 }
 
+/*
 func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 	var data map[string]any
 
@@ -54,7 +55,7 @@ func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 		return nil, err
 	}
 
-	/* if value, ok := data["fecha_solicitud"].(string); ok {
+	if value, ok := data["fecha_solicitud"].(string); ok {
 		fechaSolicitud, err := time.Parse(
 			"2006-01-02T15:04",
 			value,
@@ -64,26 +65,7 @@ func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 		}
 
 		data["fecha_solicitud"] = fechaSolicitud.Format(time.RFC3339)
-	} */
-
-	for key, value := range data {
-		if !strings.HasPrefix(key, "fecha_") {
-			continue
-		}
-
-		valor, ok := value.(string)
-		if !ok || valor == "" {
-			continue
-		}
-
-		fecha, err := time.Parse("2006-01-02T15:04", valor)
-		if err != nil {
-			return nil, fmt.Errorf("campo %s: %w", key, err)
-		}
-
-		data[key] = fecha.Format(time.RFC3339)
 	}
-
 	if value, ok := data["sede_id"].(string); ok {
 		sedeID, err := strconv.ParseInt(value, 10, 32)
 		if err != nil {
@@ -103,6 +85,55 @@ func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
 	}
 
 	return data, nil
+}*/
+
+func ParseBodyToJSON(r *http.Request) (map[string]any, error) {
+	var data map[string]any
+
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+
+	if err := NormalizarFechas(data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func NormalizarFechas(data any) error {
+	switch v := data.(type) {
+	case map[string]any:
+		for key, value := range v {
+			if strings.HasPrefix(key, "fecha_") {
+				valor, ok := value.(string)
+				if !ok || valor == "" {
+					continue
+				}
+
+				fecha, err := time.Parse("2006-01-02T15:04", valor)
+				if err != nil {
+					return fmt.Errorf("campo %s: %w", key, err)
+				}
+
+				v[key] = fecha.Format(time.RFC3339)
+				continue
+			}
+
+			if err := NormalizarFechas(value); err != nil {
+				return err
+			}
+		}
+
+	case []any:
+		for _, item := range v {
+			if err := NormalizarFechas(item); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func ResponseOkJSON(w http.ResponseWriter, v any) {
