@@ -33,8 +33,8 @@ templ Layout(
 			<script src={ "/assets/mitabla_admin.js?v=" + AssetVersion }></script>
 			for _, js := range config.ExtraJS {
 				<script src={ js.Src + "?v=" + AssetVersion } if js.Type != "" {
-	type={ js.Type }
-}></script>
+					type={ js.Type }
+				}></script>
 			}
 		</head>
 		<body class={ config.WithDefaults().BodyClass }>

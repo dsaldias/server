@@ -183,7 +183,7 @@ func Layout(
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(js.Type)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/layout.templ`, Line: 36, Col: 15}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dataadmin/pages/mainlayout/principal/layout.templ`, Line: 36, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 				if templ_7745c5c3_Err != nil {
@@ -262,7 +262,7 @@ func Inicio() templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div><h1>Bienvenido</h1><button data-on:click=\"alert('I'm sorry, Dave. I'm afraid I can't do that.')\">Open the pod bay doors, HAL.</button><div><button data-on:click=\"@get('/datastar/saludo')\">saludo</button><div id=\"hal\"></div></div><input data-bind:foo-bar><div data-text=\"$fooBar\"></div><div data-computed:repeated=\"$fooBar.repeat(2)\" data-text=\"$repeated\"></div><button data-show=\"$fooBar != ''\">Save</button><button data-on:click=\"$fooBar = ''\">Reset</button><input data-bind:foo><div data-signals:foo=\"1\"><div data-text=\"$foo\"></div></div><div data-text=\"$foo.length\"></div><br><div data-text=\"$landingGearRetracted ? 'Ready' : 'Waiting'\"></div><div data-show=\"$landingGearRetracted || $timeRemaining < 10\">Countdown</div><button data-on:click=\"$landingGearRetracted && @post('/launch')\">Launch</button> <button data-on:click=\"$landingGearRetracted = true; @get('/datastar/saludo')\">Force launch</button> <button data-on:click=\"\n\t\t\t$landingGearRetracted = true; \n\t\t\t@get('/datastar/saludo')\">Force launch</button></div><div><form id=\"form-sin-senales\" hidden></form><button type=\"button\" data-on:click=\"@get('/datastar/saludo', {\n\t\t\t\tcontentType: 'form',\n\t\t\t\tselector: '#form-sin-senales'\n\t\t\t})\">saludar</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div><h1>Bienvenido</h1></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
