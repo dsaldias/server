@@ -81,6 +81,20 @@ templ HeaderAcciones() {
 	@utility.BtnNuevaUnidad()
 }
 
+templ HeaderBusqueda(lista_id string) {
+	<div class="mb-1">
+		<div class="relative max-w-sm">
+			<input
+				type="text"
+				placeholder="Buscar..."
+				class="w-full rounded-md border border-input z-[1] bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+				data-tabla-busqueda={ lista_id }
+				autocomplete="off"
+			/>
+		</div>
+	</div>
+}
+
 func parseTime(t time.Time) string {
 	return t.Format("02/01/2006 15:04")
 }

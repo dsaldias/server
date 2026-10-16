@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/dsaldias/server/dataadmin/pages/avisos"
+	"github.com/dsaldias/server/dataadmin/pages/datastar"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	xlogin "github.com/dsaldias/server/dataadmin/pages/mainlayout/login"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
@@ -61,6 +62,9 @@ var (
 	WEB_ADMIN_PATH_TICKETS_VER           = "/adminx/tickets/{id}/ver"
 	WEB_ADMIN_PATH_TICKETS_RESPONDER_GET = "/adminx/tickets/{id}/get"
 	WEB_ADMIN_PATH_TICKETS_RESPONDER     = "/adminx/tickets/responder"
+
+	// rutas para probar datastar
+	DATASTAR_HOME = "/datastar/saludo"
 )
 
 func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handlers2 {
@@ -73,6 +77,7 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	uncontroller := unidades.UnidadesController{DB: db, C: &umain}
 	acontroller := avisos.AvisosController{DB: db, C: &umain}
 	tcontroller := ticket.TicketController{DB: db, C: &umain}
+	controllerdata := datastar.Controller{DB: db, C: &umain}
 
 	fs1, err := fs.Sub(Assets, "assets")
 	if err != nil {
@@ -126,6 +131,9 @@ func RutasFrontAdmin(db *sql.DB, config mainlayout.LayoutConfig) []*utils.Handle
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_TICKETS_VER, H: http.HandlerFunc(tcontroller.Ver)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_TICKETS_RESPONDER_GET, H: http.HandlerFunc(tcontroller.FormResponder)})
 	ssr = append(ssr, &utils.Handlers2{Path: WEB_ADMIN_PATH_TICKETS_RESPONDER, H: http.HandlerFunc(tcontroller.ResponderTicket)})
+
+	//
+	ssr = append(ssr, &utils.Handlers2{Path: DATASTAR_HOME, H: http.HandlerFunc(controllerdata.Getsaludo)})
 
 	return ssr
 }

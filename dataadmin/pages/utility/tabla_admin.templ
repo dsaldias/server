@@ -21,6 +21,7 @@ type MiTablaProps struct {
 	HeaderClass        string
 	Acciones           templ.Component
 	Busqueda           bool
+	BusquedaTempl      templ.Component
 	Ordenable          bool
 	// FilasPorPagina     int
 }
@@ -72,8 +73,11 @@ templ TablaAdmin(
 						}
 					</div>
 				</div>
-				if props.Busqueda {
+				if props.Busqueda { 
 					@TablaAdminBusqueda(props.ListaID)
+				}
+				if props.BusquedaTempl != nil {
+					@props.BusquedaTempl
 				}
 			}
 		}
