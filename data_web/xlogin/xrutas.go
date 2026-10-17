@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/dsaldias/server/data_web/notificaciones"
+	"github.com/dsaldias/server/data_web/avisos"
 	"github.com/dsaldias/server/data_web/roles"
 	"github.com/dsaldias/server/data_web/tickets"
 	"github.com/dsaldias/server/data_web/unidades"
@@ -26,7 +26,7 @@ func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
 	rutas_usuarios := usuarios.Rutas(db)
 	rutas_roles := roles.Rutas(db)
 	rutas_unidades := unidades.Rutas(db)
-	rutas_notificaciones := notificaciones.Rutas(db)
+	rutas_avisos := avisos.Rutas(db)
 	rutas_tickets := tickets.Rutas(db)
 
 	rutas = append(rutas, &utilidad.Handlers2{Path: "/adminx", H: http.HandlerFunc(controller.LoginRender)})
@@ -38,7 +38,7 @@ func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
 
 	moduleRoutes := append(rutas_usuarios, rutas_roles...)
 	moduleRoutes = append(moduleRoutes, rutas_unidades...)
-	moduleRoutes = append(moduleRoutes, rutas_notificaciones...)
+	moduleRoutes = append(moduleRoutes, rutas_avisos...)
 	moduleRoutes = append(moduleRoutes, rutas_tickets...)
 	for _, moduleRoute := range moduleRoutes {
 		route := moduleRoute
