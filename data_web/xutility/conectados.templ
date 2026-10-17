@@ -1,0 +1,43 @@
+package xutility
+
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ ConnectedUsersDialog() {
+	@dialog.Dialog(dialog.Props{ID: "connected-users-dialog"}) {
+		@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-lg"}) {
+			@dialog.Header() {
+				@dialog.Title() { Usuarios conectados }
+				@dialog.Description() { Estado actual de las conexiones al sistema. }
+			}
+			<div id="connected-users-content">
+				@ConnectedUsersContent(nil, "Abre esta ventana para consultar los usuarios conectados.")
+			</div>
+		}
+	}
+}
+
+templ ConnectedUsersContent(users []*model.Usuario, message string) {
+	<div class="space-y-4">
+		<div class="grid gap-3 sm:grid-cols-2">
+			<div class="rounded-lg border border-border/60 bg-muted/20 p-3"><p class="text-xs text-muted-foreground">Usuarios únicos</p><p class="text-2xl font-semibold" data-ws-unique>{ connectedUserUniqueCount(users) }</p></div>
+			<div class="rounded-lg border border-border/60 bg-muted/20 p-3"><p class="text-xs text-muted-foreground">Conexiones activas</p><p class="text-2xl font-semibold" data-ws-total>{ connectedUserTotalCount(users) }</p></div>
+		</div>
+		if message != "" {
+			<div class="rounded-lg border border-border/60 bg-muted/10 p-5 text-center text-sm text-muted-foreground">{ message }</div>
+		} else if len(users) == 0 {
+			<div class="rounded-lg border border-border/60 bg-muted/10 p-5 text-center text-sm text-muted-foreground">No hay usuarios conectados.</div>
+		} else {
+			<div class="max-h-72 space-y-2 overflow-y-auto pr-1">
+				for _, user := range users {
+					if user != nil {
+						<div class="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-background px-3 py-2">
+							<div class="min-w-0"><p class="truncate text-sm font-medium">{ connectedUserName(user) }</p><p class="truncate text-xs text-muted-foreground">{ user.Username }</p></div>
+							<span class="shrink-0 text-xs text-muted-foreground">{ connectedUserCount(user.Conexiones) }</span>
+						</div>
+					}
+				}
+			</div>
+		}
+	</div>
+}

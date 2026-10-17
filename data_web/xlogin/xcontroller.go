@@ -13,6 +13,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/dsaldias/server/data_web/components/combobox"
+	"github.com/dsaldias/server/data_web/xutility"
 	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xrepo"
 	"github.com/dsaldias/server/graph_auth/model"
@@ -49,7 +50,7 @@ func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := templ.WithChildren(r.Context(), LoginRender())
-	MainLayout("Acceso | Panel administrativo", Default()).Render(ctx, w)
+	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
 }
 
 func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +128,29 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 	ctx := templ.WithChildren(r.Context(), InicioRender(c.inicioData(r)))
-	MainLayout("Acceso | Panel administrativo", Default()).Render(ctx, w)
+	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+}
+
+func (c *Controller) ConnectedUsers(w http.ResponseWriter, r *http.Request) {
+	if !c.authenticated(r) {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+
+	users, err := xrepo.UsuariosConectados(r.Context(), c.DB)
+	message := ""
+	if err != nil {
+		message = "No hay usuarios conectados."
+	}
+
+	var body bytes.Buffer
+	if renderErr := xutility.ConnectedUsersContent(users, message).Render(r.Context(), &body); renderErr != nil {
+		http.Error(w, "No fue posible cargar los usuarios conectados", http.StatusInternalServerError)
+		return
+	}
+
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#connected-users-content"), datastar.WithModeOuter())
 }
 
 func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, module http.Handler) {
@@ -149,7 +172,7 @@ func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, m
 		w.WriteHeader(recorder.Code)
 	}
 	ctx := templ.WithChildren(r.Context(), InicioRender(data))
-	_ = MainLayout("Panel administrativo", Default()).Render(ctx, w)
+	_ = MainLayout("Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
 }
 
 func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {

@@ -13,11 +13,10 @@ import "github.com/dsaldias/server/data_web/components"
 // la clave para actualizar en test es cambiar esta variable
 // para prod, el propio task build setea el valor en cada compilacion
 // por lo general sirve para actualizar los assets como js y css, los html vienen del server
-var AssetVersion = "dev"
-
 func MainLayout(
 	titulo string,
 	config Config,
+	AssetVersion string,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
