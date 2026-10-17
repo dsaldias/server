@@ -1,11 +1,76 @@
 package xlogin
 
-templ InicioRender() {
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/card"
+import "github.com/dsaldias/server/data_web/components/dialog"
+
+templ InicioRender(authenticated bool) {
 	<div id="page" class="min-h-screen bg-muted/30">
-		<header class="flex h-16 items-center border-b bg-card px-6"></header>
+		<header class="flex h-16 items-center border-b bg-card px-6">
+			<div class="h-8 w-8 rounded-lg bg-primary/10"></div>
+			<div class="ml-3 h-3 w-32 rounded bg-muted"></div>
+		</header>
 		<div class="flex min-h-[calc(100vh-4rem)]">
-			<aside class="hidden w-64 border-r bg-card md:block"></aside>
-			<main class="flex-1"></main>
+			<aside class="hidden w-64 border-r bg-card p-6 md:block">
+				<div class="h-3 w-24 rounded bg-muted"></div>
+				<div class="mt-6 space-y-3">
+					<div class="h-9 rounded-md bg-muted/60"></div>
+					<div class="h-9 rounded-md bg-muted/40"></div>
+					<div class="h-9 rounded-md bg-muted/40"></div>
+				</div>
+			</aside>
+			<main class="flex-1 p-6">
+				<div class="h-8 w-56 rounded bg-muted"></div>
+				<div class="mt-6 grid gap-4 md:grid-cols-3">
+					@card.Card(card.Props{Class: "h-32"}) {
+						@card.Content(card.ContentProps{Class: "h-full"}) {}
+					}
+					@card.Card(card.Props{Class: "h-32"}) {
+						@card.Content(card.ContentProps{Class: "h-full"}) {}
+					}
+					@card.Card(card.Props{Class: "h-32"}) {
+						@card.Content(card.ContentProps{Class: "h-full"}) {}
+					}
+				</div>
+			</main>
 		</div>
 	</div>
+	if !authenticated {
+		@dialog.Dialog(dialog.Props{ID: "relogin-dialog", DefaultOpen: true}) {
+			@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-md", HideCloseButton: true}) {
+				@button.Button(button.Props{
+					Variant: button.VariantGhost,
+					Size: button.SizeIcon,
+					Type: button.TypeButton,
+					Class: "absolute right-4 top-4",
+					Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx'"},
+				}) {
+					<span aria-hidden="true" class="text-lg leading-none">×</span>
+				}
+				@dialog.Header() {
+					@dialog.Title() { Tu sesión expiró }
+					@dialog.Description() { Vuelve a ingresar tus credenciales para continuar trabajando. }
+				}
+				<form method="post" class="mt-6 space-y-4" data-on:submit__prevent={ "@post('/adminx/login?mode=relogin')" }>
+					<div class="space-y-2">
+						<label for="relogin-username" class="text-sm font-medium">Usuario</label>
+						<input id="relogin-username" name="username" data-bind:username type="text" autocomplete="username" required class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"/>
+					</div>
+					<div class="space-y-2">
+						<label for="relogin-password" class="text-sm font-medium">Contraseña</label>
+						<input id="relogin-password" name="password" data-bind:password type="password" autocomplete="current-password" required class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"/>
+					</div>
+					<div id="relogin-result"></div>
+					@dialog.Footer() {
+						@button.Button(button.Props{
+							Variant: button.VariantOutline,
+							Type: button.TypeButton,
+							Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx'"},
+						}) { Salir }
+						@button.Button(button.Props{Type: button.TypeSubmit}) { Iniciar sesión }
+					}
+				</form>
+			}
+		}
+	}
 }
