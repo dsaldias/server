@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"html"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -22,12 +23,14 @@ type UnidadesPageData struct {
 	Detalles map[string]*model.Unidad
 	Pagina   int32
 	Size     int32
+	Nombre   string
 	Error    string
 }
 
 type unidadSignals struct {
-	Pagina int32 `json:"pagina"`
-	Size   int32 `json:"size"`
+	Pagina int32  `json:"pagina"`
+	Size   int32  `json:"size"`
+	Nombre string `json:"unidadBusqueda"`
 }
 type unidadFormSignals struct {
 	Nombre      string `json:"nombre"`
@@ -54,8 +57,9 @@ func (c *Controller) UnidadesRender(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) unidadesPageData(r *http.Request) UnidadesPageData {
 	page, size := positiveInt(r.URL.Query().Get("pagina"), 1), positiveInt(r.URL.Query().Get("size"), 10)
-	data := UnidadesPageData{Pagina: page, Size: size}
-	data.Listado, _ = xrepo.Unidades2(r.Context(), c.DB, model.QueryUnidades{Pagina: page, Size: size})
+	nombre := strings.TrimSpace(r.URL.Query().Get("nombre"))
+	data := UnidadesPageData{Pagina: page, Size: size, Nombre: nombre}
+	data.Listado, _ = xrepo.Unidades2(r.Context(), c.DB, model.QueryUnidades{Pagina: page, Size: size, Nombre: optionalString(nombre)})
 	if data.Listado == nil {
 		data.Error = "No fue posible cargar las unidades."
 	}
@@ -121,7 +125,8 @@ func (c *Controller) unidadesPatch(w http.ResponseWriter, r *http.Request, data 
 		if signals.Size > 0 {
 			data.Size = signals.Size
 		}
-		data.Listado, _ = xrepo.Unidades2(r.Context(), c.DB, model.QueryUnidades{Pagina: data.Pagina, Size: data.Size})
+		data.Nombre = strings.TrimSpace(signals.Nombre)
+		data.Listado, _ = xrepo.Unidades2(r.Context(), c.DB, model.QueryUnidades{Pagina: data.Pagina, Size: data.Size, Nombre: optionalString(data.Nombre)})
 		data.Detalles = unidadDetails(r, c.DB, data.Listado)
 	}
 	var body strings.Builder
@@ -177,10 +182,15 @@ func positiveInt(value string, fallback int32) int32 {
 	return int32(number)
 }
 func unidadQueryURL(data UnidadesPageData) string {
-	return ADMIN_UNIDADES + "?pagina=" + strconv.Itoa(int(data.Pagina)) + "&size=" + strconv.Itoa(int(data.Size))
+	query := ADMIN_UNIDADES + "?pagina=" + strconv.Itoa(int(data.Pagina)) + "&size=" + strconv.Itoa(int(data.Size))
+	if data.Nombre != "" {
+		query += "&nombre=" + url.QueryEscape(data.Nombre)
+	}
+	return query
 }
-func unidadSignalInt(value int32) string { return strconv.Itoa(int(value)) }
-func unidadStatus(value int32) string    { return strconv.Itoa(int(value)) }
+func unidadSignalInt(value int32) string     { return strconv.Itoa(int(value)) }
+func unidadSignalString(value string) string { return strconv.Quote(value) }
+func unidadStatus(value int32) string        { return strconv.Itoa(int(value)) }
 func unidadDate(value time.Time) string {
 	if value.IsZero() {
 		return "—"

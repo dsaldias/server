@@ -7,12 +7,15 @@ import "github.com/dsaldias/server/data_web/xutility"
 
 templ RenderUnidades(data UnidadesPageData) {
 	@dialog.Dialog(dialog.Props{ID: "unidad-dialog"}) {
-		<div id="unidades-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ unidadSignalInt(data.Pagina) } data-signals:size={ unidadSignalInt(data.Size) }>
+		<div id="unidades-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ unidadSignalInt(data.Pagina) } data-signals:size={ unidadSignalInt(data.Size) } data-signals:unidadBusqueda={ unidadSignalString(data.Nombre) }>
 			@xutility.PageHeader("Unidades", "Administra las unidades disponibles en el sistema.") {
 				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina=1; @get('/adminx/unidades')"}}) { @icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar }
 				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "unidad-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": unidadCreateResetScript()}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nueva unidad }
 			}
-			<div class="flex items-center justify-end rounded-xl border border-border/60 bg-card p-4 shadow-sm"><div class="flex items-center gap-2"><label for="unidades-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label><select id="unidades-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina=1; @get('/adminx/unidades')"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select><span class="text-sm text-muted-foreground">registros</span></div></div>
+			@xutility.FilterBar() {
+				<div class="w-full sm:max-w-md"><label for="unidades-search" class="mb-2 block text-sm font-medium">Buscar por nombre</label><div class="flex gap-2"><input id="unidades-search" type="search" class="h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30" placeholder="Ej. Unidad central" data-bind:unidadBusqueda data-on:keydown="if(evt.key==='Enter'){ $pagina=1; @get('/adminx/unidades') }" /><button type="button" class="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-border/70 px-3 text-sm hover:bg-muted" data-on:click="document.getElementById('unidades-search').value=''; $unidadBusqueda=''; $pagina=1; @get('/adminx/unidades?pagina=1&size='+$size+'&nombre=')">Limpiar</button></div></div>
+				<div class="flex items-center gap-2"><label for="unidades-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label><select id="unidades-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina=1; @get('/adminx/unidades')"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select><span class="text-sm text-muted-foreground">registros</span></div>
+			}
 			@UnidadesTableRegion(data)
 		</div>
 		@UnidadForm()
