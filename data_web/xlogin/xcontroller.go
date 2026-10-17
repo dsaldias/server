@@ -41,9 +41,9 @@ func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body bytes.Buffer
-	InicioRender().Render(r.Context(), &body)
-	_ = sse.PatchElements(body.String(), datastar.WithSelector("#page"), datastar.WithModeOuter())
+	// La autenticación se procesa mediante SSE, por lo que la navegación al
+	// inicio debe enviarse como un evento al navegador.
+	_ = sse.Redirect(ADMIN_INICIO)
 }
 
 func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
