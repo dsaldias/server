@@ -17,6 +17,7 @@ templ RenderUnidades(data UnidadesPageData) {
 				<div class="flex items-center gap-2"><label for="unidades-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label><select id="unidades-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina=1; @get('/adminx/unidades')"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select><span class="text-sm text-muted-foreground">registros</span></div>
 			}
 			@UnidadesTableRegion(data)
+			@UnidadViewDialogs(data)
 		</div>
 		@UnidadForm()
 	}
@@ -50,11 +51,14 @@ templ UnidadesTableRegion(data UnidadesPageData) {
 		} else {
 			@xutility.EmptyState("No hay unidades registradas.")
 		}
-		if data.Listado != nil {
-			for _, unidad := range data.Listado.Datos {
-				if detail, ok := data.Detalles[unidad.ID]; ok {
-					@dialog.Dialog(dialog.Props{ID: "unidad-view-" + unidad.ID}) { @UnidadView(detail) }
-				}
+	}
+}
+
+templ UnidadViewDialogs(data UnidadesPageData) {
+	if data.Listado != nil {
+		for _, unidad := range data.Listado.Datos {
+			if detail, ok := data.Detalles[unidad.ID]; ok {
+				@dialog.Dialog(dialog.Props{ID: "unidad-view-" + unidad.ID}) { @UnidadView(detail) }
 			}
 		}
 	}

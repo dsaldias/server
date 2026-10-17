@@ -44,6 +44,7 @@ templ RenderUsuarios(data UsuariosPageData) {
 			}
 
 			@UsuariosTableRegion(data)
+			@UsuarioViewDialogs(data)
 		</div>
 
 		@Formulario(data.Roles, data.Unidades)
@@ -84,15 +85,19 @@ templ UsuariosTableRegion(data UsuariosPageData) {
 					</table>
 				</div>
 				@xutility.Pagination(usuarioPaginationSummary(data.Listado), usuarioPageLabel(data.Listado), !usuarioCanPrevious(data.Listado), !usuarioCanNext(data.Listado), templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina - 1)}, templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina + 1)})
-			}
-			for _, user := range data.Listado.Datos {
-				if detalle, ok := data.Detalles[user.ID]; ok {
-					@dialog.Dialog(dialog.Props{ID: "usuario-view-" + user.ID}) {
-						@Visualizar(detalle)
-					}
+		}
+	}
+}
+}
+
+templ UsuarioViewDialogs(data UsuariosPageData) {
+	if data.Listado != nil {
+		for _, user := range data.Listado.Datos {
+			if detalle, ok := data.Detalles[user.ID]; ok {
+				@dialog.Dialog(dialog.Props{ID: "usuario-view-" + user.ID}) {
+					@Visualizar(detalle)
 				}
 			}
 		}
-}
-
+	}
 }

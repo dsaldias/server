@@ -8,7 +8,7 @@ import "github.com/dsaldias/server/graph_auth/model"
 
 templ RenderTickets(data TicketsPageData) {
 	@dialog.Dialog(dialog.Props{ID: "ticket-create-dialog"}) {
-		<div id="tickets-page" class="mx-auto max-w-7xl space-y-6" data-signals:ticketEstado={ ticketSignalString(data.Estado) } data-signals:ticketID="''" data-signals:ticketAction="'create'" data-signals:ticketSaving="false" data-signals:ticketSaved="false">
+		<div id="tickets-page" class="mx-auto max-w-7xl space-y-6" data-signals:ticketEstado={ ticketSignalString(data.Estado) } data-signals:ticketID="''" data-signals:ticketAction="'create'" data-signals:ticketSaving="false" data-signals:ticketSaved="false" data-signals:ticketCloseID="''" data-effect="if($ticketCloseID){window.templ?.dialog?.close('ticket-view-'+$ticketCloseID);$ticketCloseID='';}">
 			@xutility.PageHeader("Tickets", "Administra las solicitudes y conversaciones de soporte.") {
 				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "@get('/adminx/tickets')"}}) { @icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar }
 				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "ticket-create-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": "$ticketSaving=false; $ticketSaved=false; $ticketAction='create'; $problema=''; document.getElementById('ticket-form-error')?.replaceChildren();"}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nuevo ticket }
@@ -18,6 +18,7 @@ templ RenderTickets(data TicketsPageData) {
 				<select id="tickets-status" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:ticketEstado data-on:change="@get('/adminx/tickets')"><option value="">Todos</option><option value="abierto">Abierto</option><option value="cliente">Cliente</option><option value="soporte">Soporte</option><option value="cerrado">Cerrado</option></select>
 			}
 			@TicketsTableRegion(data)
+			@TicketDialogs(data)
 		</div>
 		@TicketCreateForm()
 	}
@@ -63,9 +64,12 @@ templ TicketsTableRegion(data TicketsPageData) {
 		} else {
 			@xutility.EmptyState("No hay tickets para mostrar.")
 		}
-		for _, ticket := range data.Listado {
-			@dialog.Dialog(dialog.Props{ID: "ticket-view-" + ticket.ID}) { @TicketView(ticket, data.Detalles[ticket.ID]) }
-		}
+	}
+}
+
+templ TicketDialogs(data TicketsPageData) {
+	for _, ticket := range data.Listado {
+		@dialog.Dialog(dialog.Props{ID: "ticket-view-" + ticket.ID}) { @TicketView(ticket, data.Detalles[ticket.ID]) }
 	}
 }
 
@@ -86,7 +90,7 @@ templ TicketView(ticket *model.RespTickets, detail *model.Ticket) {
 				<form class="space-y-3" data-signals:ticketID={ ticketSignalString(ticket.ID) } data-signals:ticketAction="'reply'" data-signals:ticketSaving="false" data-on:submit__prevent="$ticketSaving=true; $ticketAction='reply'; @post('/adminx/tickets?action=reply')">
 					<label for={ "ticket-response-" + ticket.ID } class="text-sm font-medium">Responder<textarea id={ "ticket-response-" + ticket.ID } name="respuesta" required class="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:respuesta placeholder="Escribe una respuesta..."></textarea></label>
 					<div id="ticket-response-form-error"></div>
-					<button type="submit" class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground disabled:pointer-events-none disabled:opacity-50" data-effect="this.disabled=$ticketSaving">Enviar respuesta</button>
+					<button type="submit" class="inline-flex h-9 items-center justify-center bg-primary px-4 text-sm font-medium text-primary-foreground disabled:pointer-events-none disabled:opacity-50" data-on:click="if($ticketSaving){evt.preventDefault();return};$ticketSaving=true;this.disabled=true;this.setAttribute('aria-busy','true');this.textContent='Enviando...'" data-effect="this.disabled=$ticketSaving">Enviar respuesta</button>
 				</form>
 			}
 		</div>

@@ -125,13 +125,17 @@ func (c *Controller) ticketSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := c.ticketsPageData(r)
+	if (signals.TicketAction == "reply" || signals.TicketAction == "close") && strings.TrimSpace(signals.TicketID) != "" {
+		_ = sse.MarshalAndPatchSignals(map[string]string{"ticketCloseID": strings.TrimSpace(signals.TicketID)})
+	}
 	var body strings.Builder
 	_ = TicketsTableRegion(data).Render(r.Context(), &body)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#tickets-table-region"), datastar.WithModeOuter())
-	_ = sse.MarshalAndPatchSignals(map[string]bool{"ticketSaving": false, "ticketSaved": true})
-	if (signals.TicketAction == "reply" || signals.TicketAction == "close") && strings.TrimSpace(signals.TicketID) != "" {
-		_ = sse.ExecuteScript("window.templ?.dialog?.close(" + strconv.Quote("ticket-view-"+strings.TrimSpace(signals.TicketID)) + ")")
+	saving := false
+	if signals.TicketAction == "reply" {
+		saving = true
 	}
+	_ = sse.MarshalAndPatchSignals(map[string]any{"ticketSaving": saving, "ticketSaved": true})
 }
 
 type ticketValidationError string
@@ -183,7 +187,15 @@ func ticketStatusClass(value string) string {
 }
 
 func ticketViewAttributes(id string) templ.Attributes {
-	return templ.Attributes{"type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "ticket-view-" + id, "aria-haspopup": "dialog", "aria-expanded": "false"}
+	return templ.Attributes{
+		"type":                       "button",
+		"data-slot":                  "dialog-trigger",
+		"data-base-ui-click-trigger": true,
+		"data-templ-controls":        "ticket-view-" + id,
+		"aria-haspopup":              "dialog",
+		"aria-expanded":              "false",
+		"data-on:click":              "$respuesta=''; $ticketSaving=false; $ticketAction='reply';",
+	}
 }
 
 func ticketCloseAttributes(id string) templ.Attributes {

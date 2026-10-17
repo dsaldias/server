@@ -20,6 +20,7 @@ templ RenderRoles(data RolesPageData) {
 				</div>
 			</div>
 			@RolesTableRegion(data)
+			@RoleViewDialogs(data)
 		</div>
 		@RoleForm(data.Permisos, data.Menus)
 	}
@@ -51,12 +52,15 @@ templ RolesTableRegion(data RolesPageData) {
 		} else {
 			@xutility.EmptyState("No hay roles registrados.")
 		}
-		if data.Listado != nil {
-			for _, role := range data.Listado.Datos {
-				if detail, ok := data.Detalles[role.ID]; ok {
-					@dialog.Dialog(dialog.Props{ID: "rol-view-" + role.ID}) {
-						@RoleView(detail)
-					}
+	}
+}
+
+templ RoleViewDialogs(data RolesPageData) {
+	if data.Listado != nil {
+		for _, role := range data.Listado.Datos {
+			if detail, ok := data.Detalles[role.ID]; ok {
+				@dialog.Dialog(dialog.Props{ID: "rol-view-" + role.ID}) {
+					@RoleView(detail)
 				}
 			}
 		}
