@@ -1,0 +1,73 @@
+package xutility
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/card"
+import "github.com/dsaldias/server/data_web/utils"
+
+// PageHeader provides the common responsive title/actions area for admin pages.
+templ PageHeader(title, subtitle string) {
+	<div class="grid gap-4 rounded-xl border border-border/60 bg-card p-5 shadow-sm md:grid-cols-[1fr_auto] md:items-center">
+		<div>
+			<h1 class="text-2xl font-semibold tracking-tight">{ title }</h1>
+			<p class="mt-1 text-sm text-muted-foreground">{ subtitle }</p>
+		</div>
+		<div class="flex flex-wrap gap-2 md:justify-end">
+			{ children... }
+		</div>
+	</div>
+}
+
+// FilterBar is a neutral container for module-specific filters and page size.
+templ FilterBar() {
+	<div class="flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm sm:flex-row sm:items-end sm:justify-between">
+		{ children... }
+	</div>
+}
+
+// TableRegion is the Datastar patch target. The module owns the table markup.
+templ TableRegion(id string) {
+	<div id={ id } class="space-y-4">
+		{ children... }
+	</div>
+}
+
+// TableCard standardizes the compact card used around data tables.
+templ TableCard() {
+	@card.Card(card.Props{Class: "overflow-hidden ring-border/60", Size: card.SizeSm}) {
+		{ children... }
+	}
+}
+
+// Pagination renders the common previous/current/next footer.
+templ Pagination(summary, pageLabel string, previousDisabled, nextDisabled bool, previousAttrs, nextAttrs templ.Attributes) {
+	<div class="flex flex-col gap-3 border-t border-border/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+		<span class="text-muted-foreground">{ summary }</span>
+		<div class="flex items-center gap-1">
+			@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: previousDisabled, Attributes: previousAttrs}) { Anterior }
+			<span class="px-2 text-muted-foreground">{ pageLabel }</span>
+			@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: nextDisabled, Attributes: nextAttrs}) { Siguiente }
+		</div>
+	</div>
+}
+
+templ ReadField(label, value string) {
+	<div class="space-y-1 rounded-md border border-border/60 bg-muted/20 px-3 py-2">
+		<p class="text-xs text-muted-foreground">{ label }</p>
+		<p class="text-sm font-medium">{ value }</p>
+	</div>
+}
+
+templ ReadSection(title string) {
+	<section class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3">
+		<h3 class="text-sm font-semibold">{ title }</h3>
+		{ children... }
+	</section>
+}
+
+templ EmptyState(message string) {
+	<div class="rounded-lg border border-border/60 bg-muted/10 p-8 text-center text-sm text-muted-foreground">{ message }</div>
+}
+
+templ ErrorState(message string) {
+	<div class={ utils.CN("rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive") } role="alert">{ message }</div>
+}

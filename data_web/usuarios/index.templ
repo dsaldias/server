@@ -1,30 +1,23 @@
 package usuarios
 
 import "github.com/dsaldias/server/data_web/components/button"
-import "github.com/dsaldias/server/data_web/components/card"
 import "github.com/dsaldias/server/data_web/components/combobox"
 import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/icon"
+import "github.com/dsaldias/server/data_web/xutility"
 
 templ RenderUsuarios(data UsuariosPageData) {
 	@dialog.Dialog(dialog.Props{ID: "usuario-dialog"}) {
 		<div id="usuarios-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ usuarioSignalInt(data.Pagina) } data-signals:size={ usuarioSignalInt(data.Size) } data-signals:rol={ usuarioSignalString(data.Rol) }>
-			<div class="grid gap-4 rounded-xl border border-border/60 bg-card p-5 shadow-sm md:grid-cols-[1fr_auto] md:items-center">
-				<div>
-					<h1 class="text-2xl font-semibold tracking-tight">Usuarios</h1>
-					<p class="mt-1 text-sm text-muted-foreground">Administra los usuarios registrados en el sistema.</p>
-				</div>
-				<div class="flex flex-wrap gap-2 md:justify-end">
+			@xutility.PageHeader("Usuarios", "Administra los usuarios registrados en el sistema.") {
 					@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina = 1; @get('/adminx/usuarios')"}}) {
 						@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
 					}
 					@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": usuarioCreateResetScript()}}) {
 						@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
 					}
-				</div>
-			</div>
-
-			<div class="flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm sm:flex-row sm:items-end sm:justify-between">
+			}
+			@xutility.FilterBar() {
 				<div class="w-full sm:max-w-sm" data-on:combobox-change="$rol = evt.detail.values[0]; $pagina = 1; @get('/adminx/usuarios')">
 					<label class="mb-2 block text-sm font-medium">Filtrar por rol</label>
 					@combobox.Combobox(combobox.Props{ID: "usuarios-role-filter", DefaultValue: data.Rol, Items: usuariosRoleItems(data.Roles)}) {
@@ -48,7 +41,7 @@ templ RenderUsuarios(data UsuariosPageData) {
 					</select>
 					<span class="text-sm text-muted-foreground">registros</span>
 				</div>
-			</div>
+			}
 
 			@UsuariosTableRegion(data)
 		</div>
@@ -58,11 +51,11 @@ templ RenderUsuarios(data UsuariosPageData) {
 }
 
 templ UsuariosTableRegion(data UsuariosPageData) {
-	<div id="usuarios-table-region" class="space-y-4">
+	@xutility.TableRegion("usuarios-table-region") {
 		if data.Error != "" {
-			<div class="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">{ data.Error }</div>
+			@xutility.ErrorState(data.Error)
 		} else if data.Listado != nil {
-			@card.Card(card.Props{Class: "overflow-hidden ring-border/60", Size: card.SizeSm}) {
+			@xutility.TableCard() {
 				<div class="overflow-x-auto">
 					<table class="w-full text-sm">
 						<thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -90,14 +83,7 @@ templ UsuariosTableRegion(data UsuariosPageData) {
 						</tbody>
 					</table>
 				</div>
-				<div class="flex flex-col gap-3 border-t border-border/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
-					<span class="text-muted-foreground">{ usuarioPaginationSummary(data.Listado) }</span>
-					<div class="flex items-center gap-1">
-						@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: !usuarioCanPrevious(data.Listado), Attributes: templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina - 1)}}) { Anterior }
-						<span class="px-2 text-muted-foreground">{ usuarioPageLabel(data.Listado) }</span>
-						@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: !usuarioCanNext(data.Listado), Attributes: templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina + 1)}}) { Siguiente }
-					</div>
-				</div>
+				@xutility.Pagination(usuarioPaginationSummary(data.Listado), usuarioPageLabel(data.Listado), !usuarioCanPrevious(data.Listado), !usuarioCanNext(data.Listado), templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina - 1)}, templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina + 1)})
 			}
 			for _, user := range data.Listado.Datos {
 				if detalle, ok := data.Detalles[user.ID]; ok {
@@ -107,5 +93,6 @@ templ UsuariosTableRegion(data UsuariosPageData) {
 				}
 			}
 		}
-	</div>
+}
+
 }

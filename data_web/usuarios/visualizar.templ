@@ -1,6 +1,7 @@
 package usuarios
 
 import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/xutility"
 import "github.com/dsaldias/server/graph_auth/model"
 
 templ Visualizar(user *model.ResponseUsuario) {
@@ -11,78 +12,64 @@ templ Visualizar(user *model.ResponseUsuario) {
 		}
 		<div class="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto pr-1">
 		<div class="grid gap-4 sm:grid-cols-2">
-			@usuarioReadField("Nombres", user.Nombres)
-			@usuarioReadField("Primer apellido", user.Apellido1)
-			@usuarioReadField("Segundo apellido", optionalString(user.Apellido2))
-			@usuarioReadField("Usuario", user.Username)
-			@usuarioReadField("Documento", optionalString(user.Documento))
-			@usuarioReadField("Celular", optionalString(user.Celular))
-			@usuarioReadField("Correo", optionalString(user.Correo))
-			@usuarioReadField("Sexo", optionalString(user.Sexo))
-			@usuarioReadField("Dirección", optionalString(user.Direccion))
-			@usuarioReadField("Estado", usuarioStatusLabel(user.Estado))
-			@usuarioReadField("Último acceso", usuarioLastLogin(user.LastLogin))
-			@usuarioReadField("Fecha de registro", usuarioTime(user.FechaRegistro))
-			@usuarioReadField("Última actualización", usuarioTime(user.FechaUpdate))
-			@usuarioReadField("OAuth ID", optionalString(user.OauthID))
-			@usuarioReadField("Foto URL", optionalString(user.FotoURL))
-			@usuarioReadField("Latitud", usuarioFloat(user.Latitud))
-			@usuarioReadField("Longitud", usuarioFloat(user.Longitud))
-			@usuarioReadField("Conexiones", usuarioInt(user.Conexiones))
+			@xutility.ReadField("Nombres", user.Nombres)
+			@xutility.ReadField("Primer apellido", user.Apellido1)
+			@xutility.ReadField("Segundo apellido", optionalString(user.Apellido2))
+			@xutility.ReadField("Usuario", user.Username)
+			@xutility.ReadField("Documento", optionalString(user.Documento))
+			@xutility.ReadField("Celular", optionalString(user.Celular))
+			@xutility.ReadField("Correo", optionalString(user.Correo))
+			@xutility.ReadField("Sexo", optionalString(user.Sexo))
+			@xutility.ReadField("Dirección", optionalString(user.Direccion))
+			@xutility.ReadField("Estado", usuarioStatusLabel(user.Estado))
+			@xutility.ReadField("Último acceso", usuarioLastLogin(user.LastLogin))
+			@xutility.ReadField("Fecha de registro", usuarioTime(user.FechaRegistro))
+			@xutility.ReadField("Última actualización", usuarioTime(user.FechaUpdate))
+			@xutility.ReadField("OAuth ID", optionalString(user.OauthID))
+			@xutility.ReadField("Foto URL", optionalString(user.FotoURL))
+			@xutility.ReadField("Latitud", usuarioFloat(user.Latitud))
+			@xutility.ReadField("Longitud", usuarioFloat(user.Longitud))
+			@xutility.ReadField("Conexiones", usuarioInt(user.Conexiones))
 		</div>
 
-		@usuarioReadSection("Roles y unidades") {
+		@xutility.ReadSection("Roles y unidades") {
 			if len(user.Roles) == 0 {
-				<p class="text-sm text-muted-foreground">Sin roles asignados.</p>
+				@xutility.EmptyState("Sin roles asignados.")
 			} else {
 				<div class="space-y-2">
 					for _, role := range user.Roles {
 						<div class="grid gap-2 rounded-md border border-border/60 bg-muted/20 px-3 py-2 sm:grid-cols-2">
-							@usuarioReadField("Rol", role.RolName)
-							@usuarioReadField("Unidad", role.UnidadName)
+							@xutility.ReadField("Rol", role.RolName)
+							@xutility.ReadField("Unidad", role.UnidadName)
 						</div>
 					}
 				</div>
 			}
 		}
 
-		@usuarioReadSection("Permisos directos") {
+		@xutility.ReadSection("Permisos directos") {
 			if len(user.PermisosSueltos) == 0 {
-				<p class="text-sm text-muted-foreground">Sin permisos directos.</p>
+				@xutility.EmptyState("Sin permisos directos.")
 			} else {
 				<div class="grid gap-2 sm:grid-cols-2">
 					for _, permission := range user.PermisosSueltos {
-						@usuarioReadField(permission.Nombre, permission.Metodo)
+						@xutility.ReadField(permission.Nombre, permission.Metodo)
 					}
 				</div>
 			}
 		}
 
-		@usuarioReadSection("Menús directos") {
+		@xutility.ReadSection("Menús directos") {
 			if len(user.MenusSueltos) == 0 {
-				<p class="text-sm text-muted-foreground">Sin menús directos.</p>
+				@xutility.EmptyState("Sin menús directos.")
 			} else {
 				<div class="grid gap-2 sm:grid-cols-2">
 					for _, menu := range user.MenusSueltos {
-						@usuarioReadField(menu.Label, menu.Path)
+						@xutility.ReadField(menu.Label, menu.Path)
 					}
 				</div>
 			}
 		}
 		</div>
 	}
-}
-
-templ usuarioReadSection(title string) {
-	<section class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3">
-		<h3 class="text-sm font-semibold">{ title }</h3>
-		{ children... }
-	</section>
-}
-
-templ usuarioReadField(label, value string) {
-	<div class="space-y-1 rounded-md border border-border/60 bg-muted/20 px-3 py-2">
-		<p class="text-xs text-muted-foreground">{ label }</p>
-		<p class="text-sm font-medium">{ value }</p>
-	</div>
 }
