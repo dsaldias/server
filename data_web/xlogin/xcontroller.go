@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -29,6 +29,7 @@ type InicioData struct {
 	UnidadID      string
 	RolID         string
 	Content       templ.Component
+	ActivePath    string
 }
 
 type contextInput struct {
@@ -67,6 +68,11 @@ func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 			selector = "#relogin-result"
 		}
 		_ = sse.PatchElements(body.String(), datastar.WithSelector(selector), datastar.WithModeOuter())
+		buttonID := "login-submit"
+		if r.URL.Query().Get("mode") == "relogin" {
+			buttonID = "relogin-submit"
+		}
+		_ = sse.ExecuteScript("const button = document.getElementById('" + buttonID + "'); if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = button.id === 'relogin-submit' ? 'Iniciar sesión' : 'Ingresar'; }")
 		return
 	}
 
@@ -157,7 +163,7 @@ func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
 	cookie.UnidadID = unidadID
 	utilidad.CtxSetCookie(r.Context(), *cookie)
 
-	data := InicioData{Authenticated: true, Me: me, UnidadID: unidadID, RolID: rolID}
+	data := InicioData{Authenticated: true, Me: me, UnidadID: unidadID, RolID: rolID, ActivePath: inicioActivePath(r)}
 	data.Me.Menus = menus
 
 	var body bytes.Buffer
@@ -168,7 +174,7 @@ func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
 
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#admin-sidebar"), datastar.WithModeOuter())
-	_ = sse.ExecuteScript("const role = document.getElementById('active-role'); if (role) role.textContent = " + strconv.Quote(inicioSelectedRole(me, unidadID, rolID)) + "; const result = document.getElementById('context-result'); if (result) result.replaceChildren()")
+	_ = sse.ExecuteScript("const role = document.getElementById('active-role'); if (role) role.textContent = " + strconv.Quote(inicioSelectedRole(me, unidadID, rolID)) + "; const result = document.getElementById('context-result'); if (result) result.replaceChildren(); const selector = document.querySelector('[data-context-selector]'); if (selector) { selector.removeAttribute('aria-busy'); selector.querySelectorAll('input,button').forEach(element => element.disabled = false); }")
 }
 
 func (c *Controller) contextError(w http.ResponseWriter, r *http.Request, message string) {
@@ -176,6 +182,7 @@ func (c *Controller) contextError(w http.ResponseWriter, r *http.Request, messag
 	_ = InicioContextError(message).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#context-result"), datastar.WithModeOuter())
+	_ = sse.ExecuteScript("const selector = document.querySelector('[data-context-selector]'); if (selector) { selector.removeAttribute('aria-busy'); selector.querySelectorAll('input,button').forEach(element => element.disabled = false); }")
 }
 
 func inicioHasRole(me *model.ResponseMe, unidadID, rolID string) bool {
@@ -200,6 +207,7 @@ func (c *Controller) inicioData(r *http.Request) InicioData {
 		Authenticated: true,
 		UnidadID:      auth.UnidadID,
 		RolID:         auth.RolID,
+		ActivePath:    inicioActivePath(r),
 	}
 	data.Me, _ = xrepo.Me(r.Context(), c.DB, model.InputMe{UnidadID: auth.UnidadID})
 	if data.Me != nil {
@@ -285,11 +293,39 @@ func inicioChildMenus(menus []*model.Menus, parentID string) []*model.Menus {
 	return children
 }
 
+func inicioActivePath(r *http.Request) string {
+	path := r.URL.Path
+	if path != ADMIN_CONTEXT {
+		return path
+	}
+	if referer, err := url.Parse(r.Referer()); err == nil && strings.HasPrefix(referer.Path, "/adminx/") {
+		return referer.Path
+	}
+	return ADMIN_INICIO
+}
+
+func inicioMenuClass(path, activePath, base string) string {
+	if path == activePath {
+		return base + " bg-sidebar-foreground/15 text-sidebar-foreground"
+	}
+	return base
+}
+
+func inicioMenuExpanded(children []*model.Menus, activePath string) string {
+	for _, child := range children {
+		if child != nil && child.Path == activePath {
+			return "space-y-1 border-l border-sidebar-border pl-3"
+		}
+	}
+	return "hidden space-y-1 border-l border-sidebar-border pl-3"
+}
+
 func inicioMenuClick(menu *model.Menus) string {
 	if menu == nil {
 		return ""
 	}
 
 	path := strconv.Quote(menu.Path)
-	return fmt.Sprintf("(async()=>{const target=document.getElementById('admin-content');if(!target)return;const path=%s;target.innerHTML='<div class=\\\"flex min-h-48 items-center justify-center text-sm text-muted-foreground\\\">Cargando...</div>';try{const response=await fetch(path,{headers:{'Accept':'text/html','X-Requested-With':'fetch'}});const html=await response.text();const parsed=new DOMParser().parseFromString(html,'text/html');const page=parsed.querySelector('#admin-content');target.innerHTML=page?page.innerHTML:html;if(response.ok)window.history.pushState({},'',path)}catch(error){target.innerHTML='<div class=\\\"rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive\\\">No fue posible cargar el contenido: '+error.message+'</div>'}})();", path)
+	script := `(async()=>{const selected=event.currentTarget;const menuItems=document.querySelectorAll('[data-menu-path]');menuItems.forEach(item=>item.disabled=true);const target=document.getElementById('admin-content');if(!target){menuItems.forEach(item=>item.disabled=false);return}const path=__PATH__;target.setAttribute('aria-busy','true');target.innerHTML='<div class="flex min-h-48 items-center justify-center gap-2 text-sm text-muted-foreground"><span class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>Cargando...</div>';try{const response=await fetch(path,{headers:{'Accept':'text/html','X-Requested-With':'fetch'}});const html=await response.text();const parsed=new DOMParser().parseFromString(html,'text/html');const page=parsed.querySelector('#admin-content');target.innerHTML=page?page.innerHTML:html;if(response.ok){window.history.pushState({},'',path);document.querySelectorAll('[data-menu-path]').forEach(item=>item.classList.remove('bg-sidebar-foreground/15','text-sidebar-foreground'));selected.classList.add('bg-sidebar-foreground/15','text-sidebar-foreground');selected.closest('[id^="admin-menu-"]')?.classList.remove('hidden');if(window.matchMedia('(max-width: 767px)').matches){const shell=document.getElementById('admin-shell');shell?.setAttribute('data-sidebar-collapsed','true');document.getElementById('admin-sidebar')?.classList.add('hidden');document.getElementById('admin-sidebar')?.classList.remove('flex')}}}catch(error){target.innerHTML='<div class="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">No fue posible cargar el contenido: '+error.message+'</div>'}finally{target.removeAttribute('aria-busy');menuItems.forEach(item=>item.disabled=false)}})();`
+	return strings.Replace(script, "__PATH__", path, 1)
 }

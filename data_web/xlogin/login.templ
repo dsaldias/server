@@ -39,7 +39,7 @@ templ LoginRender() {
 						@card.Description(card.DescriptionProps{Class: "mt-3 text-sm leading-6"}) { Ingresa tus credenciales para acceder al sistema. }
 					}
 					@card.Content() {
-						<form method="post" class="space-y-5" data-on:submit__prevent={ "@post('/adminx/login')" }>
+						<form method="post" class="space-y-5" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login')" }>
 							@field.Group() {
 								@field.Field() {
 									@field.Label(field.LabelProps{For: "username"}) { Usuario }
@@ -59,7 +59,7 @@ templ LoginRender() {
 									})
 								}
 								<div id="login-result"></div>
-								@button.Button(button.Props{Type: button.TypeSubmit, Class: "h-11 w-full"}) { Ingresar }
+								@button.Button(button.Props{ID: "login-submit", Type: button.TypeSubmit, Class: "h-11 w-full"}) { Ingresar }
 							}
 						</form>
 					}

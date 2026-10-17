@@ -19,6 +19,11 @@ templ MainLayout(
 			<meta id="theme-color" name="theme-color" content={ config.WithDefaults().ThemeColor }/>
 			<meta id="x-asset-version" data-value={ AssetVersion }/>
 			<title>{ titulo }</title>
+			<script>
+				if (localStorage.getItem("theme") === "dark") {
+					document.documentElement.classList.add("dark");
+				}
+			</script>
 			<link rel="stylesheet" href={ config.WithDefaults().Stylesheet + "?v=" + AssetVersion }/>
 			for _, href := range config.ExtraCSS {
 				<link rel="stylesheet" href={ href + "?v=" + AssetVersion }/>
