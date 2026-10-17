@@ -49,7 +49,7 @@ import (
 
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 	"github.com/dsaldias/server/dataauth"
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 )
 
 // # go run github.com/99designs/gqlgen generate
@@ -130,7 +130,7 @@ package app
 import (
 	"database/sql"
 
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 )
 
 /*
@@ -170,7 +170,7 @@ import (
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
 	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 )
 
 //go:embed asset/*

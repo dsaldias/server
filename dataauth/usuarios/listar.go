@@ -11,7 +11,7 @@ import (
 	"github.com/dsaldias/server/dataauth/menus"
 	"github.com/dsaldias/server/dataauth/permisos"
 	"github.com/dsaldias/server/dataauth/roles"
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 )
 
@@ -78,7 +78,7 @@ func GetUsuarios2(db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado
 	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
 		return nil, err
 	}
-	paginas := utils.CalcularPaginas(total, int32(query.Size))
+	paginas := utilidad.CalcularPaginas(total, int32(query.Size))
 	pagina := model.Pagina{
 		Pagina:    query.Pagina,
 		Size:      query.Size,

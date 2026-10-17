@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"os"
 
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/graph_auth/model"
-
-	"github.com/dsaldias/server/dataauth/utils"
 )
 
 func CrearOauth(db *sql.DB, input model.NewUsuarioOauth, isportal bool) (*model.Usuario, error) {
@@ -66,7 +65,7 @@ func CrearOauth(db *sql.DB, input model.NewUsuarioOauth, isportal bool) (*model.
 	}
 
 	if isportal {
-		utils.NotifyUserExternalCreated(db, newus.ID, newus.Username, input.Password)
+		utilidad.NotifyUserExternalCreated(db, newus.ID, newus.Username, input.Password)
 	}
 
 	return newus, nil

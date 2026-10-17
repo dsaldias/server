@@ -8,7 +8,7 @@ import (
 
 	"github.com/dsaldias/server/graph_auth/model"
 
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 )
 
@@ -25,7 +25,7 @@ func Crear(ctx context.Context, db *sql.DB, input model.NewTicket, userid string
 	data := datanotify("purple")
 	xnotificaciones.EnviarNotificacion(context.Background(), m, &data)
 
-	utils.NotifyTicketCreated(db, id)
+	utilidad.NotifyTicketCreated(db, id)
 
 	return Get(ctx, db, id)
 }

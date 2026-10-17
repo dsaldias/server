@@ -15,7 +15,7 @@ import (
 	"github.com/dsaldias/server/dataauth/ticketss"
 	"github.com/dsaldias/server/dataauth/unidades"
 	"github.com/dsaldias/server/dataauth/usuarios"
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 	"github.com/dsaldias/server/graph_auth/model"
 )
@@ -32,7 +32,7 @@ func LoginV2(ctx context.Context, db *sql.DB, input model.NewLogin2) (*model.Res
 
 // CreateRol is the resolver for the create_rol field.
 func CreateRol(ctx context.Context, db *sql.DB, input model.NewRol) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, db, "create_rol")
+	_, err := utilidad.CtxValue(ctx, db, "create_rol")
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func CreateRol(ctx context.Context, db *sql.DB, input model.NewRol) (*model.Rol,
 
 // UpdateRol is the resolver for the update_rol field.
 func UpdateRol(ctx context.Context, db *sql.DB, input model.UpdateRol) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, db, "update_rol")
+	_, err := utilidad.CtxValue(ctx, db, "update_rol")
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func UpdateRol(ctx context.Context, db *sql.DB, input model.UpdateRol) (*model.R
 
 // CreateUsuario is the resolver for the create_usuario field.
 func CreateUsuario(ctx context.Context, db *sql.DB, input model.NewUsuario) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, db, "create_usuario")
+	_, err := utilidad.CtxValue(ctx, db, "create_usuario")
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func CreateUsuario(ctx context.Context, db *sql.DB, input model.NewUsuario) (*mo
 
 // UpdateUsuario is the resolver for the update_usuario field.
 func UpdateUsuario(ctx context.Context, db *sql.DB, input model.UpdateUsuario) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, db, "update_usuario")
+	_, err := utilidad.CtxValue(ctx, db, "update_usuario")
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func UpdateUsuario(ctx context.Context, db *sql.DB, input model.UpdateUsuario) (
 
 // UpdatePerfil is the resolver for the update_perfil field.
 func UpdatePerfil(ctx context.Context, db *sql.DB, input model.UpdatePerfil) (*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, db, "update_perfil")
+	_, err := utilidad.CtxValue(ctx, db, "update_perfil")
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func UpdatePerfil(ctx context.Context, db *sql.DB, input model.UpdatePerfil) (*m
 
 // CreateUnidad is the resolver for the create_unidad field.
 func CreateUnidad(ctx context.Context, db *sql.DB, input model.NewUnidad) (*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, db, "create_unidad")
+	_, err := utilidad.CtxValue(ctx, db, "create_unidad")
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func CreateUnidad(ctx context.Context, db *sql.DB, input model.NewUnidad) (*mode
 
 // UpdateUnidad is the resolver for the update_unidad field.
 func UpdateUnidad(ctx context.Context, db *sql.DB, input model.UpdUnidad) (*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, db, "update_unidad")
+	_, err := utilidad.CtxValue(ctx, db, "update_unidad")
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func EnviarNotificacion(ctx context.Context, db *sql.DB, titulo string) (bool, e
 
 // CrearNotificacion is the resolver for the crear_notificacion field.
 func CrearNotificacion(ctx context.Context, db *sql.DB, input model.NewNotificacion) (*model.Notificacion, error) {
-	tok, err := utils.CtxValue(ctx, db, "crear_notificacion")
+	tok, err := utilidad.CtxValue(ctx, db, "crear_notificacion")
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func CrearNotificacion(ctx context.Context, db *sql.DB, input model.NewNotificac
 
 // UpdateNotificacion is the resolver for the update_notificacion field.
 func UpdateNotificacion(ctx context.Context, db *sql.DB, input model.UpdNotificacion) (*model.Notificacion, error) {
-	tok, err := utils.CtxValue(ctx, db, "update_notificacion")
+	tok, err := utilidad.CtxValue(ctx, db, "update_notificacion")
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func UpdateNotificacion(ctx context.Context, db *sql.DB, input model.UpdNotifica
 
 // CreateTicket is the resolver for the create_ticket field.
 func CreateTicket(ctx context.Context, db *sql.DB, input model.NewTicket) (*model.Ticket, error) {
-	tok, err := utils.CtxValue(ctx, db, "create_ticket")
+	tok, err := utilidad.CtxValue(ctx, db, "create_ticket")
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func CreateTicket(ctx context.Context, db *sql.DB, input model.NewTicket) (*mode
 
 // UpdateTicket is the resolver for the update_ticket field.
 func UpdateTicket(ctx context.Context, db *sql.DB, input model.NewTicketRespuesta) (*model.Ticket, error) {
-	tok, err := utils.CtxValue(ctx, db, "update_ticket")
+	tok, err := utilidad.CtxValue(ctx, db, "update_ticket")
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func UpdateTicket(ctx context.Context, db *sql.DB, input model.NewTicketRespuest
 
 // CerrarTicket is the resolver for the cerrar_ticket field.
 func CerrarTicket(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
-	_, err := utils.CtxValue(ctx, db, "cerrar_ticket")
+	_, err := utilidad.CtxValue(ctx, db, "cerrar_ticket")
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func ChatEnviarMensaje(ctx context.Context, db *sql.DB, input model.ChatEnviarMe
 
 // Me is the resolver for the me field.
 func Me(ctx context.Context, db *sql.DB, input model.InputMe) (*model.ResponseMe, error) {
-	tok, err := utils.CtxValue(ctx, db, "")
+	tok, err := utilidad.CtxValue(ctx, db, "")
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,7 @@ func Me(ctx context.Context, db *sql.DB, input model.InputMe) (*model.ResponseMe
 
 // Roles is the resolver for the roles field.
 func Roles(ctx context.Context, db *sql.DB) ([]*model.ResponseRoles, error) {
-	_, err := utils.CtxValue(ctx, db, "roles")
+	_, err := utilidad.CtxValue(ctx, db, "roles")
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func Roles(ctx context.Context, db *sql.DB) ([]*model.ResponseRoles, error) {
 }
 
 func Roles2(ctx context.Context, db *sql.DB, q model.QueryRoles) (*model.RolPaginado, error) {
-	_, err := utils.CtxValue(ctx, db, "roles")
+	_, err := utilidad.CtxValue(ctx, db, "roles")
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func Roles2(ctx context.Context, db *sql.DB, q model.QueryRoles) (*model.RolPagi
 
 // Permisos is the resolver for the permisos field.
 func Permisos(ctx context.Context, db *sql.DB) ([]*model.Permiso, error) {
-	_, err := utils.CtxValue(ctx, db, "permisos")
+	_, err := utilidad.CtxValue(ctx, db, "permisos")
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func Permisos(ctx context.Context, db *sql.DB) ([]*model.Permiso, error) {
 
 // Usuarios is the resolver for the usuarios field.
 func Usuarios(ctx context.Context, db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error) {
-	_, err := utils.CtxValue(ctx, db, "usuarios")
+	_, err := utilidad.CtxValue(ctx, db, "usuarios")
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func Usuarios(ctx context.Context, db *sql.DB, query model.QueryUsuarios) ([]*mo
 }
 
 func Usuarios2(ctx context.Context, db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado, error) {
-	_, err := utils.CtxValue(ctx, db, "usuarios")
+	_, err := utilidad.CtxValue(ctx, db, "usuarios")
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func UsuariosConectados(ctx context.Context, db *sql.DB) ([]*model.Usuario, erro
 
 // UsuarioByID is the resolver for the usuario_by_id field.
 func UsuarioByID(ctx context.Context, db *sql.DB, id string) (*model.ResponseUsuario, error) {
-	_, err := utils.CtxValue(ctx, db, "usuario_by_id")
+	_, err := utilidad.CtxValue(ctx, db, "usuario_by_id")
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func UsuarioByID(ctx context.Context, db *sql.DB, id string) (*model.ResponseUsu
 
 // RolByID is the resolver for the rol_by_id field.
 func RolByID(ctx context.Context, db *sql.DB, id string) (*model.Rol, error) {
-	_, err := utils.CtxValue(ctx, db, "rol_by_id")
+	_, err := utilidad.CtxValue(ctx, db, "rol_by_id")
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func RolByID(ctx context.Context, db *sql.DB, id string) (*model.Rol, error) {
 
 // Menus is the resolver for the menus field.
 func Menus(ctx context.Context, db *sql.DB) ([]*model.Menus, error) {
-	_, err := utils.CtxValue(ctx, db, "menus")
+	_, err := utilidad.CtxValue(ctx, db, "menus")
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +243,7 @@ func Menus(ctx context.Context, db *sql.DB) ([]*model.Menus, error) {
 }
 
 func GetMenusbyRol(ctx context.Context, db *sql.DB, rolid string) ([]*model.Menus, error) {
-	_, err := utils.CtxValue(ctx, db, "")
+	_, err := utilidad.CtxValue(ctx, db, "")
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +252,7 @@ func GetMenusbyRol(ctx context.Context, db *sql.DB, rolid string) ([]*model.Menu
 
 // Unidades is the resolver for the unidades field.
 func Unidades(ctx context.Context, db *sql.DB) ([]*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, db, "unidades")
+	_, err := utilidad.CtxValue(ctx, db, "unidades")
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +260,7 @@ func Unidades(ctx context.Context, db *sql.DB) ([]*model.Unidad, error) {
 }
 
 func Unidades2(ctx context.Context, db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) {
-	_, err := utils.CtxValue(ctx, db, "unidades")
+	_, err := utilidad.CtxValue(ctx, db, "unidades")
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +268,7 @@ func Unidades2(ctx context.Context, db *sql.DB, q model.QueryUnidades) (*model.U
 }
 
 func UnidadByID(ctx context.Context, db *sql.DB, id string) (*model.Unidad, error) {
-	_, err := utils.CtxValue(ctx, db, "")
+	_, err := utilidad.CtxValue(ctx, db, "")
 	if err != nil {
 		return nil, err
 	}
@@ -311,7 +311,7 @@ func Reporte2b(ctx context.Context, db *sql.DB) ([]*model.ResponseReporte2b, err
 
 // AllTickets is the resolver for the all_tickets field.
 func AllTickets(ctx context.Context, db *sql.DB, q model.QueryTickets) ([]*model.RespTickets, error) {
-	_, err := utils.CtxValue(ctx, db, "all_tickets")
+	_, err := utilidad.CtxValue(ctx, db, "all_tickets")
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func AllTickets(ctx context.Context, db *sql.DB, q model.QueryTickets) ([]*model
 
 // MisTickets is the resolver for the mis_tickets field.
 func MisTickets(ctx context.Context, db *sql.DB) ([]*model.RespTickets, error) {
-	tok, err := utils.CtxValue(ctx, db, "mis_tickets")
+	tok, err := utilidad.CtxValue(ctx, db, "mis_tickets")
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +330,7 @@ func MisTickets(ctx context.Context, db *sql.DB) ([]*model.RespTickets, error) {
 
 // VerTicket is the resolver for the ver_ticket field.
 func VerTicket(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
-	_, err := utils.CtxValue(ctx, db, "ver_ticket")
+	_, err := utilidad.CtxValue(ctx, db, "ver_ticket")
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +344,7 @@ func ChatsByUser(ctx context.Context, db *sql.DB, userID string) ([]*model.Respo
 
 // ChatMensajes is the resolver for the chat_mensajes field.
 func ChatMensajes(ctx context.Context, db *sql.DB, conversacionID string) ([]*model.ChatMensaje, error) {
-	tok, err := utils.CtxValue(ctx, db, "")
+	tok, err := utilidad.CtxValue(ctx, db, "")
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +359,7 @@ func ChatsNoLeidos(ctx context.Context, db *sql.DB, userID string) (int32, error
 
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
 func NotificacionesSubs(ctx context.Context, db *sql.DB) (<-chan *model.XNotificacion, error) {
-	userid := utils.CtxUserIDWs(ctx, db, "")
+	userid := utilidad.CtxUserIDWs(ctx, db, "")
 	if userid != nil {
 		return xnotificaciones.NotificacionesSubs(ctx, *userid)
 	}

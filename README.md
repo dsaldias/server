@@ -14,7 +14,7 @@ go tool gqlgen init
 ```
 
 ```bash
-go get -tool github.com/dsaldias/server/generar
+go get -tool github.com/dsaldias/server/dataauth/xgenerar
 ```
 
 ---
@@ -24,7 +24,7 @@ go get -tool github.com/dsaldias/server/generar
 Inicializar un nuevo archivo de servidor:
 
 ```bash
-go tool generar init
+go tool xgenerar init
 ```
 
 Y luego:
@@ -65,10 +65,10 @@ go mod init my_server_app
 go get -tool github.com/99designs/gqlgen
 go tool gqlgen init
 
-go get -tool github.com/dsaldias/server/generar
-go tool generar init
+go get -tool github.com/dsaldias/server/dataauth/xgenerar
+go tool xgenerar init
 go mod tidy
-go tool generar db
+go tool xgenerar db
 go run serverx.go
 
 playgrounds:

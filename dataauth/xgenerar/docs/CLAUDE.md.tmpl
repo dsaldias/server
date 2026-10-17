@@ -20,7 +20,7 @@ go run serverx.go
 go mod tidy
 
 # Crear la base de datos y tablas RBAC (primera vez, después de configurar .env)
-go tool generar db
+go tool xgenerar db
 
 # Apply your own entity migrations
 mysql -u root -p <dbname> < sqls/database-<module>.sql
@@ -172,7 +172,7 @@ go run github.com/99designs/gqlgen generate
 ```go
 import (
     "{{MODULE}}/app/<entity>"
-    "github.com/dsaldias/server/dataauth/utils"
+    "github.com/dsaldias/server/dataauth/utilidad"
 )
 
 func (r *mutationResolver) Create<Entity>(ctx context.Context, input model.New<Entity>) (*model.<Entity>, error) {

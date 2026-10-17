@@ -209,7 +209,7 @@ go run github.com/99designs/gqlgen generate
 ```go
 import (
     "<this-module>/app/<entity>"
-    "github.com/dsaldias/server/dataauth/utils"
+    "github.com/dsaldias/server/dataauth/utilidad"
 )
 
 func (r *queryResolver) <Entities>(ctx context.Context) ([]*model.<Entity>, error) {

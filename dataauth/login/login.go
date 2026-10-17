@@ -12,7 +12,7 @@ import (
 	"github.com/dsaldias/server/dataauth/sessionkey"
 	"github.com/dsaldias/server/dataauth/unidades"
 	"github.com/dsaldias/server/dataauth/usuarios"
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 )
 
@@ -37,7 +37,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	if err != nil {
 		// login externo
 		if err.Error() == usuarios.WRONG_PASS {
-			utils.CreateExternalUser(db, input.Username, input.Password)
+			utilidad.CreateExternalUser(db, input.Username, input.Password)
 			u, err := usuarios.GetByUserPass(db, input.Username, input.Password)
 			if err != nil {
 				return nil, err
@@ -52,7 +52,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 		return nil, errors.New("usuario no activo")
 	}
 
-	token, exp, minus, err := utils.GenerateToken(ctx, us.ID)
+	token, exp, minus, err := utilidad.GenerateToken(ctx, us.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	res.SessionTime = minus
 	res.Me = me
 
-	utils.NotifyUserRelogin(db, us.ID, us.Username, input.Password)
+	utilidad.NotifyUserRelogin(db, us.ID, us.Username, input.Password)
 
 	send := os.Getenv("SEND_NOTI_LOGIN")
 	if send == "1" {
@@ -90,7 +90,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 	}
 
 	// funcionalidad nueva para cookie
-	cd := utils.CookieData{
+	cd := utilidad.CookieData{
 		Token:    sesion.Key,
 		UserID:   us.ID,
 		Username: us.Username,
@@ -98,7 +98,7 @@ func Login(ctx context.Context, db *sql.DB, input model.NewLogin, is_v2 bool) (*
 		UnidadID: uni,
 		Expires:  exp,
 	}
-	utils.CtxSetCookie(ctx, cd)
+	utilidad.CtxSetCookie(ctx, cd)
 
 	return &res, nil
 }

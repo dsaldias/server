@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
@@ -58,7 +58,7 @@ func GetRoles2(db *sql.DB, q model.QueryRoles) (*model.RolPaginado, error) {
 	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
 		return nil, err
 	}
-	paginas := utils.CalcularPaginas(total, int32(q.Size))
+	paginas := utilidad.CalcularPaginas(total, int32(q.Size))
 	pagina := model.Pagina{
 		Pagina:    q.Pagina,
 		Size:      q.Size,

@@ -1,4 +1,4 @@
-package utils
+package utilidad
 
 func CalcularPaginas(total, size int32) int32 {
 	if size <= 0 {

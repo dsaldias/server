@@ -14,7 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/coder/websocket"
-	"github.com/dsaldias/server/dataauth/utils"
+	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xnotificaciones"
 	"github.com/dsaldias/server/graph_auth"
 	"github.com/go-chi/chi/v5"
@@ -24,7 +24,7 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, handlers []*utils.Handlers2, router *chi.Mux) {
+func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, handlers []*utilidad.Handlers2, router *chi.Mux) {
 
 	port := os.Getenv("PORT")
 	rate := os.Getenv("RATE_LIMIT")
@@ -35,15 +35,15 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 
 	router.Use(middleware.Compress(5, "application/json", "application/graphql+json"))
 	router.Use(cors.New(cors.Options{
-		AllowedOrigins:   utils.GetAllowedOrigins(),
+		AllowedOrigins:   utilidad.GetAllowedOrigins(),
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 		Debug:            false,
 	}).Handler)
-	router.Use(utils.MiddlewareCookie)
-	router.Use(utils.AuthMiddleware(db))
+	router.Use(utilidad.MiddlewareCookie)
+	router.Use(utilidad.AuthMiddleware(db))
 	if rate == "1" {
-		rl := utils.NewRateLimiter(22, time.Second)
+		rl := utilidad.NewRateLimiter(22, time.Second)
 		router.Use(rl.RateMiddleware)
 	}
 
@@ -64,7 +64,7 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 				OriginPatterns: []string{"*"},
 			},
 		},
-		InitFunc: utils.UaserIDMiddleware(db),
+		InitFunc: utilidad.UaserIDMiddleware(db),
 	})
 
 	srv2.SetQueryCache(lru.New[*ast.QueryDocument](1000))
@@ -81,7 +81,7 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 
 	router.Handle("/query_auth", srv2)
 	// router.Handle("/ws", srv2)
-	router.Handle("/ws", utils.WsMiddlewareCookie(srv2))
+	router.Handle("/ws", utilidad.WsMiddlewareCookie(srv2))
 	router.Handle("/query", srv)
 	router.Handle("/ws_app", srv)
 	router.Get("/sse", xnotificaciones.SSEHandler)
@@ -95,12 +95,12 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	router.Handle("/res/*", http.StripPrefix("/res/", http.FileServer(http.Dir("res"))))
 	// rest to graphql
 	if schema != nil {
-		router.Post("/rest/mutation/{operationName}", utils.RestToGraphQlHandler(*schema))
-		router.Get("/rest/query/{operationName}", utils.RestToGraphQlHandler(*schema))
+		router.Post("/rest/mutation/{operationName}", utilidad.RestToGraphQlHandler(*schema))
+		router.Get("/rest/query/{operationName}", utilidad.RestToGraphQlHandler(*schema))
 	}
 
-	router.Post("/rest_auth/mutation/{operationName}", utils.RestToGraphQlHandler(schema2))
-	router.Get("/rest_auth/query/{operationName}", utils.RestToGraphQlHandler(schema2))
+	router.Post("/rest_auth/mutation/{operationName}", utilidad.RestToGraphQlHandler(schema2))
+	router.Get("/rest_auth/query/{operationName}", utilidad.RestToGraphQlHandler(schema2))
 
 	/* ssr := dataadmin.RutasFront(db)
 	for _, h := range ssr {

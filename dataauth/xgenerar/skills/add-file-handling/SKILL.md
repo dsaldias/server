@@ -79,7 +79,7 @@ func Actualizar(db *sql.DB, input model.Update<Entity>) (*model.<Entity>, error)
 // graph/schema.resolvers.go
 import (
     "github.com/dsaldias/server/dataauth/archivos"
-    "github.com/dsaldias/server/dataauth/utils"
+    "github.com/dsaldias/server/dataauth/utilidad"
 )
 
 func (r *queryResolver) Get<Entity>Imagen(ctx context.Context, url string) (string, error) {
