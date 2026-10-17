@@ -1,6 +1,7 @@
 package roles
 
 import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/xutility"
 import "github.com/dsaldias/server/graph_auth/model"
 
@@ -34,7 +35,18 @@ templ RoleView(role *model.Rol) {
 					<div class="grid gap-2 sm:grid-cols-2">
 						for _, menu := range role.Menus {
 							if menu != nil {
-								@xutility.ReadField(menu.Label, menu.Path)
+								<div class={ roleMenuClass(menu) }>
+									if menu.PadreID != nil {
+										@icon.CornerDownRight(icon.Props{Class: "mt-0.5 size-3.5 shrink-0 text-muted-foreground"})
+									} else {
+										@icon.Folder(icon.Props{Class: "mt-0.5 size-3.5 shrink-0 text-muted-foreground"})
+									}
+									<div class="min-w-0"><p class="text-sm font-medium">{ menu.Label }</p><p class="truncate text-xs text-muted-foreground">{ menu.Path }</p>
+										if menu.PadreID != nil {
+											<p class="text-xs text-muted-foreground">Hijo de: { roleMenuParentName(menu, role.Menus) }</p>
+										}
+									</div>
+								</div>
 							}
 						}
 					</div>

@@ -62,5 +62,18 @@ func validar_campos(input model.NewRol) error {
 	if input.Descripcion != nil && len(*input.Descripcion) > 100 {
 		return errors.New("descripcion excede los 100 caracteres")
 	}
+
+	if input.Jerarquia == nil {
+		return errors.New("asigne la jerarquia")
+	}
+
+	if len(input.Menus) == 0 {
+		return errors.New("seleccione los menus")
+	}
+
+	if len(input.Permisos) == 0 {
+		return errors.New("seleccione los permisos")
+	}
+
 	return nil
 }

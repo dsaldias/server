@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
+	"github.com/dsaldias/server/data_web/components/combobox"
 	"github.com/dsaldias/server/dataauth/xrepo"
 	"github.com/dsaldias/server/graph_auth/model"
 	"github.com/starfederation/datastar-go/datastar"
@@ -159,15 +160,20 @@ func roleEditAttributes(role *model.Rol) templ.Attributes {
 		}
 	}
 	encode := func(value any) string { data, _ := json.Marshal(value); return string(data) }
+	sync := roleSelectionSyncScript()
 	return templ.Attributes{
 		"type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true,
 		"data-templ-controls": "rol-dialog", "aria-haspopup": "dialog", "aria-expanded": "false",
-		"data-on:click": "$rolMode='edit'; $rolID=" + encode(role.ID) + "; $rolSaving=false; $rolSaved=false; $nombre=" + encode(role.Nombre) + "; $descripcion=" + encode(optionalStringValue(role.Descripcion)) + "; $jerarquia=" + strconv.Itoa(int(role.Jerarquia)) + "; $permisos=" + encode(permissions) + "; $menus=" + encode(menus) + "; const root=document.getElementById('rol-dialog'); root?.querySelector('[data-rol-title]')?.replaceChildren('Editar rol'); root?.querySelector('#rol-form-error')?.replaceChildren();",
+		"data-on:click": "$rolMode='edit'; $rolID=" + encode(role.ID) + "; $rolSaving=false; $rolSaved=false; $nombre=" + encode(role.Nombre) + "; $descripcion=" + encode(optionalStringValue(role.Descripcion)) + "; $jerarquia=" + strconv.Itoa(int(role.Jerarquia)) + "; $permisos=" + encode(permissions) + "; $menus=" + encode(menus) + "; const root=document.getElementById('rol-dialog'); root?.querySelector('[data-rol-title]')?.replaceChildren('Editar rol'); root?.querySelector('#rol-form-error')?.replaceChildren(); " + sync + " syncRoleSelections('rol-permisos', " + encode(permissions) + "); syncRoleSelections('rol-menus', " + encode(menus) + ");",
 	}
 }
 
 func roleCreateResetScript() string {
-	return "$rolMode='create'; $rolID=''; $rolSaving=false; $rolSaved=false; $nombre=''; $descripcion=''; $jerarquia=0; $permisos=[]; $menus=[]; const root=document.getElementById('rol-dialog'); root?.querySelector('[data-rol-title]')?.replaceChildren('Nuevo rol'); root?.querySelector('#rol-form-error')?.replaceChildren();"
+	return "$rolMode='create'; $rolID=''; $rolSaving=false; $rolSaved=false; $nombre=''; $descripcion=''; $jerarquia=0; $permisos=[]; $menus=[]; const root=document.getElementById('rol-dialog'); root?.querySelector('[data-rol-title]')?.replaceChildren('Nuevo rol'); root?.querySelector('#rol-form-error')?.replaceChildren(); " + roleSelectionSyncScript() + " syncRoleSelections('rol-permisos', []); syncRoleSelections('rol-menus', []);"
+}
+
+func roleSelectionSyncScript() string {
+	return `const syncRoleSelections=(id,values)=>{const content=document.getElementById(id);if(!content)return;const wanted=new Set(values||[]);content.querySelectorAll('[data-slot="combobox-item"]').forEach(item=>{const selected=item.hasAttribute('data-selected');const shouldSelect=wanted.has(item.getAttribute('data-templ-value')||'');if(selected!==shouldSelect)item.click();});};`
 }
 
 func optionalString(value string) *string {
@@ -258,4 +264,43 @@ func rolePageClick(page int32) string {
 
 func roleFormError(message string) string {
 	return `<div id="rol-form-error" role="alert" class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">` + html.EscapeString(message) + `</div>`
+}
+
+func rolePermissionItems(values []*model.Permiso) []combobox.ItemData {
+	items := make([]combobox.ItemData, 0, len(values))
+	for _, value := range values {
+		if value != nil {
+			items = append(items, combobox.ItemData{Value: value.Metodo, Label: value.Nombre})
+		}
+	}
+	return items
+}
+
+func roleMenuItems(values []*model.Menus) []combobox.ItemData {
+	items := make([]combobox.ItemData, 0, len(values))
+	for _, value := range values {
+		if value != nil {
+			items = append(items, combobox.ItemData{Value: value.ID, Label: value.Label})
+		}
+	}
+	return items
+}
+
+func roleMenuParentName(menu *model.Menus, menus []*model.Menus) string {
+	if menu == nil || menu.PadreID == nil {
+		return ""
+	}
+	for _, parent := range menus {
+		if parent != nil && parent.ID == *menu.PadreID {
+			return "de " + parent.Label
+		}
+	}
+	return "de menú padre"
+}
+
+func roleMenuClass(menu *model.Menus) string {
+	if menu != nil && menu.PadreID != nil {
+		return "flex items-start gap-2 rounded-md border border-border/40 bg-muted/10 px-3 py-2 pl-6"
+	}
+	return "flex items-start gap-2 rounded-md border border-border/60 bg-muted/20 px-3 py-2"
 }

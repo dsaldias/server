@@ -1,8 +1,10 @@
 package roles
 
 import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/combobox"
 import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/field"
+import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/components/input"
 import "github.com/dsaldias/server/graph_auth/model"
 
@@ -19,20 +21,42 @@ templ RoleForm(permisos []*model.Permiso, menus []*model.Menus) {
 			</div>
 			@field.Field() { @field.Label(field.LabelProps{For: "rol-descripcion"}) { Descripción } <textarea id="rol-descripcion" maxlength="100" class="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Descripción del rol" data-bind:descripcion></textarea> }
 			<div class="grid gap-4 sm:grid-cols-2">
-				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Permisos</p><p class="text-xs text-muted-foreground">Selecciona los permisos disponibles para este rol.</p></div><select id="rol-permisos" multiple size="8" class="min-h-40 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:permisos>
-					for _, permission := range permisos {
-						if permission != nil {
-							<option value={ permission.Metodo }>{ permission.Nombre }</option>
+				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Permisos</p><p class="text-xs text-muted-foreground">Busca y selecciona uno o varios permisos.</p></div><div data-on:combobox-change="$permisos = evt.detail.values">
+					@combobox.Combobox(combobox.Props{ID: "rol-permisos", Multiple: true, Items: rolePermissionItems(permisos)}) {
+						@combobox.Chips() { @combobox.Value() @combobox.ChipsInput(combobox.ChipsInputProps{Placeholder: "Buscar permisos..."}) }
+						@combobox.Content(combobox.ContentProps{Class: "!bg-popover !text-popover-foreground !border !border-border shadow-lg"}) {
+							@combobox.Empty() { No hay permisos disponibles. }
+							@combobox.List() {
+								for _, permission := range permisos {
+									if permission != nil {
+										@combobox.Item(combobox.ItemProps{Value: permission.Metodo, Label: permission.Nombre}) { { permission.Nombre } }
+									}
+								}
+							}
 						}
 					}
-				</select></div>
-				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Menús</p><p class="text-xs text-muted-foreground">Selecciona los menús disponibles para este rol.</p></div><select id="rol-menus" multiple size="8" class="min-h-40 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:menus>
-					for _, menu := range menus {
-						if menu != nil {
-							<option value={ menu.ID }>{ menu.Label }</option>
+				</div><p class="text-xs text-muted-foreground">Los permisos seleccionados aparecerán como etiquetas.</p></div>
+				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Menús</p><p class="text-xs text-muted-foreground">Busca y selecciona los menús que podrá utilizar este rol.</p></div><div data-on:combobox-change="$menus = evt.detail.values">
+					@combobox.Combobox(combobox.Props{ID: "rol-menus", Multiple: true, Items: roleMenuItems(menus)}) {
+						@combobox.Chips() { @combobox.Value() @combobox.ChipsInput(combobox.ChipsInputProps{Placeholder: "Buscar menús..."}) }
+						@combobox.Content(combobox.ContentProps{Class: "!bg-popover !text-popover-foreground !border !border-border shadow-lg"}) {
+							@combobox.Empty() { No hay menús disponibles. }
+							@combobox.List() {
+								for _, menu := range menus {
+									if menu != nil {
+										@combobox.Item(combobox.ItemProps{Value: menu.ID, Label: menu.Label}) {
+											if menu.PadreID != nil {
+												<div class="flex min-w-0 items-center gap-2 pl-3">@icon.CornerDownRight(icon.Props{Class: "size-3.5 shrink-0 text-muted-foreground"})<span class="min-w-0 truncate">{ menu.Label }</span><span class="ml-auto truncate text-xs text-muted-foreground">{ roleMenuParentName(menu, menus) }</span></div>
+											} else {
+												<div class="flex min-w-0 items-center gap-2 font-medium">@icon.Folder(icon.Props{Class: "size-3.5 shrink-0 text-muted-foreground"})<span class="min-w-0 truncate">{ menu.Label }</span></div>
+											}
+										}
+									}
+								}
+							}
 						}
 					}
-				</select></div>
+				</div><p class="text-xs text-muted-foreground">Los menús seleccionados aparecerán como etiquetas.</p></div>
 			</div>
 			<div id="rol-form-error"></div>
 			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "rol-submit"}) { Guardar rol } }
