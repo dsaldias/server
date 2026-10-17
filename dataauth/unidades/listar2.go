@@ -3,6 +3,7 @@ package unidades
 import (
 	"database/sql"
 	"errors"
+	"strings"
 
 	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/graph_auth/model"
@@ -18,7 +19,17 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 
 	offset := (q.Pagina - 1) * q.Size
 
-	sql := `select 
+	where := ""
+	args := make([]any, 0, 3)
+	if q.Nombre != nil {
+		nombre := strings.TrimSpace(*q.Nombre)
+		if nombre != "" {
+			where = " where nombre like ?"
+			args = append(args, "%"+nombre+"%")
+		}
+	}
+
+	query := `select
 	id, 
 	nombre, 
 	descripcion, 
@@ -26,10 +37,11 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 	ST_X(ubicacion) AS latitud, 
 	ST_Y(ubicacion) AS longitud, 
 	fecha_registro 
-	from rbac_unidades order by id, orden
-	LIMIT ? OFFSET ?
+from rbac_unidades` + where + ` order by id, orden
+LIMIT ? OFFSET ?
 	`
-	rows, err := db.Query(sql, q.Size, offset)
+	args = append(args, q.Size, offset)
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +58,9 @@ func ListarV2(db *sql.DB, q model.QueryUnidades) (*model.UnidadPaginada, error) 
 	}
 
 	var total int32
-	queryTotal := ` select count(*) from rbac_unidades `
-	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
+	queryTotal := `select count(*) from rbac_unidades` + where
+	countArgs := args[:len(args)-2]
+	if err := db.QueryRow(queryTotal, countArgs...).Scan(&total); err != nil {
 		return nil, err
 	}
 	paginas := utilidad.CalcularPaginas(total, int32(q.Size))

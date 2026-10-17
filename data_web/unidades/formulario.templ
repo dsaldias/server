@@ -1,0 +1,22 @@
+package unidades
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/components/field"
+import "github.com/dsaldias/server/data_web/components/input"
+
+templ UnidadForm() {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-2xl"}) {
+		@dialog.Header() { @dialog.Title() { <span data-unidad-title>Nueva unidad</span> } @dialog.Description() { Registra la información y ubicación opcional de la unidad. } }
+		<form id="unidad-form" class="max-h-[calc(100vh-10rem)] space-y-5 overflow-y-auto pr-1" data-signals:unidadMode="'create'" data-signals:unidadID="''" data-signals:unidadSaving="false" data-signals:unidadSaved="false" data-on:submit__prevent="$unidadSaving=true; @post('/adminx/unidades?pagina='+$pagina+'&size='+$size+'&mode='+encodeURIComponent($unidadMode||'create')+'&id='+encodeURIComponent($unidadID||''))" data-effect="if($unidadSaving){const button=document.getElementById('unidad-submit');if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Guardando...';}}else{const button=document.getElementById('unidad-submit');if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent='Guardar unidad';}}if($unidadSaved){window.templ?.dialog?.close('unidad-dialog');$unidadSaved=false;}">
+			<div class="grid gap-4 sm:grid-cols-2">
+				@field.Field() { @field.Label(field.LabelProps{For: "unidad-nombre"}) { Nombre } @input.Input(input.Props{ID: "unidad-nombre", Placeholder: "Nombre de la unidad", Required: true, Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true}}) }
+				@field.Field() { @field.Label(field.LabelProps{For: "unidad-orden"}) { Orden } <input id="unidad-orden" type="number" min="0" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:orden /> }
+			</div>
+			@field.Field() { @field.Label(field.LabelProps{For: "unidad-descripcion"}) { Descripción } <textarea id="unidad-descripcion" maxlength="255" class="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Descripción de la unidad" data-bind:descripcion></textarea> }
+			<details class="group rounded-lg border border-border/60 bg-muted/10"><summary class="cursor-pointer list-none px-3 py-2.5 text-sm font-medium [&::-webkit-details-marker]:hidden"><span class="mr-2 inline-block transition-transform group-open:rotate-90">›</span>Ubicación</summary><div class="grid gap-4 border-t border-border/60 p-3 sm:grid-cols-2"><p class="text-xs text-muted-foreground sm:col-span-2">Puedes indicar las coordenadas geográficas de la unidad. Este bloque es opcional.</p><div class="space-y-2"><label for="unidad-latitud" class="text-sm font-medium">Latitud</label><input id="unidad-latitud" type="number" step="any" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" placeholder="Ej. -17.7833" data-bind:latitud /></div><div class="space-y-2"><label for="unidad-longitud" class="text-sm font-medium">Longitud</label><input id="unidad-longitud" type="number" step="any" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" placeholder="Ej. -63.1821" data-bind:longitud /></div></div></details>
+			<div id="unidad-form-error"></div>
+			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "unidad-submit"}) { Guardar unidad } }
+		</form>
+	}
+}

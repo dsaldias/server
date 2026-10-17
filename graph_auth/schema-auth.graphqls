@@ -406,6 +406,7 @@ input NewTicketRespuesta {
 input QueryUnidades {
   pagina: Int!
   size: Int!
+  nombre: String
 }
 
 input QueryRoles {

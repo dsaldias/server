@@ -1,0 +1,12 @@
+package unidades
+
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/xutility"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ UnidadView(unidad *model.Unidad) {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-2xl"}) {
+		@dialog.Header() { @dialog.Title() { Visualizar unidad } @dialog.Description() { Consulta la información registrada de la unidad. } }
+		<div class="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto pr-1"><div class="grid gap-4 sm:grid-cols-2">@xutility.ReadField("Nombre", unidad.Nombre) @xutility.ReadField("Orden", unidadStatus(unidad.Orden)) @xutility.ReadField("Descripción", unidadText(unidad.Descripcion)) @xutility.ReadField("Fecha de registro", unidadDate(unidad.FechaRegistro)) @xutility.ReadField("Latitud", unidadFloat(unidad.Latitud)) @xutility.ReadField("Longitud", unidadFloat(unidad.Longitud))</div></div>
+	}
+}

@@ -10,6 +10,6 @@ import (
 const ADMIN_UNIDADES = "/adminx/unidades"
 
 func Rutas(db *sql.DB) []*utilidad.Handlers2 {
-	controller := Controller{}
+	controller := Controller{DB: db}
 	return []*utilidad.Handlers2{{Path: ADMIN_UNIDADES, H: http.HandlerFunc(controller.UnidadesRender)}}
 }

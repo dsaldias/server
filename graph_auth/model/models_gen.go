@@ -221,8 +221,9 @@ type QueryTickets struct {
 }
 
 type QueryUnidades struct {
-	Pagina int32 `json:"pagina"`
-	Size   int32 `json:"size"`
+	Pagina int32   `json:"pagina"`
+	Size   int32   `json:"size"`
+	Nombre *string `json:"nombre,omitempty"`
 }
 
 type QueryUsuarios struct {
