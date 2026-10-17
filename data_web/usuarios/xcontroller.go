@@ -1,10 +1,12 @@
 package usuarios
 
 import (
+	"database/sql"
 	"net/http"
 )
 
 type Controller struct {
+	DB *sql.DB
 }
 
 func (c *Controller) UsuariosRender(w http.ResponseWriter, r *http.Request) {

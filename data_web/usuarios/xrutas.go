@@ -12,7 +12,7 @@ var (
 )
 
 func Rutas(db *sql.DB) []*utilidad.Handlers2 {
-	controller := Controller{}
+	controller := Controller{DB: db}
 	rutas := []*utilidad.Handlers2{}
 
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_USUARIOS, H: http.HandlerFunc(controller.UsuariosRender)})
