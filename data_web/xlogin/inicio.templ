@@ -27,7 +27,7 @@ templ InicioRender(data InicioData) {
 					@icon.Moon(icon.Props{Class: "hidden size-4 dark:block"})
 					<span class="sr-only">Cambiar tema</span>
 				}
-				<div class="hidden w-64 sm:block" data-signals:context="" data-context-selector>
+				<div class="hidden w-64 sm:block" data-signals:context={ inicioContextSignal(data.UnidadID, data.RolID) } data-context-selector>
 					<div data-on:combobox-change="const selector = evt.currentTarget; selector.setAttribute('aria-busy','true'); selector.querySelectorAll('input,button').forEach(element => element.disabled = true); $context = evt.detail.values[0]; @post('/adminx/context')">
 					@combobox.Combobox(combobox.Props{ID: "unit-role-selector", DefaultValue: data.UnidadID + "|" + data.RolID, Items: inicioRoleItems(data.Me)}) {
 						@combobox.Input(combobox.InputProps{Placeholder: "Seleccionar unidad / rol"})
@@ -124,7 +124,7 @@ templ InicioContextError(message string) {
 }
 
 templ reloginForm() {
-	<form method="post" class="mt-6 space-y-4" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login?mode=relogin')" }>
+	<form method="post" class="mt-6 space-y-4" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))" }>
 		<div class="space-y-2"><label for="relogin-username" class="text-sm font-medium">Usuario</label><input id="relogin-username" name="username" data-bind:username type="text" autocomplete="username" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"/></div>
 		<div class="space-y-2"><label for="relogin-password" class="text-sm font-medium">Contraseña</label><input id="relogin-password" name="password" data-bind:password type="password" autocomplete="current-password" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"/></div>
 		<div id="relogin-result"></div>

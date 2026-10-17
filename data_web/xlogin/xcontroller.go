@@ -36,6 +36,12 @@ type contextInput struct {
 	Context string `json:"context"`
 }
 
+type loginSubmitInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Context  string `json:"context"`
+}
+
 func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
 	if c.authenticated(r) {
 		http.Redirect(w, r, ADMIN_INICIO, http.StatusSeeOther)
@@ -47,14 +53,15 @@ func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
-	var input model.NewLogin2
-	if err := datastar.ReadSignals(r, &input); err != nil {
+	var signals loginSubmitInput
+	if err := datastar.ReadSignals(r, &signals); err != nil {
 		_ = r.ParseForm()
-		input.Username = r.FormValue("username")
-		input.Password = r.FormValue("password")
+		signals.Username = r.FormValue("username")
+		signals.Password = r.FormValue("password")
+		signals.Context = r.FormValue("context")
 	}
 
-	result, err := xrepo.LoginV2(r.Context(), c.DB, input)
+	result, err := xrepo.LoginV2(r.Context(), c.DB, model.NewLogin2{Username: signals.Username, Password: signals.Password})
 	sse := datastar.NewSSE(w, r)
 	if err != nil || result == nil {
 		message := "No fue posible iniciar sesión."
@@ -77,7 +84,24 @@ func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Query().Get("mode") == "relogin" {
-		_ = sse.ExecuteScript("document.getElementById('relogin-dialog')?.remove()")
+		returnPath := r.URL.Query().Get("return_path")
+		if !strings.HasPrefix(returnPath, "/adminx/") {
+			returnPath = ADMIN_INICIO
+		}
+		contextValue := signals.Context
+		if contextValue == "" {
+			contextValue = r.URL.Query().Get("context")
+		}
+		if target, parseErr := url.Parse(returnPath); parseErr == nil {
+			query := target.Query()
+			if contextValue != "" {
+				query.Set("context", contextValue)
+			}
+			target.RawQuery = query.Encode()
+			_ = sse.Redirect(target.String())
+			return
+		}
+		_ = sse.Redirect(ADMIN_INICIO)
 		return
 	}
 
@@ -210,14 +234,56 @@ func (c *Controller) inicioData(r *http.Request) InicioData {
 		ActivePath:    inicioActivePath(r),
 	}
 	data.Me, _ = xrepo.Me(r.Context(), c.DB, model.InputMe{UnidadID: auth.UnidadID})
+	requestedContext := r.URL.Query().Get("context")
+	if requestedContext != "" {
+		parts := strings.SplitN(requestedContext, "|", 2)
+		if len(parts) == 2 && parts[0] != "" && parts[1] != "" {
+			requestedMe, requestedErr := xrepo.Me(r.Context(), c.DB, model.InputMe{UnidadID: parts[0]})
+			if requestedErr == nil && inicioHasRole(requestedMe, parts[0], parts[1]) {
+				data.Me = requestedMe
+				data.UnidadID = parts[0]
+				data.RolID = parts[1]
+			}
+		}
+	}
+
+	if data.Me != nil && !inicioHasRole(data.Me, data.UnidadID, data.RolID) {
+		if firstUnit, firstRole, ok := inicioFirstRole(data.Me); ok {
+			data.UnidadID = firstUnit
+			data.RolID = firstRole
+		}
+	}
+	if requestedContext != "" || data.UnidadID != auth.UnidadID || data.RolID != auth.RolID {
+		if cookie, cookieErr := utilidad.CtxGetCookie(r); cookieErr == nil {
+			cookie.UnidadID = data.UnidadID
+			cookie.RolID = data.RolID
+			utilidad.CtxSetCookie(r.Context(), *cookie)
+		}
+	}
 	if data.Me != nil {
 		// La cookie define el rol activo. Reemplazamos los menús generales
 		// devueltos por Me por los que pertenecen a ese rol concreto.
-		if menus, menuErr := xrepo.GetMenusbyRol(r.Context(), c.DB, auth.RolID); menuErr == nil {
+		if menus, menuErr := xrepo.GetMenusbyRol(r.Context(), c.DB, data.RolID); menuErr == nil {
 			data.Me.Menus = menus
 		}
 	}
 	return data
+}
+
+func inicioFirstRole(me *model.ResponseMe) (string, string, bool) {
+	if me == nil {
+		return "", "", false
+	}
+	for _, role := range me.Roles {
+		if role != nil && role.Unidad != nil && role.Rol != nil {
+			return role.Unidad.ID, role.Rol.ID, true
+		}
+	}
+	return "", "", false
+}
+
+func inicioContextSignal(unidadID, rolID string) string {
+	return strconv.Quote(unidadID + "|" + rolID)
 }
 
 func (c *Controller) authenticated(r *http.Request) bool {
