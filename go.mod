@@ -6,6 +6,7 @@ go 1.27.0
 require (
 	github.com/99designs/gqlgen v0.17.95
 	github.com/HugoSmits86/nativewebp v1.3.0
+	github.com/a-h/templ v0.3.1070
 	github.com/coder/websocket v1.8.15
 	github.com/go-chi/chi/v5 v5.5.0
 	github.com/go-sql-driver/mysql v1.10.1
@@ -22,7 +23,6 @@ require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/Oudwins/tailwind-merge-go v0.2.2 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
-	github.com/a-h/templ v0.3.1070 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/andybalholm/brotli v1.2.6 // indirect
 	github.com/axadrn/shadcn-templ/v2 v2.0.0-beta.15 // indirect
