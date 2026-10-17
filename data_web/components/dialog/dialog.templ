@@ -49,6 +49,7 @@ type ContentProps struct {
 	Class           string
 	Attributes      templ.Attributes
 	HideCloseButton bool
+	HideMaximizeButton bool
 	// Modal is Base UI's modal: focus trap, scroll lock and inert outside.
 	// nil means true.
 	Modal *bool
@@ -215,20 +216,39 @@ templ Content(props ...ContentProps) {
 			{ p.Attributes... }
 		>
 			{ children... }
-			if !p.HideCloseButton {
-				@button.Button(button.Props{
-					Variant: button.VariantGhost,
-					Size:    button.SizeIconSm,
-					Class:   "absolute top-2 right-2",
-					Attributes: templ.Attributes{
-						"data-slot":             "dialog-close",
-						"data-templ-dialog-close": "",
-					},
-				}) {
-					@icon.X()
-					<span class="sr-only">Close</span>
+			<div class="absolute top-2 right-2 flex items-center gap-1">
+				if !p.HideMaximizeButton {
+					@button.Button(button.Props{
+						Variant: button.VariantGhost,
+						Size:    button.SizeIconSm,
+						Class:   "",
+						Attributes: templ.Attributes{
+							"data-slot":                 "dialog-maximize",
+							"data-templ-dialog-maximize": "",
+							"aria-label":                "Maximizar diálogo",
+							"title":                     "Maximizar diálogo",
+						},
+					}) {
+						<span data-dialog-maximize-icon>@icon.Maximize2()</span>
+						<span class="hidden" data-dialog-restore-icon>@icon.Minimize2()</span>
+						<span class="sr-only">Maximizar diálogo</span>
+					}
 				}
-			}
+				if !p.HideCloseButton {
+					@button.Button(button.Props{
+						Variant: button.VariantGhost,
+						Size:    button.SizeIconSm,
+						Class:   "",
+						Attributes: templ.Attributes{
+							"data-slot":             "dialog-close",
+							"data-templ-dialog-close": "",
+						},
+					}) {
+						@icon.X()
+						<span class="sr-only">Close</span>
+					}
+				}
+			</div>
 		</div>
 	}
 }

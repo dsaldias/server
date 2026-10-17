@@ -383,6 +383,19 @@
 
   document.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
+    const maximizeButton = event.target.closest("[data-templ-dialog-maximize]");
+    if (maximizeButton) {
+      const popup = dialogFor(maximizeButton);
+      if (!popup) return;
+      const maximized = popup.dataset.dialogMaximized === "true";
+      popup.dataset.dialogMaximized = maximized ? "false" : "true";
+      popup.classList.toggle("dialog-maximized", !maximized);
+      maximizeButton.querySelector("[data-dialog-maximize-icon]")?.classList.toggle("hidden", !maximized);
+      maximizeButton.querySelector("[data-dialog-restore-icon]")?.classList.toggle("hidden", maximized);
+      maximizeButton.setAttribute("aria-label", maximized ? "Maximizar diálogo" : "Restablecer diálogo");
+      maximizeButton.setAttribute("title", maximized ? "Maximizar diálogo" : "Restablecer diálogo");
+      return;
+    }
     const closeButton = event.target.closest("[data-templ-dialog-close]");
     if (closeButton) {
       requestOpenChange(dialogFor(closeButton), false);

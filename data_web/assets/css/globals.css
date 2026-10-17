@@ -11,6 +11,8 @@
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
 	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
 	--color-secondary: var(--secondary);
@@ -36,6 +38,8 @@
 	--foreground: #0f172a;
 	--card: #ffffff;
 	--card-foreground: #0f172a;
+	--popover: #ffffff;
+	--popover-foreground: #0f172a;
 	--primary: #081027;
 	--primary-foreground: #ffffff;
 	--secondary: #eef2f5;
@@ -60,6 +64,8 @@
 	--foreground: #eef4ff;
 	--card: #081027;
 	--card-foreground: #eef4ff;
+	--popover: #101a30;
+	--popover-foreground: #eef4ff;
 	--primary: #4f8cff;
 	--primary-foreground: #ffffff;
 	--secondary: #111c35;
@@ -85,6 +91,25 @@
 	min-width: 0 !important;
 	overflow: hidden !important;
 	border-right-width: 0 !important;
+}
+
+[data-slot="dialog-content"].dialog-maximized {
+	position: fixed !important;
+	inset: 1rem !important;
+	top: 1rem !important;
+	right: 1rem !important;
+	bottom: 1rem !important;
+	left: 1rem !important;
+	width: auto !important;
+	height: calc(100vh - 2rem) !important;
+	max-width: none !important;
+	max-height: none !important;
+	translate: none !important;
+	transform: none !important;
+	scale: 1 !important;
+	rotate: none !important;
+	margin: 0 !important;
+	overflow-y: auto !important;
 }
 
 @media (max-width: 767px) {

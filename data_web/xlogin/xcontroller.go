@@ -131,7 +131,7 @@ func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, module http.Handler) {
-	if r.Header.Get("X-Requested-With") == "fetch" {
+	if r.Header.Get("X-Requested-With") == "fetch" || r.Header.Get("Datastar-Request") == "true" {
 		module.ServeHTTP(w, r)
 		return
 	}

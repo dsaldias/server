@@ -1,5 +1,111 @@
-package usuarios 
+package usuarios
 
-templ RenderUsuarios(){
-  soy usuarios
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/card"
+import "github.com/dsaldias/server/data_web/components/combobox"
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/components/icon"
+
+templ RenderUsuarios(data UsuariosPageData) {
+	@dialog.Dialog(dialog.Props{ID: "usuario-dialog"}) {
+		<div id="usuarios-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ usuarioSignalInt(data.Pagina) } data-signals:size={ usuarioSignalInt(data.Size) } data-signals:rol={ usuarioSignalString(data.Rol) }>
+			<div class="grid gap-4 rounded-xl border border-border/60 bg-card p-5 shadow-sm md:grid-cols-[1fr_auto] md:items-center">
+				<div>
+					<h1 class="text-2xl font-semibold tracking-tight">Usuarios</h1>
+					<p class="mt-1 text-sm text-muted-foreground">Administra los usuarios registrados en el sistema.</p>
+				</div>
+				<div class="flex flex-wrap gap-2 md:justify-end">
+					@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina = 1; @get('/adminx/usuarios')"}}) {
+						@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
+					}
+					@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": usuarioCreateResetScript()}}) {
+						@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
+					}
+				</div>
+			</div>
+
+			<div class="flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm sm:flex-row sm:items-end sm:justify-between">
+				<div class="w-full sm:max-w-sm" data-on:combobox-change="$rol = evt.detail.values[0]; $pagina = 1; @get('/adminx/usuarios')">
+					<label class="mb-2 block text-sm font-medium">Filtrar por rol</label>
+					@combobox.Combobox(combobox.Props{ID: "usuarios-role-filter", DefaultValue: data.Rol, Items: usuariosRoleItems(data.Roles)}) {
+						@combobox.Input(combobox.InputProps{Placeholder: "Todos los roles", ShowClear: true})
+						@combobox.Content(combobox.ContentProps{Class: "!bg-popover !text-popover-foreground !border !border-border !ring-0 shadow-lg"}) {
+							@combobox.Empty() { No hay roles disponibles. }
+							@combobox.List() {
+								for _, role := range data.Roles {
+									@combobox.Item(combobox.ItemProps{Value: role.ID, Label: role.Nombre}) { { role.Nombre } }
+								}
+							}
+						}
+					}
+				</div>
+				<div class="flex items-center gap-2">
+					<label for="usuarios-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label>
+					<select id="usuarios-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina = 1; @get('/adminx/usuarios')">
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="50">50</option>
+					</select>
+					<span class="text-sm text-muted-foreground">registros</span>
+				</div>
+			</div>
+
+			@UsuariosTableRegion(data)
+		</div>
+
+		@Formulario(data.Roles, data.Unidades)
+	}
+}
+
+templ UsuariosTableRegion(data UsuariosPageData) {
+	<div id="usuarios-table-region" class="space-y-4">
+		if data.Error != "" {
+			<div class="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">{ data.Error }</div>
+		} else if data.Listado != nil {
+			@card.Card(card.Props{Class: "overflow-hidden ring-border/60", Size: card.SizeSm}) {
+				<div class="overflow-x-auto">
+					<table class="w-full text-sm">
+						<thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+							<tr><th class="px-3 py-2 font-medium">Usuario</th><th class="px-3 py-2 font-medium">Username</th><th class="px-3 py-2 font-medium">Correo</th><th class="px-3 py-2 font-medium">Documento</th><th class="px-3 py-2 font-medium">Estado</th><th class="px-3 py-2 font-medium">Último acceso</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr>
+						</thead>
+						<tbody class="divide-y divide-border/60">
+							for _, user := range data.Listado.Datos {
+								<tr class="transition-colors hover:bg-muted/40">
+									<td class="whitespace-nowrap px-3 py-2 font-medium">{ user.Nombres + " " + user.Apellido1 }</td>
+									<td class="px-3 py-2 text-muted-foreground">{ user.Username }</td>
+									<td class="px-3 py-2 text-muted-foreground">{ optionalString(user.Correo) }</td>
+									<td class="px-3 py-2 text-muted-foreground">{ optionalString(user.Documento) }</td>
+									<td class="px-3 py-2"><span class={ usuarioStatusClass(user.Estado) }>{ usuarioStatusLabel(user.Estado) }</span></td>
+									<td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ usuarioLastLogin(user.LastLogin) }</td>
+									<td class="px-3 py-2"><div class="flex justify-end gap-1">
+										@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: dialog.TriggerFor("usuario-view-" + user.ID)}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar usuario</span> }
+										if detalle, ok := data.Detalles[user.ID]; ok {
+											@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: usuarioEditAttributes("usuario-dialog", detalle)}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
+										} else {
+											@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: dialog.TriggerFor("usuario-dialog")}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
+										}
+									</div></td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+				<div class="flex flex-col gap-3 border-t border-border/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+					<span class="text-muted-foreground">{ usuarioPaginationSummary(data.Listado) }</span>
+					<div class="flex items-center gap-1">
+						@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: !usuarioCanPrevious(data.Listado), Attributes: templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina - 1)}}) { Anterior }
+						<span class="px-2 text-muted-foreground">{ usuarioPageLabel(data.Listado) }</span>
+						@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Type: button.TypeButton, Disabled: !usuarioCanNext(data.Listado), Attributes: templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina + 1)}}) { Siguiente }
+					</div>
+				</div>
+			}
+			for _, user := range data.Listado.Datos {
+				if detalle, ok := data.Detalles[user.ID]; ok {
+					@dialog.Dialog(dialog.Props{ID: "usuario-view-" + user.ID}) {
+						@Visualizar(detalle)
+					}
+				}
+			}
+		}
+	</div>
 }
