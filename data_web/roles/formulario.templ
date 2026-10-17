@@ -1,0 +1,41 @@
+package roles
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/components/field"
+import "github.com/dsaldias/server/data_web/components/input"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ RoleForm(permisos []*model.Permiso, menus []*model.Menus) {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
+		@dialog.Header() {
+			@dialog.Title() { <span data-rol-title>Nuevo rol</span> }
+			@dialog.Description() { Define la información, permisos y menús asignados al rol. }
+		}
+		<form id="rol-form" class="max-h-[calc(100vh-10rem)] space-y-5 overflow-y-auto pr-1" data-signals:rolMode="'create'" data-signals:rolID="''" data-signals:rolSaving="false" data-signals:rolSaved="false" data-signals:permisos="[]" data-signals:menus="[]" data-effect="if ($rolSaving) { const button=document.getElementById('rol-submit'); if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Guardando...';} } else { const button=document.getElementById('rol-submit'); if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent='Guardar rol';} } if($rolSaved){window.templ?.dialog?.close('rol-dialog');$rolSaved=false;}" data-on:submit__prevent="$rolSaving=true; @post('/adminx/roles?pagina='+$pagina+'&size='+$size+'&mode='+encodeURIComponent($rolMode||'create')+'&id='+encodeURIComponent($rolID||''))">
+			<div class="grid gap-4 sm:grid-cols-2">
+				@field.Field() { @field.Label(field.LabelProps{For: "rol-nombre"}) { Nombre } @input.Input(input.Props{ID: "rol-nombre", Placeholder: "Nombre del rol", Required: true, Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true}}) }
+				@field.Field() { @field.Label(field.LabelProps{For: "rol-jerarquia"}) { Jerarquía } <input id="rol-jerarquia" type="number" min="0" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:jerarquia /> }
+			</div>
+			@field.Field() { @field.Label(field.LabelProps{For: "rol-descripcion"}) { Descripción } <textarea id="rol-descripcion" maxlength="100" class="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Descripción del rol" data-bind:descripcion></textarea> }
+			<div class="grid gap-4 sm:grid-cols-2">
+				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Permisos</p><p class="text-xs text-muted-foreground">Selecciona los permisos disponibles para este rol.</p></div><select id="rol-permisos" multiple size="8" class="min-h-40 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:permisos>
+					for _, permission := range permisos {
+						if permission != nil {
+							<option value={ permission.Metodo }>{ permission.Nombre }</option>
+						}
+					}
+				</select></div>
+				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Menús</p><p class="text-xs text-muted-foreground">Selecciona los menús disponibles para este rol.</p></div><select id="rol-menus" multiple size="8" class="min-h-40 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:menus>
+					for _, menu := range menus {
+						if menu != nil {
+							<option value={ menu.ID }>{ menu.Label }</option>
+						}
+					}
+				</select></div>
+			</div>
+			<div id="rol-form-error"></div>
+			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "rol-submit"}) { Guardar rol } }
+		</form>
+	}
+}

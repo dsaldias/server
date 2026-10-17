@@ -1,0 +1,45 @@
+package roles
+
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/xutility"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ RoleView(role *model.Rol) {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
+		@dialog.Header() { @dialog.Title() { Visualizar rol } @dialog.Description() { Consulta la información y asignaciones del rol. } }
+		<div class="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto pr-1">
+			<div class="grid gap-4 sm:grid-cols-2">
+				@xutility.ReadField("Nombre", role.Nombre)
+				@xutility.ReadField("Jerarquía", roleStatus(role.Jerarquia))
+				@xutility.ReadField("Descripción", roleText(role.Descripcion))
+				@xutility.ReadField("Fecha de registro", roleDate(role.FechaRegistro))
+			</div>
+			@xutility.ReadSection("Permisos") {
+				if len(role.Permisos) == 0 {
+					@xutility.EmptyState("Sin permisos asignados.")
+				} else {
+					<div class="grid gap-2 sm:grid-cols-2">
+						for _, permission := range role.Permisos {
+							if permission != nil {
+								@xutility.ReadField(permission.Nombre, permission.Metodo)
+							}
+						}
+					</div>
+				}
+			}
+			@xutility.ReadSection("Menús") {
+				if len(role.Menus) == 0 {
+					@xutility.EmptyState("Sin menús asignados.")
+				} else {
+					<div class="grid gap-2 sm:grid-cols-2">
+						for _, menu := range role.Menus {
+							if menu != nil {
+								@xutility.ReadField(menu.Label, menu.Path)
+							}
+						}
+					</div>
+				}
+			}
+		</div>
+	}
+}
