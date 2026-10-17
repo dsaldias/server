@@ -369,7 +369,7 @@ func parchearResolver(path, contentresolver string) {
 func generarSQLApp(module string) {
 	parts := strings.Split(module, "/")
 	shortName := parts[len(parts)-1]
-	sqlDir := filepath.Join("res", "sqls")
+	sqlDir := filepath.Join("assets", "sqls")
 	dest := filepath.Join(sqlDir, "database-"+shortName+".sql")
 	dest2 := "Taskfile.yml"
 

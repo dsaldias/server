@@ -19,7 +19,7 @@ archivos.SubirImagen(img64, prefix, idbol string) (string, error)
 // img64:  data URL base64 (ej: "data:image/jpeg;base64,...")
 // prefix: prefijo del nombre de archivo (ej: "producto", "perfil")
 // idbol:  identificador único (ej: ID del registro)
-// retorna: path como "res/producto-42.webp"
+// retorna: path como "assets/producto-42.webp"
 
 // Descarga imagen: lee del disco, retorna base64 data URI
 archivos.GetImagen(url string) (string, error)
@@ -31,7 +31,7 @@ Restricciones:
 - Máximo 2MB por archivo
 - MIME types aceptados: jpeg, png, bmp, webp
 - Salida siempre WebP (conversión automática)
-- Archivos guardados en directorio `res/` en la raíz del proyecto
+- Archivos guardados en directorio `assets/` en la raíz del proyecto
 
 ## Patrón: upload al crear
 

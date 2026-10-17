@@ -247,7 +247,7 @@ func (r *mutationResolver) Delete<Entity>(ctx context.Context, id string) (bool,
 
 ## Step 6 — Migración SQL
 
-Agregar la tabla al archivo `res/sqls/database-<modulo>.sql` del proyecto (hay un único archivo SQL por proyecto). Para determinar el nombre exacto del archivo, leer `go.mod` y tomar el último segmento del módulo.
+Agregar la tabla al archivo `assets/sqls/database-<modulo>.sql` del proyecto (hay un único archivo SQL por proyecto). Para determinar el nombre exacto del archivo, leer `go.mod` y tomar el último segmento del módulo.
 
 Convenciones:
 - Nombre de tabla: prefijo `app_` + nombre en español en plural (ej: `app_productos`)

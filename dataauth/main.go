@@ -92,10 +92,10 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 		}
 	}
 
-	// Los archivos SQL viven dentro de res/ para acompañar al proyecto generado,
+	// Los archivos SQL viven dentro de assets/ para acompañar al proyecto generado,
 	// pero no deben publicarse junto con las imágenes y demás recursos.
-	router.Handle("/res/sqls/*", http.NotFoundHandler())
-	router.Handle("/res/*", http.StripPrefix("/res/", http.FileServer(http.Dir("res"))))
+	router.Handle("/assets/sqls/*", http.NotFoundHandler())
+	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	// rest to graphql
 	if schema != nil {
 		router.Post("/rest/mutation/{operationName}", utilidad.RestToGraphQlHandler(*schema))

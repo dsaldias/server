@@ -45,7 +45,7 @@ func SubirImagen(img64, prefix, idbol string) (string, error) {
 		return "", errors.New("la imagen no debe exceder 2 MB")
 	}
 
-	dir := "res"
+	dir := "assets"
 	fileName := prefix + "-" + idbol + ".webp"
 	filePath := filepath.Join(dir, fileName)
 
