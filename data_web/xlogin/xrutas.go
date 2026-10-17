@@ -13,12 +13,13 @@ import (
 )
 
 var (
-	ADMIN_HOME       = "/adminx/"
-	ADMIN_LOGIN      = "/adminx/login"
-	ADMIN_LOGOUT     = "/adminx/logout"
-	ADMIN_INICIO     = "/adminx/inicio"
-	ADMIN_CONTEXT    = "/adminx/context"
-	ADMIN_CONECTADOS = "/adminx/conectados"
+	ADMIN_HOME           = "/adminx/"
+	ADMIN_LOGIN          = "/adminx/login"
+	ADMIN_LOGOUT         = "/adminx/logout"
+	ADMIN_INICIO         = "/adminx/inicio"
+	ADMIN_CONTEXT        = "/adminx/context"
+	ADMIN_CONECTADOS     = "/adminx/conectados"
+	ADMIN_AVISOS_ACTIVOS = "/adminx/avisos/activos"
 )
 
 func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
@@ -37,6 +38,7 @@ func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_INICIO, H: http.HandlerFunc(controller.InicioRender)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CONTEXT, H: http.HandlerFunc(controller.ContextSubmit)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CONECTADOS, H: http.HandlerFunc(controller.ConnectedUsers)})
+	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_AVISOS_ACTIVOS, H: http.HandlerFunc(controller.ActiveAlerts)})
 
 	moduleRoutes := append(rutas_usuarios, rutas_roles...)
 	moduleRoutes = append(moduleRoutes, rutas_unidades...)

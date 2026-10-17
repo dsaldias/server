@@ -1,0 +1,33 @@
+package xutility
+
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ ActiveAlertsDialog() {
+	@dialog.Dialog(dialog.Props{ID: "active-alerts-dialog"}) {
+		@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-xl"}) {
+			@dialog.Header() {
+				@dialog.Title() { Avisos activos }
+				@dialog.Description() { Estos avisos requieren tu atención. }
+			}
+			@ActiveAlertsContent(nil)
+		}
+	}
+}
+
+templ ActiveAlertsContent(alerts []*model.Notificacion) {
+	<div id="active-alerts-content" data-alert-count={ activeAlertCount(alerts) } class="max-h-[calc(100vh-14rem)] space-y-3 overflow-y-auto pr-1">
+		if len(alerts) == 0 {
+			<div class="rounded-lg border border-border/60 bg-muted/10 p-5 text-center text-sm text-muted-foreground">No hay avisos activos.</div>
+		} else {
+			for _, alert := range alerts {
+				if alert != nil {
+					<article data-active-alert-id={ alert.ID } class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 dark:border-amber-400/30 dark:bg-amber-400/10">
+						<p class="whitespace-pre-wrap text-sm font-medium">{ alert.Mensaje }</p>
+						<p class="mt-3 text-xs text-muted-foreground">Válido hasta { activeAlertDate(alert.Hasta) }</p>
+					</article>
+				}
+			}
+		}
+	</div>
+}

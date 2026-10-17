@@ -39,6 +39,8 @@ templ MainLayout(
 		</head>
 		<body class={ config.WithDefaults().BodyClass }>
 			@xutility.NotificationHost()
+			@xutility.VersionUpdateHost()
+			@xutility.ActiveAlertsDialog()
 			{ children... } 
 		</body>
 	</html>

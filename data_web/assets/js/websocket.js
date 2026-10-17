@@ -35,6 +35,24 @@
     });
   };
 
+  const showVersionUpdate = (serverVersion) => {
+    const currentVersion = document.querySelector("meta#x-asset-version")?.dataset.value;
+    if (!currentVersion || !serverVersion || currentVersion === serverVersion) return;
+    if (window.__authV2VersionUpdateShown) return;
+
+    const host = document.getElementById("version-update-host");
+    if (!host) return;
+    window.__authV2VersionUpdateShown = true;
+
+    const update = document.createElement("button");
+    update.type = "button";
+    update.className = "pointer-events-auto w-full max-w-lg cursor-pointer rounded-xl border border-primary/30 bg-card px-4 py-3 text-left text-sm font-medium text-card-foreground shadow-xl ring-1 ring-black/5 transition hover:bg-muted dark:ring-white/10";
+    update.setAttribute("aria-label", "Actualizar la aplicación");
+    update.textContent = "Hay una nueva versión disponible. Haz clic aquí para actualizar.";
+    update.addEventListener("click", () => window.location.reload());
+    host.replaceChildren(update);
+  };
+
   const showNotification = (message) => {
     const title = String(message || "Nueva notificación").trim();
     const host = document.getElementById("notification-host");
@@ -42,7 +60,9 @@
 
     const toast = document.createElement("div");
     toast.setAttribute("role", "status");
-    toast.className = "pointer-events-auto flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4 text-card-foreground shadow-lg ring-1 ring-black/5 dark:ring-white/10";
+    toast.className = "pointer-events-auto flex items-start gap-3 rounded-xl border border-transparent p-4 text-sm font-medium shadow-xl";
+    toast.style.backgroundColor = "#65c28c";
+    toast.style.color = "#081027";
 
     const content = document.createElement("p");
     content.className = "min-w-0 flex-1 text-sm font-medium leading-5";
@@ -50,7 +70,8 @@
 
     const close = document.createElement("button");
     close.type = "button";
-    close.className = "shrink-0 rounded-md px-1 text-lg leading-none text-muted-foreground hover:bg-muted hover:text-foreground";
+    close.className = "shrink-0 rounded-md px-1 text-lg leading-none opacity-75 hover:opacity-100";
+    close.style.color = "#081027";
     close.setAttribute("aria-label", "Cerrar notificación");
     close.textContent = "×";
     close.addEventListener("click", () => toast.remove());
@@ -65,6 +86,52 @@
     window.setTimeout(() => toast.remove(), 5000);
   };
 
+  const shownAlertIDs = new Set();
+  let activeAlertsRequest = null;
+
+  const waitForDOM = () => {
+    if (document.readyState !== "loading") return Promise.resolve();
+    return new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true }));
+  };
+
+  const refreshActiveAlerts = async () => {
+    const path = window.location.pathname;
+    if (path === "/adminx" || path === "/adminx/" || path === "/adminx/login") return;
+    if (activeAlertsRequest) return activeAlertsRequest;
+
+    activeAlertsRequest = (async () => {
+      await waitForDOM();
+      const response = await fetch("/adminx/avisos/activos", {
+        headers: { Accept: "text/html", "X-Requested-With": "fetch" },
+        credentials: "same-origin",
+      });
+      if (!response.ok) return;
+
+      const html = await response.text();
+      const template = document.createElement("template");
+      template.innerHTML = html.trim();
+      const content = template.content.firstElementChild;
+      if (!content) return;
+
+      const ids = Array.from(content.querySelectorAll("[data-active-alert-id]")).map((element) => element.getAttribute("data-active-alert-id"));
+      const newIDs = ids.filter((id) => id && !shownAlertIDs.has(id));
+      ids.forEach((id) => id && shownAlertIDs.add(id));
+
+      const current = document.getElementById("active-alerts-content");
+      if (current) current.replaceWith(content);
+
+      if (newIDs.length > 0 && window.templ?.dialog?.open) {
+        window.templ.dialog.open("active-alerts-dialog");
+      }
+    })()
+      .catch((error) => console.error("[WS] No se pudieron cargar los avisos activos:", error))
+      .finally(() => {
+        activeAlertsRequest = null;
+      });
+
+    return activeAlertsRequest;
+  };
+
   const processMessage = (payload) => {
     const notification = payload?.data?.notificaciones_subs;
     if (!notification) return;
@@ -76,7 +143,10 @@
         const data = JSON.parse(notification.data_json);
         if (data.tipo === "conectados") {
           setCounters(data.datos?.conectados ?? 0, data.datos?.total_conectados ?? 0);
-        } else if (data.tipo === "alerta" || !data.tipo) {
+          showVersionUpdate(data.datos?.assets_version);
+        } else if (data.tipo === "alerta") {
+          refreshActiveAlerts();
+        } else if (!data.tipo) {
           showNotification(notification.title);
         }
       } catch (error) {
@@ -105,7 +175,10 @@
     },
     on: {
       connecting: () => setStatus("connecting"),
-      opened: () => setStatus("connected"),
+      opened: () => {
+        setStatus("connected");
+        refreshActiveAlerts();
+      },
       closed: () => setStatus("error"),
       error: () => setStatus("error"),
     },

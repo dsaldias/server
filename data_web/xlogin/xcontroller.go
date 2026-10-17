@@ -153,6 +153,27 @@ func (c *Controller) ConnectedUsers(w http.ResponseWriter, r *http.Request) {
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#connected-users-content"), datastar.WithModeOuter())
 }
 
+func (c *Controller) ActiveAlerts(w http.ResponseWriter, r *http.Request) {
+	if !c.authenticated(r) {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+
+	alerts, err := xrepo.Notificaciones(r.Context(), c.DB)
+	if err != nil {
+		http.Error(w, "No fue posible cargar los avisos activos", http.StatusInternalServerError)
+		return
+	}
+
+	var body bytes.Buffer
+	if renderErr := xutility.ActiveAlertsContent(alerts).Render(r.Context(), &body); renderErr != nil {
+		http.Error(w, "No fue posible renderizar los avisos activos", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = w.Write(body.Bytes())
+}
+
 func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, module http.Handler) {
 	if r.Header.Get("X-Requested-With") == "fetch" || r.Header.Get("Datastar-Request") == "true" {
 		module.ServeHTTP(w, r)
