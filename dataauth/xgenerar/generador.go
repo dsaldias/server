@@ -369,15 +369,16 @@ func parchearResolver(path, contentresolver string) {
 func generarSQLApp(module string) {
 	parts := strings.Split(module, "/")
 	shortName := parts[len(parts)-1]
-	dest := filepath.Join("sqls", "database-"+shortName+".sql")
+	sqlDir := filepath.Join("res", "sqls")
+	dest := filepath.Join(sqlDir, "database-"+shortName+".sql")
 	dest2 := "Taskfile.yml"
 
-	if err := os.MkdirAll("sqls", 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "❌ error creando directorio sqls/: %v\n", err)
+	if err := os.MkdirAll(sqlDir, 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error creando directorio %s/: %v\n", sqlDir, err)
 		return
 	}
 
-	escribirArchivo(filepath.Join("sqls", "database.sql"), []byte(sqlRBAC))
+	escribirArchivo(filepath.Join(sqlDir, "database.sql"), []byte(sqlRBAC))
 	content := strings.ReplaceAll(sqlAppTemplate, "{{MODULE}}", module)
 	escribirArchivo(dest, []byte(content))
 
