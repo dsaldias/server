@@ -19,7 +19,7 @@ tasks:
   tailwind:
     desc: Watch Tailwind CSS changes
     cmds:
-      - "tailwindcss -i ./assets/css/globals.css -o ./assets/css/output.css --watch"
+      - "tailwindcss -i ./data_web/assets/css/globals.css -o ./data_web/assets/css/output.css --watch"
 
   scripts-watch:
     desc: Watch component scripts
@@ -29,7 +29,8 @@ tasks:
   build:
     desc: Build the application with production assets
     cmds:
-      - tailwindcss -i ./assets/css/globals.css -o ./assets/css/output.css --minify
+      - mkdir -p bin
+      - tailwindcss -i ./data_web/assets/css/globals.css -o ./data_web/assets/css/output.css --minify
       - go tool shadcn-templ bundle
       - go tool templ generate
       - go build -o bin/app .

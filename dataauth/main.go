@@ -95,6 +95,10 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 	// Los archivos SQL viven dentro de assets/ para acompañar al proyecto generado,
 	// pero no deben publicarse junto con las imágenes y demás recursos.
 	router.Handle("/assets/sqls/*", http.NotFoundHandler())
+	// La UI vive en data_web; sus recursos compilados conservan las URLs
+	// estándar de shadcn-templ bajo /assets/.
+	router.Handle("/assets/css/*", http.StripPrefix("/assets/css/", http.FileServer(http.Dir("data_web/assets/css"))))
+	router.Handle("/assets/js/*", http.StripPrefix("/assets/js/", http.FileServer(http.Dir("data_web/assets/js"))))
 	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	// rest to graphql
 	if schema != nil {
