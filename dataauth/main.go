@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -33,7 +34,29 @@ func Iniciar(srv *handler.Server, schema *graphql.ExecutableSchema, db *sql.DB, 
 		router = chi.NewRouter()
 	}
 
-	router.Use(middleware.Compress(5, "application/json", "application/graphql+json"))
+	// router.Use(middleware.Compress(5, "application/json", "application/graphql+json"))
+	compress := middleware.Compress(
+		5,
+		"application/json",
+		"application/graphql+json",
+	)
+
+	router.Use(func(next http.Handler) http.Handler {
+		compressed := compress(next)
+
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/adminx" ||
+				strings.HasPrefix(r.URL.Path, "/adminx/") ||
+				r.URL.Path == "/web" ||
+				strings.HasPrefix(r.URL.Path, "/web/") {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			compressed.ServeHTTP(w, r)
+		})
+	})
+
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   utilidad.GetAllowedOrigins(),
 		AllowedHeaders:   []string{"*"},

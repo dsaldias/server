@@ -1,3 +1,11 @@
-package xlogin 
+package xlogin
 
-templ InicioRender(){}
+templ InicioRender() {
+	<div id="page" class="min-h-screen bg-muted/30">
+		<header class="flex h-16 items-center border-b bg-card px-6"></header>
+		<div class="flex min-h-[calc(100vh-4rem)]">
+			<aside class="hidden w-64 border-r bg-card md:block"></aside>
+			<main class="flex-1"></main>
+		</div>
+	</div>
+}

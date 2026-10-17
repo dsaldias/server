@@ -14,12 +14,14 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/rs/cors v1.11.1
+	github.com/starfederation/datastar-go v1.2.2
 	github.com/vektah/gqlparser/v2 v2.5.63
 	github.com/vincent-petithory/dataurl v1.0.0
 )
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
+	github.com/CAFxX/httpcompression v0.0.9 // indirect
 	github.com/Oudwins/tailwind-merge-go v0.2.2 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
@@ -34,11 +36,13 @@ require (
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
 	github.com/urfave/cli/v3 v3.14.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/image v0.47.0 // indirect
 	golang.org/x/mod v0.42.0 // indirect
 	golang.org/x/net v0.61.0 // indirect

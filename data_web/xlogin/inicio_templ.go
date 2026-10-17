@@ -29,6 +29,10 @@ func InicioRender() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"page\" class=\"min-h-screen bg-muted/30\"><header class=\"flex h-16 items-center border-b bg-card px-6\"></header><div class=\"flex min-h-[calc(100vh-4rem)]\"><aside class=\"hidden w-64 border-r bg-card md:block\"></aside><main class=\"flex-1\"></main></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }

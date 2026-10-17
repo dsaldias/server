@@ -1,1 +1,80 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-header: var(--header);
+	--color-header-foreground: var(--header-foreground);
+}
+
+:root {
+	--radius: 0.65rem;
+	--background: #e3effb;
+	--foreground: #0f172a;
+	--card: #f8fafe;
+	--card-foreground: #0f172a;
+	--primary: #0f172a;
+	--primary-foreground: #ffffff;
+	--secondary: #f1f5f9;
+	--secondary-foreground: #0f172a;
+	--muted: #f5f7fa;
+	--muted-foreground: #64748b;
+	--accent: #00c8ff;
+	--accent-foreground: #0f172a;
+	--destructive: #dc2626;
+	--border: #e5eaf0;
+	--input: #e5eaf0;
+	--ring: #94a3b8;
+	--sidebar: #1b7e86;
+	--sidebar-foreground: #ffffff;
+	--sidebar-border: #dce8ea;
+	--header: #f8fafe;
+	--header-foreground: #0f172a;
+}
+
+.dark {
+	--background: #081027;
+	--foreground: #eef4ff;
+	--card: #081027;
+	--card-foreground: #eef4ff;
+	--primary: #4f8cff;
+	--primary-foreground: #ffffff;
+	--secondary: #111c35;
+	--secondary-foreground: #eaf2ff;
+	--muted: #10182c;
+	--muted-foreground: #8190ad;
+	--accent: #00c8ff;
+	--accent-foreground: #ffffff;
+	--destructive: #ff5572;
+	--border: #1c3158;
+	--input: #1a2b4d;
+	--ring: #38bdf8;
+	--sidebar: #081027;
+	--sidebar-foreground: #eaf2ff;
+	--sidebar-border: #18345f;
+	--header: #081027;
+	--header-foreground: #ffffff;
+}
