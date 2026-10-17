@@ -8,218 +8,218 @@ package graph_auth
 import (
 	"context"
 
-	"github.com/dsaldias/server/dataauth/repo"
+	"github.com/dsaldias/server/dataauth/xrepo"
 	"github.com/dsaldias/server/graph_auth/model"
 )
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.NewLogin) (*model.ResponseLogin, error) {
-	return repo.Login(ctx, r.DB, input)
+	return xrepo.Login(ctx, r.DB, input)
 }
 
 // LoginV2 is the resolver for the login_v2 field.
 func (r *mutationResolver) LoginV2(ctx context.Context, input model.NewLogin2) (*model.ResponseLogin, error) {
-	return repo.LoginV2(ctx, r.DB, input)
+	return xrepo.LoginV2(ctx, r.DB, input)
 }
 
 // CreateRol is the resolver for the create_rol field.
 func (r *mutationResolver) CreateRol(ctx context.Context, input model.NewRol) (*model.Rol, error) {
-	return repo.CreateRol(ctx, r.DB, input)
+	return xrepo.CreateRol(ctx, r.DB, input)
 }
 
 // UpdateRol is the resolver for the update_rol field.
 func (r *mutationResolver) UpdateRol(ctx context.Context, input model.UpdateRol) (*model.Rol, error) {
-	return repo.UpdateRol(ctx, r.DB, input)
+	return xrepo.UpdateRol(ctx, r.DB, input)
 }
 
 // CreateUsuario is the resolver for the create_usuario field.
 func (r *mutationResolver) CreateUsuario(ctx context.Context, input model.NewUsuario) (*model.Usuario, error) {
-	return repo.CreateUsuario(ctx, r.DB, input)
+	return xrepo.CreateUsuario(ctx, r.DB, input)
 }
 
 // UpdateUsuario is the resolver for the update_usuario field.
 func (r *mutationResolver) UpdateUsuario(ctx context.Context, input model.UpdateUsuario) (*model.Usuario, error) {
-	return repo.UpdateUsuario(ctx, r.DB, input)
+	return xrepo.UpdateUsuario(ctx, r.DB, input)
 }
 
 // UpdatePerfil is the resolver for the update_perfil field.
 func (r *mutationResolver) UpdatePerfil(ctx context.Context, input model.UpdatePerfil) (*model.Usuario, error) {
-	return repo.UpdatePerfil(ctx, r.DB, input)
+	return xrepo.UpdatePerfil(ctx, r.DB, input)
 }
 
 // CreateUnidad is the resolver for the create_unidad field.
 func (r *mutationResolver) CreateUnidad(ctx context.Context, input model.NewUnidad) (*model.Unidad, error) {
-	return repo.CreateUnidad(ctx, r.DB, input)
+	return xrepo.CreateUnidad(ctx, r.DB, input)
 }
 
 // UpdateUnidad is the resolver for the update_unidad field.
 func (r *mutationResolver) UpdateUnidad(ctx context.Context, input model.UpdUnidad) (*model.Unidad, error) {
-	return repo.UpdateUnidad(ctx, r.DB, input)
+	return xrepo.UpdateUnidad(ctx, r.DB, input)
 }
 
 // CreateOauth is the resolver for the createOauth field.
 func (r *mutationResolver) CreateOauth(ctx context.Context, input model.NewUsuarioOauth) (*model.Usuario, error) {
-	return repo.CreateOauth(ctx, r.DB, input)
+	return xrepo.CreateOauth(ctx, r.DB, input)
 }
 
 // EnviarNotificacion is the resolver for the enviar_notificacion field.
 func (r *mutationResolver) EnviarNotificacion(ctx context.Context, titulo string) (bool, error) {
-	return repo.EnviarNotificacion(ctx, r.DB, titulo)
+	return xrepo.EnviarNotificacion(ctx, r.DB, titulo)
 }
 
 // CrearNotificacion is the resolver for the crear_notificacion field.
 func (r *mutationResolver) CrearNotificacion(ctx context.Context, input model.NewNotificacion) (*model.Notificacion, error) {
-	return repo.CrearNotificacion(ctx, r.DB, input)
+	return xrepo.CrearNotificacion(ctx, r.DB, input)
 }
 
 // UpdateNotificacion is the resolver for the update_notificacion field.
 func (r *mutationResolver) UpdateNotificacion(ctx context.Context, input model.UpdNotificacion) (*model.Notificacion, error) {
-	return repo.UpdateNotificacion(ctx, r.DB, input)
+	return xrepo.UpdateNotificacion(ctx, r.DB, input)
 }
 
 // CreateTicket is the resolver for the create_ticket field.
 func (r *mutationResolver) CreateTicket(ctx context.Context, input model.NewTicket) (*model.Ticket, error) {
-	return repo.CreateTicket(ctx, r.DB, input)
+	return xrepo.CreateTicket(ctx, r.DB, input)
 }
 
 // UpdateTicket is the resolver for the update_ticket field.
 func (r *mutationResolver) UpdateTicket(ctx context.Context, input model.NewTicketRespuesta) (*model.Ticket, error) {
-	return repo.UpdateTicket(ctx, r.DB, input)
+	return xrepo.UpdateTicket(ctx, r.DB, input)
 }
 
 // CerrarTicket is the resolver for the cerrar_ticket field.
 func (r *mutationResolver) CerrarTicket(ctx context.Context, id string) (*model.Ticket, error) {
-	return repo.CerrarTicket(ctx, r.DB, id)
+	return xrepo.CerrarTicket(ctx, r.DB, id)
 }
 
 // ChatEnviarMensaje is the resolver for the chat_enviar_mensaje field.
 func (r *mutationResolver) ChatEnviarMensaje(ctx context.Context, input model.ChatEnviarMensajeInput) (*model.ChatMensaje, error) {
-	return repo.ChatEnviarMensaje(ctx, r.DB, input)
+	return xrepo.ChatEnviarMensaje(ctx, r.DB, input)
 }
 
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context, input model.InputMe) (*model.ResponseMe, error) {
-	return repo.Me(ctx, r.DB, input)
+	return xrepo.Me(ctx, r.DB, input)
 }
 
 // Roles is the resolver for the roles field.
 func (r *queryResolver) Roles(ctx context.Context) ([]*model.ResponseRoles, error) {
-	return repo.Roles(ctx, r.DB)
+	return xrepo.Roles(ctx, r.DB)
 }
 
 // Roles2 is the resolver for the roles2 field.
 func (r *queryResolver) Roles2(ctx context.Context, q model.QueryRoles) (*model.RolPaginado, error) {
-	return repo.Roles2(ctx, r.DB, q)
+	return xrepo.Roles2(ctx, r.DB, q)
 }
 
 // Permisos is the resolver for the permisos field.
 func (r *queryResolver) Permisos(ctx context.Context) ([]*model.Permiso, error) {
-	return repo.Permisos(ctx, r.DB)
+	return xrepo.Permisos(ctx, r.DB)
 }
 
 // Usuarios is the resolver for the usuarios field.
 func (r *queryResolver) Usuarios(ctx context.Context, query model.QueryUsuarios) ([]*model.Usuario, error) {
-	return repo.Usuarios(ctx, r.DB, query)
+	return xrepo.Usuarios(ctx, r.DB, query)
 }
 
 // Usuarios2 is the resolver for the usuarios2 field.
 func (r *queryResolver) Usuarios2(ctx context.Context, query model.QueryUsuarios) (*model.UsuarioPaginado, error) {
-	return repo.Usuarios2(ctx, r.DB, query)
+	return xrepo.Usuarios2(ctx, r.DB, query)
 }
 
 // UsuariosConectados is the resolver for the usuarios_conectados field.
 func (r *queryResolver) UsuariosConectados(ctx context.Context) ([]*model.Usuario, error) {
-	return repo.UsuariosConectados(ctx, r.DB)
+	return xrepo.UsuariosConectados(ctx, r.DB)
 }
 
 // UsuarioByID is the resolver for the usuario_by_id field.
 func (r *queryResolver) UsuarioByID(ctx context.Context, id string) (*model.ResponseUsuario, error) {
-	return repo.UsuarioByID(ctx, r.DB, id)
+	return xrepo.UsuarioByID(ctx, r.DB, id)
 }
 
 // RolByID is the resolver for the rol_by_id field.
 func (r *queryResolver) RolByID(ctx context.Context, id string) (*model.Rol, error) {
-	return repo.RolByID(ctx, r.DB, id)
+	return xrepo.RolByID(ctx, r.DB, id)
 }
 
 // Menus is the resolver for the menus field.
 func (r *queryResolver) Menus(ctx context.Context) ([]*model.Menus, error) {
-	return repo.Menus(ctx, r.DB)
+	return xrepo.Menus(ctx, r.DB)
 }
 
 // Unidades is the resolver for the unidades field.
 func (r *queryResolver) Unidades(ctx context.Context) ([]*model.Unidad, error) {
-	return repo.Unidades(ctx, r.DB)
+	return xrepo.Unidades(ctx, r.DB)
 }
 
 // Unidades2 is the resolver for the unidades2 field.
 func (r *queryResolver) Unidades2(ctx context.Context, q model.QueryUnidades) (*model.UnidadPaginada, error) {
-	return repo.Unidades2(ctx, r.DB, q)
+	return xrepo.Unidades2(ctx, r.DB, q)
 }
 
 // GetImagen is the resolver for the get_imagen field.
 func (r *queryResolver) GetImagen(ctx context.Context, url string) (string, error) {
-	return repo.GetImagen(ctx, r.DB, url)
+	return xrepo.GetImagen(ctx, r.DB, url)
 }
 
 // ConexionesWs is the resolver for the conexiones_ws field.
 func (r *queryResolver) ConexionesWs(ctx context.Context) (string, error) {
-	return repo.ConexionesWs(ctx, r.DB)
+	return xrepo.ConexionesWs(ctx, r.DB)
 }
 
 // Notificaciones is the resolver for the notificaciones field.
 func (r *queryResolver) Notificaciones(ctx context.Context) ([]*model.Notificacion, error) {
-	return repo.Notificaciones(ctx, r.DB)
+	return xrepo.Notificaciones(ctx, r.DB)
 }
 
 // Reporte1 is the resolver for the reporte1 field.
 func (r *queryResolver) Reporte1(ctx context.Context) ([]*model.ResponseReporte1, error) {
-	return repo.Reporte1(ctx, r.DB)
+	return xrepo.Reporte1(ctx, r.DB)
 }
 
 // Reporte2 is the resolver for the reporte2 field.
 func (r *queryResolver) Reporte2(ctx context.Context) ([]*model.ResponseReporte2, error) {
-	return repo.Reporte2(ctx, r.DB)
+	return xrepo.Reporte2(ctx, r.DB)
 }
 
 // Reporte2b is the resolver for the reporte2b field.
 func (r *queryResolver) Reporte2b(ctx context.Context) ([]*model.ResponseReporte2b, error) {
-	return repo.Reporte2b(ctx, r.DB)
+	return xrepo.Reporte2b(ctx, r.DB)
 }
 
 // AllTickets is the resolver for the all_tickets field.
 func (r *queryResolver) AllTickets(ctx context.Context, q model.QueryTickets) ([]*model.RespTickets, error) {
-	return repo.AllTickets(ctx, r.DB, q)
+	return xrepo.AllTickets(ctx, r.DB, q)
 }
 
 // MisTickets is the resolver for the mis_tickets field.
 func (r *queryResolver) MisTickets(ctx context.Context) ([]*model.RespTickets, error) {
-	return repo.MisTickets(ctx, r.DB)
+	return xrepo.MisTickets(ctx, r.DB)
 }
 
 // VerTicket is the resolver for the ver_ticket field.
 func (r *queryResolver) VerTicket(ctx context.Context, id string) (*model.Ticket, error) {
-	return repo.VerTicket(ctx, r.DB, id)
+	return xrepo.VerTicket(ctx, r.DB, id)
 }
 
 // ChatsByUser is the resolver for the chats_by_user field.
 func (r *queryResolver) ChatsByUser(ctx context.Context, userID string) ([]*model.ResponseChatConversacion, error) {
-	return repo.ChatsByUser(ctx, r.DB, userID)
+	return xrepo.ChatsByUser(ctx, r.DB, userID)
 }
 
 // ChatMensajes is the resolver for the chat_mensajes field.
 func (r *queryResolver) ChatMensajes(ctx context.Context, conversacionID string) ([]*model.ChatMensaje, error) {
-	return repo.ChatMensajes(ctx, r.DB, conversacionID)
+	return xrepo.ChatMensajes(ctx, r.DB, conversacionID)
 }
 
 // ChatsNoLeidos is the resolver for the chats_no_leidos field.
 func (r *queryResolver) ChatsNoLeidos(ctx context.Context, userID string) (int32, error) {
-	return repo.ChatsNoLeidos(ctx, r.DB, userID)
+	return xrepo.ChatsNoLeidos(ctx, r.DB, userID)
 }
 
 // NotificacionesSubs is the resolver for the notificaciones_subs field.
 func (r *subscriptionResolver) NotificacionesSubs(ctx context.Context) (<-chan *model.XNotificacion, error) {
-	return repo.NotificacionesSubs(ctx, r.DB)
+	return xrepo.NotificacionesSubs(ctx, r.DB)
 }
 
 // Mutation returns MutationResolver implementation.
