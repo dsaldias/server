@@ -26,7 +26,7 @@ templ InicioRender(data InicioData) {
 					<span class="sr-only">Cambiar tema</span>
 				}
 				<div class="hidden w-64 sm:block">
-					@combobox.Combobox(combobox.Props{ID: "unit-role-selector"}) {
+					@combobox.Combobox(combobox.Props{ID: "unit-role-selector", DefaultValue: data.UnidadID + "|" + data.RolID, Items: inicioRoleItems(data.Me)}) {
 						@combobox.Input(combobox.InputProps{Placeholder: "Seleccionar unidad / rol"})
 						@combobox.Content() {
 							@combobox.Empty() { No hay coincidencias. }

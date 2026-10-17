@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
+	"github.com/dsaldias/server/data_web/components/combobox"
 	"github.com/dsaldias/server/dataauth/utilidad"
 	"github.com/dsaldias/server/dataauth/xrepo"
 	"github.com/dsaldias/server/graph_auth/model"
@@ -137,4 +138,22 @@ func inicioSelectedRole(me *model.ResponseMe, unidadID, rolID string) string {
 		}
 	}
 	return "Seleccionar unidad / rol"
+}
+
+func inicioRoleItems(me *model.ResponseMe) []combobox.ItemData {
+	if me == nil {
+		return nil
+	}
+
+	items := make([]combobox.ItemData, 0, len(me.Roles))
+	for _, role := range me.Roles {
+		if role.Unidad == nil || role.Rol == nil {
+			continue
+		}
+		items = append(items, combobox.ItemData{
+			Value: role.Unidad.ID + "|" + role.Rol.ID,
+			Label: role.Unidad.Nombre + " / " + role.Rol.Nombre,
+		})
+	}
+	return items
 }

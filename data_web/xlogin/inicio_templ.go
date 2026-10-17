@@ -236,7 +236,7 @@ func InicioRender(data InicioData) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = combobox.Combobox(combobox.Props{ID: "unit-role-selector"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = combobox.Combobox(combobox.Props{ID: "unit-role-selector", DefaultValue: data.UnidadID + "|" + data.RolID, Items: inicioRoleItems(data.Me)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
