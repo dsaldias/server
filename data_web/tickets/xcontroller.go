@@ -64,7 +64,7 @@ func (c *Controller) ticketsPageDataWithState(r *http.Request, estado string) Ti
 			continue
 		}
 		data.Listado = append(data.Listado, ticket)
-		if detail, detailErr := xrepo.VerTicket(r.Context(), c.DB, ticket.ID); detailErr == nil && detail != nil {
+		if detail, detailErr := xrepo.VerTicketConRespuestas(r.Context(), c.DB, ticket.ID); detailErr == nil && detail != nil {
 			data.Detalles[ticket.ID] = detail
 		}
 	}
@@ -129,7 +129,7 @@ func (c *Controller) ticketSave(w http.ResponseWriter, r *http.Request) {
 	_ = TicketsTableRegion(data).Render(r.Context(), &body)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#tickets-table-region"), datastar.WithModeOuter())
 	_ = sse.MarshalAndPatchSignals(map[string]bool{"ticketSaving": false, "ticketSaved": true})
-	if signals.TicketAction == "reply" && strings.TrimSpace(signals.TicketID) != "" {
+	if (signals.TicketAction == "reply" || signals.TicketAction == "close") && strings.TrimSpace(signals.TicketID) != "" {
 		_ = sse.ExecuteScript("window.templ?.dialog?.close(" + strconv.Quote("ticket-view-"+strings.TrimSpace(signals.TicketID)) + ")")
 	}
 }
@@ -187,7 +187,8 @@ func ticketViewAttributes(id string) templ.Attributes {
 }
 
 func ticketCloseAttributes(id string) templ.Attributes {
-	return templ.Attributes{"type": "button", "data-on:click": "$ticketID=" + strconv.Quote(id) + "; $ticketSaving=true; $ticketAction='close'; @post('/adminx/tickets?action=close')"}
+	script := "if(window.confirm(" + strconv.Quote("¿Deseas cerrar este ticket? Esta acción no se puede deshacer.") + ")){ $ticketID=" + strconv.Quote(id) + "; $ticketSaving=true; $ticketAction='close'; @post('/adminx/tickets?action=close') }"
+	return templ.Attributes{"type": "button", "data-on:click": script}
 }
 
 func ticketFormError(message string) string {

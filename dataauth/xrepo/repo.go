@@ -337,6 +337,20 @@ func VerTicket(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error
 	return ticketss.Get(ctx, db, id)
 }
 
+// VerTicketConRespuestas obtiene un ticket y carga explícitamente su historial.
+// Se usa desde consumidores que no pasan por la selección de campos de GraphQL.
+func VerTicketConRespuestas(ctx context.Context, db *sql.DB, id string) (*model.Ticket, error) {
+	ticket, err := VerTicket(ctx, db, id)
+	if err != nil {
+		return nil, err
+	}
+	ticket.Respuestas, err = ticketss.Respuestas(db, id)
+	if err != nil {
+		return nil, err
+	}
+	return ticket, nil
+}
+
 // ChatsByUser is the resolver for the chats_by_user field.
 func ChatsByUser(ctx context.Context, db *sql.DB, userID string) ([]*model.ResponseChatConversacion, error) {
 	return chat.ConversacionesByUser(db, userID)
