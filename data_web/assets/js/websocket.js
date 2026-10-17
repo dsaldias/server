@@ -35,15 +35,49 @@
     });
   };
 
+  const showNotification = (message) => {
+    const title = String(message || "Nueva notificación").trim();
+    const host = document.getElementById("notification-host");
+    if (!host) return;
+
+    const toast = document.createElement("div");
+    toast.setAttribute("role", "status");
+    toast.className = "pointer-events-auto flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4 text-card-foreground shadow-lg ring-1 ring-black/5 dark:ring-white/10";
+
+    const content = document.createElement("p");
+    content.className = "min-w-0 flex-1 text-sm font-medium leading-5";
+    content.textContent = title;
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "shrink-0 rounded-md px-1 text-lg leading-none text-muted-foreground hover:bg-muted hover:text-foreground";
+    close.setAttribute("aria-label", "Cerrar notificación");
+    close.textContent = "×";
+    close.addEventListener("click", () => toast.remove());
+
+    toast.append(content, close);
+    host.append(toast);
+
+    while (host.children.length > 5) {
+      host.firstElementChild?.remove();
+    }
+
+    window.setTimeout(() => toast.remove(), 5000);
+  };
+
   const processMessage = (payload) => {
     const notification = payload?.data?.notificaciones_subs;
     if (!notification) return;
 
-    if (notification.data_json) {
+    if (!notification.data_json) {
+      showNotification(notification.title);
+    } else {
       try {
         const data = JSON.parse(notification.data_json);
         if (data.tipo === "conectados") {
           setCounters(data.datos?.conectados ?? 0, data.datos?.total_conectados ?? 0);
+        } else if (data.tipo === "alerta" || !data.tipo) {
+          showNotification(notification.title);
         }
       } catch (error) {
         console.error("[WS] No se pudo procesar la notificación:", error);

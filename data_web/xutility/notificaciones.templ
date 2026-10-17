@@ -1,0 +1,7 @@
+package xutility
+
+// NotificationHost is the global floating notification area used by the
+// WebSocket client. The client fills it without replacing the current page.
+templ NotificationHost() {
+	<div id="notification-host" aria-live="polite" aria-atomic="false" class="pointer-events-none fixed right-4 top-4 z-[2000] flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3"></div>
+}

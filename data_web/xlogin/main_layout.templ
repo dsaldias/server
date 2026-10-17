@@ -1,6 +1,7 @@
 package xlogin
 
 import "github.com/dsaldias/server/data_web/components"
+import "github.com/dsaldias/server/data_web/xutility"
 
 // la clave para actualizar en test es cambiar esta variable
 // para prod, el propio task build setea el valor en cada compilacion
@@ -37,6 +38,7 @@ templ MainLayout(
 			}
 		</head>
 		<body class={ config.WithDefaults().BodyClass }>
+			@xutility.NotificationHost()
 			{ children... } 
 		</body>
 	</html>
