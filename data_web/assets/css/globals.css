@@ -78,3 +78,20 @@
 	--header: #081027;
 	--header-foreground: #ffffff;
 }
+
+#admin-shell[data-sidebar-collapsed="true"] #admin-sidebar {
+	display: none !important;
+	width: 0 !important;
+	min-width: 0 !important;
+	overflow: hidden !important;
+	border-right-width: 0 !important;
+}
+
+@media (max-width: 767px) {
+	#admin-shell:not([data-sidebar-collapsed="true"]) #admin-sidebar {
+		position: absolute;
+		inset: 0 auto 0 0;
+		z-index: 30;
+		height: 100%;
+	}
+}
