@@ -1,0 +1,19 @@
+package avisos
+
+import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/graph_auth/model"
+
+templ AvisoViewDialogs(data AvisosPageData) {
+	for _, aviso := range data.Listado {
+		if aviso != nil {
+			@dialog.Dialog(dialog.Props{ID: "aviso-view-" + aviso.ID}) { @AvisoView(aviso) }
+		}
+	}
+}
+
+templ AvisoView(aviso *model.Notificacion) {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-xl"}) {
+		@dialog.Header() { @dialog.Title() { Aviso } @dialog.Description() { Detalle del aviso seleccionado. } }
+		<div class="space-y-4"><div class="rounded-lg border border-border/60 bg-muted/20 p-4"><p class="whitespace-pre-wrap text-sm">{ aviso.Mensaje }</p></div><dl class="grid gap-3 sm:grid-cols-2"><div><dt class="text-xs text-muted-foreground">Desde</dt><dd class="text-sm font-medium">{ avisoDate(aviso.Desde) }</dd></div><div><dt class="text-xs text-muted-foreground">Hasta</dt><dd class="text-sm font-medium">{ avisoDate(aviso.Hasta) }</dd></div><div><dt class="text-xs text-muted-foreground">Registrado</dt><dd class="text-sm font-medium">{ avisoDate(aviso.FechaRegistro) }</dd></div><div><dt class="text-xs text-muted-foreground">Creado por</dt><dd class="text-sm font-medium">{ aviso.CreadoPorID }</dd></div></dl></div>
+	}
+}

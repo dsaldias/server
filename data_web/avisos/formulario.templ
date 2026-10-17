@@ -1,0 +1,16 @@
+package avisos
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/dialog"
+
+templ AvisoForm() {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-2xl"}) {
+		@dialog.Header() { @dialog.Title() { <span data-aviso-title>Nuevo aviso</span> } @dialog.Description() { Define el mensaje y el periodo en el que estará activo. } }
+		<form id="aviso-form" class="space-y-5" data-signals:avisoMode="'create'" data-signals:avisoID="''" data-signals:avisoTimezone="''" data-signals:avisoSaving="false" data-signals:avisoSaved="false" data-on:submit__prevent="$avisoTimezone=Intl.DateTimeFormat().resolvedOptions().timeZone;$avisoSaving=true; @post('/adminx/avisos')" data-effect="const button=document.getElementById('aviso-submit');if(button){button.disabled=$avisoSaving;button.setAttribute('aria-busy',$avisoSaving?'true':'false');button.textContent=$avisoSaving?'Guardando...':'Guardar aviso';}if($avisoSaved){window.templ?.dialog?.close('aviso-dialog');$avisoSaved=false;}">
+			<label for="aviso-mensaje" class="space-y-2 text-sm font-medium">Mensaje<textarea id="aviso-mensaje" name="mensaje" required maxlength="1000" class="min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Escribe el aviso..." data-bind:mensaje></textarea></label>
+			<div class="grid gap-4 sm:grid-cols-2"><label for="aviso-desde" class="space-y-2 text-sm font-medium">Desde<input id="aviso-desde" name="desde" type="datetime-local" required class="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:desde /></label><label for="aviso-hasta" class="space-y-2 text-sm font-medium">Hasta<input id="aviso-hasta" name="hasta" type="datetime-local" required class="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:hasta /></label></div>
+			<div id="aviso-form-error"></div>
+			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "aviso-submit"}) { Guardar aviso } }
+		</form>
+	}
+}

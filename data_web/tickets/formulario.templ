@@ -1,0 +1,15 @@
+package tickets
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/dialog"
+
+templ TicketCreateForm() {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-xl"}) {
+		@dialog.Header() { @dialog.Title() { Nuevo ticket } @dialog.Description() { Describe el problema o solicitud que deseas registrar. } }
+		<form id="ticket-create-form" class="space-y-5" data-signals:ticketSaving="false" data-signals:ticketSaved="false" data-signals:ticketAction="'create'" data-on:submit__prevent="$ticketSaving=true; $ticketAction='create'; @post('/adminx/tickets?action=create')" data-effect="const button=document.getElementById('ticket-create-submit');if(button){button.disabled=$ticketSaving;button.setAttribute('aria-busy',$ticketSaving?'true':'false');button.textContent=$ticketSaving?'Guardando...':'Crear ticket';}if($ticketSaved){window.templ?.dialog?.close('ticket-create-dialog');$ticketSaved=false;}">
+			<label for="ticket-problema" class="space-y-2 text-sm font-medium">Problema o solicitud<textarea id="ticket-problema" name="problema" required class="min-h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Describe lo que necesitas..." data-bind:problema></textarea></label>
+			<div id="ticket-form-error"></div>
+			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "ticket-create-submit"}) { Crear ticket } }
+		</form>
+	}
+}
