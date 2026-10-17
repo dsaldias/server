@@ -45,3 +45,8 @@ func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 	InicioRender().Render(r.Context(), &body)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#page"), datastar.WithModeOuter())
 }
+
+func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
+	ctx := templ.WithChildren(r.Context(), InicioRender())
+	MainLayout("Acceso | Panel administrativo", Default()).Render(ctx, w)
+}
