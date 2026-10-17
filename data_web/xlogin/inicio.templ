@@ -25,7 +25,8 @@ templ InicioRender(data InicioData) {
 					@icon.Moon(icon.Props{Class: "hidden size-4 dark:block"})
 					<span class="sr-only">Cambiar tema</span>
 				}
-				<div class="hidden w-64 sm:block">
+				<div class="hidden w-64 sm:block" data-signals:context="">
+					<div data-on:combobox-change="$context = evt.detail.values[0]; @post('/adminx/context')">
 					@combobox.Combobox(combobox.Props{ID: "unit-role-selector", DefaultValue: data.UnidadID + "|" + data.RolID, Items: inicioRoleItems(data.Me)}) {
 						@combobox.Input(combobox.InputProps{Placeholder: "Seleccionar unidad / rol"})
 						@combobox.Content() {
@@ -43,39 +44,28 @@ templ InicioRender(data InicioData) {
 							}
 						}
 					}
+					</div>
+					<div id="context-result"></div>
 				</div>
-				<div class="hidden max-w-48 text-right sm:block"><p class="truncate text-sm font-medium">{ inicioUserName(data.Me) }</p><p class="truncate text-xs text-muted-foreground">{ inicioSelectedRole(data.Me, data.UnidadID, data.RolID) }</p></div>
+				<div class="hidden max-w-48 text-right sm:block"><p class="truncate text-sm font-medium">{ inicioUserName(data.Me) }</p><p id="active-role" class="truncate text-xs text-muted-foreground">{ inicioSelectedRole(data.Me, data.UnidadID, data.RolID) }</p></div>
 				@avatar.Avatar(avatar.Props{Size: avatar.SizeSm}) { @avatar.Fallback() { { inicioUserInitials(data.Me) } } }
 			</div>
 		</header>
 
 		<div class="relative flex min-h-[calc(100vh-4rem)]">
-			<aside id="admin-sidebar" class="hidden w-72 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground shadow-sm md:flex">
-				<div class="flex h-16 items-center gap-3 border-b border-sidebar-border px-5"><div class="flex size-9 items-center justify-center rounded-xl bg-sidebar-foreground/10"><span class="size-2.5 rounded-full bg-[#65c28c] shadow-[0_0_18px_#65c28c]"></span></div><div class="min-w-0"><p class="truncate text-sm font-semibold">Administración</p><p class="truncate text-xs text-sidebar-foreground/60">Navegación principal</p></div></div>
-				<div class="flex-1 p-4"><p class="px-2 text-xs font-medium uppercase tracking-wider text-sidebar-foreground/50">Menú lateral</p><div class="mt-3 space-y-2"><div class="h-10 rounded-lg bg-sidebar-foreground/10"></div><div class="h-10 rounded-lg bg-sidebar-foreground/5"></div><div class="h-10 rounded-lg bg-sidebar-foreground/5"></div></div></div>
-				@separator.Separator(separator.Props{Class: "bg-sidebar-border"})
-				<div class="p-3">
-					@dropdownmenu.DropdownMenu(dropdownmenu.Props{ID: "profile-menu"}) {
-						@button.Button(button.Props{Variant: button.VariantGhost, Class: "h-auto w-full justify-start gap-3 px-2 py-2 text-sidebar-foreground hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground", Attributes: dropdownmenu.Trigger(ctx)}) {
-							@avatar.Avatar(avatar.Props{Size: avatar.SizeSm}) { @avatar.Fallback() { { inicioUserInitials(data.Me) } } }
-							<span class="min-w-0 flex-1 text-left"><span class="block truncate text-sm font-medium">{ inicioUserName(data.Me) }</span><span class="block truncate text-xs text-sidebar-foreground/60">Cuenta actual</span></span>
-							@icon.ChevronsUpDown(icon.Props{Class: "size-4 shrink-0"})
-						}
-						@dropdownmenu.Content(dropdownmenu.ContentProps{Class: "w-56"}) {
-							@dropdownmenu.Label() { { inicioUserName(data.Me) } }
-							@dropdownmenu.Separator()
-							@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/perfil'"}}) { @icon.User(icon.Props{Class: "size-4"}) Mi perfil }
-							@dropdownmenu.Item(dropdownmenu.ItemProps{Variant: dropdownmenu.ItemVariantDestructive, Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/logout'"}}) { @icon.LogOut(icon.Props{Class: "size-4"}) Cerrar sesión }
-						}
-					}
-				</div>
-			</aside>
+			@InicioSidebar(data)
 
-			<main class="min-w-0 flex-1 bg-muted/30 p-4 sm:p-6 lg:p-8"><div class="mx-auto max-w-7xl"><div class="mb-6 flex flex-wrap items-end justify-between gap-3"><div><p class="text-sm text-muted-foreground">Bienvenido de nuevo</p><h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Panel administrativo</h1></div><div class="sm:hidden"><p class="text-right text-sm font-medium">{ inicioUserName(data.Me) }</p><p class="text-right text-xs text-muted-foreground">{ inicioSelectedRole(data.Me, data.UnidadID, data.RolID) }</p></div></div><div class="grid gap-4 md:grid-cols-3">
-				@card.Card() { @card.Header() { @card.Title() { Estado del sistema } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
-				@card.Card() { @card.Header() { @card.Title() { Actividad reciente } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
-				@card.Card() { @card.Header() { @card.Title() { Accesos rápidos } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
-			</div></div></main>
+			<main id="admin-content" class="min-w-0 flex-1 bg-muted/30 p-4 sm:p-6 lg:p-8">
+				if data.Content != nil {
+					@data.Content
+				} else {
+					<div class="mx-auto max-w-7xl"><div class="mb-6 flex flex-wrap items-end justify-between gap-3"><div><p class="text-sm text-muted-foreground">Bienvenido de nuevo</p><h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Panel administrativo</h1></div><div class="sm:hidden"><p class="text-right text-sm font-medium">{ inicioUserName(data.Me) }</p><p class="text-right text-xs text-muted-foreground">{ inicioSelectedRole(data.Me, data.UnidadID, data.RolID) }</p></div></div><div class="grid gap-4 md:grid-cols-3">
+						@card.Card() { @card.Header() { @card.Title() { Estado del sistema } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
+						@card.Card() { @card.Header() { @card.Title() { Actividad reciente } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
+						@card.Card() { @card.Header() { @card.Title() { Accesos rápidos } } @card.Content() { <div class="h-16 rounded-lg bg-muted"></div> } }
+					</div></div>
+				}
+			</main>
 		</div>
 	</div>
 	if !data.Authenticated {
@@ -87,6 +77,51 @@ templ InicioRender(data InicioData) {
 			}
 		}
 	}
+}
+
+templ InicioSidebar(data InicioData) {
+	<aside id="admin-sidebar" class="hidden w-72 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground shadow-sm md:flex">
+		<div class="flex h-16 items-center gap-3 border-b border-sidebar-border px-5"><div class="flex size-9 items-center justify-center rounded-xl bg-sidebar-foreground/10"><span class="size-2.5 rounded-full bg-[#65c28c] shadow-[0_0_18px_#65c28c]"></span></div><div class="min-w-0"><p class="truncate text-sm font-semibold">Administración</p><p class="truncate text-xs text-sidebar-foreground/60">Navegación principal</p></div></div>
+		<div class="flex-1 overflow-y-auto p-4"><p class="px-2 text-xs font-medium uppercase tracking-wider text-sidebar-foreground/50">Menú lateral</p><nav class="mt-3 space-y-1" aria-label="Menú principal">
+			if data.Me != nil {
+				for _, parent := range inicioRootMenus(data.Me.Menus) {
+					{{ children := inicioChildMenus(data.Me.Menus, parent.ID) }}
+					if len(children) > 0 {
+						<div class="space-y-1">
+							@button.Button(button.Props{Type: button.TypeButton, Variant: button.VariantGhost, Class: "h-10 w-full justify-start gap-2 px-2 text-sidebar-foreground hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground", Attributes: templ.Attributes{"data-on:click": "document.getElementById('admin-menu-" + parent.ID + "')?.classList.toggle('hidden')"}}) { @icon.Folder(icon.Props{Class: "size-4"})<span class="truncate">{ parent.Label }</span><span class="ml-auto text-xs">⌄</span> }
+							<div id={ "admin-menu-" + parent.ID } class="hidden space-y-1 border-l border-sidebar-border pl-3">
+								for _, child := range children {
+									@button.Button(button.Props{Type: button.TypeButton, Variant: button.VariantGhost, Class: "h-9 w-full justify-start px-2 text-left text-sm text-sidebar-foreground/75 hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground", Attributes: templ.Attributes{"data-menu-path": child.Path, "data-on:click": inicioMenuClick(child)}}) { <span class="truncate">{ child.Label }</span> }
+								}
+							</div>
+						</div>
+					} else {
+						@button.Button(button.Props{Type: button.TypeButton, Variant: button.VariantGhost, Class: "h-10 w-full justify-start gap-2 px-2 text-sidebar-foreground hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground", Attributes: templ.Attributes{"data-menu-path": parent.Path, "data-on:click": inicioMenuClick(parent)}}) { @icon.FileText(icon.Props{Class: "size-4"})<span class="truncate">{ parent.Label }</span> }
+					}
+				}
+			}
+		</nav></div>
+		@separator.Separator(separator.Props{Class: "bg-sidebar-border"})
+		<div class="p-3">
+			@dropdownmenu.DropdownMenu(dropdownmenu.Props{ID: "profile-menu"}) {
+				@button.Button(button.Props{Variant: button.VariantGhost, Class: "h-auto w-full justify-start gap-3 px-2 py-2 text-sidebar-foreground hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground", Attributes: dropdownmenu.Trigger(ctx)}) {
+					@avatar.Avatar(avatar.Props{Size: avatar.SizeSm}) { @avatar.Fallback() { { inicioUserInitials(data.Me) } } }
+					<span class="min-w-0 flex-1 text-left"><span class="block truncate text-sm font-medium">{ inicioUserName(data.Me) }</span><span class="block truncate text-xs text-sidebar-foreground/60">Cuenta actual</span></span>
+					@icon.ChevronsUpDown(icon.Props{Class: "size-4 shrink-0"})
+				}
+				@dropdownmenu.Content(dropdownmenu.ContentProps{Class: "w-56"}) {
+					@dropdownmenu.Label() { { inicioUserName(data.Me) } }
+					@dropdownmenu.Separator()
+					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/perfil'"}}) { @icon.User(icon.Props{Class: "size-4"}) Mi perfil }
+					@dropdownmenu.Item(dropdownmenu.ItemProps{Variant: dropdownmenu.ItemVariantDestructive, Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/logout'"}}) { @icon.LogOut(icon.Props{Class: "size-4"}) Cerrar sesión }
+				}
+			}
+		</div>
+	</aside>
+}
+
+templ InicioContextError(message string) {
+	<div id="context-result" class="mt-1 text-right text-xs text-destructive">{ message }</div>
 }
 
 templ reloginForm() {

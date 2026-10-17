@@ -2,8 +2,13 @@ package xlogin
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
+	"fmt"
+	"io"
 	"net/http"
+	"net/http/httptest"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -23,6 +28,11 @@ type InicioData struct {
 	Me            *model.ResponseMe
 	UnidadID      string
 	RolID         string
+	Content       templ.Component
+}
+
+type contextInput struct {
+	Context string `json:"context"`
 }
 
 func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
@@ -90,6 +100,96 @@ func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 	MainLayout("Acceso | Panel administrativo", Default()).Render(ctx, w)
 }
 
+func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, module http.Handler) {
+	if r.Header.Get("X-Requested-With") == "fetch" {
+		module.ServeHTTP(w, r)
+		return
+	}
+
+	recorder := httptest.NewRecorder()
+	module.ServeHTTP(recorder, r)
+	data := c.inicioData(r)
+	content := append([]byte(nil), recorder.Body.Bytes()...)
+	data.Content = templ.ComponentFunc(func(_ context.Context, target io.Writer) error {
+		_, err := target.Write(content)
+		return err
+	})
+
+	if recorder.Code >= http.StatusBadRequest {
+		w.WriteHeader(recorder.Code)
+	}
+	ctx := templ.WithChildren(r.Context(), InicioRender(data))
+	_ = MainLayout("Panel administrativo", Default()).Render(ctx, w)
+}
+
+func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
+	var input contextInput
+	if err := datastar.ReadSignals(r, &input); err != nil {
+		_ = r.ParseForm()
+		input.Context = r.FormValue("context")
+	}
+
+	parts := strings.SplitN(input.Context, "|", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		c.contextError(w, r, "La unidad y el rol seleccionados no son válidos.")
+		return
+	}
+
+	unidadID, rolID := parts[0], parts[1]
+	me, err := xrepo.Me(r.Context(), c.DB, model.InputMe{UnidadID: unidadID})
+	if err != nil || me == nil || !inicioHasRole(me, unidadID, rolID) {
+		c.contextError(w, r, "No tienes acceso a la unidad y rol seleccionados.")
+		return
+	}
+
+	menus, err := xrepo.GetMenusbyRol(r.Context(), c.DB, rolID)
+	if err != nil {
+		c.contextError(w, r, "No fue posible cargar los menús del rol seleccionado.")
+		return
+	}
+
+	cookie, err := utilidad.CtxGetCookie(r)
+	if err != nil {
+		c.contextError(w, r, "La sesión ya no está disponible. Inicia sesión nuevamente.")
+		return
+	}
+	cookie.RolID = rolID
+	cookie.UnidadID = unidadID
+	utilidad.CtxSetCookie(r.Context(), *cookie)
+
+	data := InicioData{Authenticated: true, Me: me, UnidadID: unidadID, RolID: rolID}
+	data.Me.Menus = menus
+
+	var body bytes.Buffer
+	if err := InicioSidebar(data).Render(r.Context(), &body); err != nil {
+		c.contextError(w, r, "No fue posible actualizar el menú lateral.")
+		return
+	}
+
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#admin-sidebar"), datastar.WithModeOuter())
+	_ = sse.ExecuteScript("const role = document.getElementById('active-role'); if (role) role.textContent = " + strconv.Quote(inicioSelectedRole(me, unidadID, rolID)) + "; const result = document.getElementById('context-result'); if (result) result.replaceChildren()")
+}
+
+func (c *Controller) contextError(w http.ResponseWriter, r *http.Request, message string) {
+	var body bytes.Buffer
+	_ = InicioContextError(message).Render(r.Context(), &body)
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#context-result"), datastar.WithModeOuter())
+}
+
+func inicioHasRole(me *model.ResponseMe, unidadID, rolID string) bool {
+	if me == nil {
+		return false
+	}
+	for _, role := range me.Roles {
+		if role != nil && role.Unidad != nil && role.Rol != nil && role.Unidad.ID == unidadID && role.Rol.ID == rolID {
+			return true
+		}
+	}
+	return false
+}
+
 func (c *Controller) inicioData(r *http.Request) InicioData {
 	auth, err := utilidad.CtxValue(r.Context(), c.DB, "")
 	if err != nil {
@@ -102,6 +202,13 @@ func (c *Controller) inicioData(r *http.Request) InicioData {
 		RolID:         auth.RolID,
 	}
 	data.Me, _ = xrepo.Me(r.Context(), c.DB, model.InputMe{UnidadID: auth.UnidadID})
+	if data.Me != nil {
+		// La cookie define el rol activo. Reemplazamos los menús generales
+		// devueltos por Me por los que pertenecen a ese rol concreto.
+		if menus, menuErr := xrepo.GetMenusbyRol(r.Context(), c.DB, auth.RolID); menuErr == nil {
+			data.Me.Menus = menus
+		}
+	}
 	return data
 }
 
@@ -156,4 +263,33 @@ func inicioRoleItems(me *model.ResponseMe) []combobox.ItemData {
 		})
 	}
 	return items
+}
+
+func inicioRootMenus(menus []*model.Menus) []*model.Menus {
+	roots := make([]*model.Menus, 0)
+	for _, menu := range menus {
+		if menu != nil && menu.PadreID == nil {
+			roots = append(roots, menu)
+		}
+	}
+	return roots
+}
+
+func inicioChildMenus(menus []*model.Menus, parentID string) []*model.Menus {
+	children := make([]*model.Menus, 0)
+	for _, menu := range menus {
+		if menu != nil && menu.PadreID != nil && *menu.PadreID == parentID {
+			children = append(children, menu)
+		}
+	}
+	return children
+}
+
+func inicioMenuClick(menu *model.Menus) string {
+	if menu == nil {
+		return ""
+	}
+
+	path := strconv.Quote(menu.Path)
+	return fmt.Sprintf("(async()=>{const target=document.getElementById('admin-content');if(!target)return;const path=%s;target.innerHTML='<div class=\\\"flex min-h-48 items-center justify-center text-sm text-muted-foreground\\\">Cargando...</div>';try{const response=await fetch(path,{headers:{'Accept':'text/html','X-Requested-With':'fetch'}});const html=await response.text();const parsed=new DOMParser().parseFromString(html,'text/html');const page=parsed.querySelector('#admin-content');target.innerHTML=page?page.innerHTML:html;if(response.ok)window.history.pushState({},'',path)}catch(error){target.innerHTML='<div class=\\\"rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive\\\">No fue posible cargar el contenido: '+error.message+'</div>'}})();", path)
 }

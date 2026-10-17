@@ -369,6 +369,12 @@
   .mt-0\.5 {
     margin-top: calc(var(--spacing) * 0.5);
   }
+  .mt-1 {
+    margin-top: var(--spacing);
+  }
+  .mt-2 {
+    margin-top: calc(var(--spacing) * 2);
+  }
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
   }
@@ -541,6 +547,9 @@
   }
   .min-h-16 {
     min-height: calc(var(--spacing) * 16);
+  }
+  .min-h-48 {
+    min-height: calc(var(--spacing) * 48);
   }
   .min-h-\[1\.5rem\] {
     min-height: 1.5rem;
@@ -745,6 +754,11 @@
   .gap-5 {
     gap: calc(var(--spacing) * 5);
   }
+  :where(.space-y-1 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
+  }
   :where(.space-y-2 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
     margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
@@ -853,6 +867,10 @@
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
   }
+  .border-l {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 1px;
+  }
   .\!border-sidebar-border {
     border-color: var(--sidebar-border) !important;
   }
@@ -861,6 +879,12 @@
   }
   .border-border {
     border-color: var(--border);
+  }
+  .border-destructive\/30 {
+    border-color: var(--destructive);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--destructive) 30%, transparent);
+    }
   }
   .border-input {
     border-color: var(--input);
@@ -957,12 +981,6 @@
   }
   .bg-sidebar-border {
     background-color: var(--sidebar-border);
-  }
-  .bg-sidebar-foreground\/5 {
-    background-color: var(--sidebar-foreground);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--sidebar-foreground) 5%, transparent);
-    }
   }
   .bg-sidebar-foreground\/10 {
     background-color: var(--sidebar-foreground);
@@ -1080,6 +1098,9 @@
   }
   .pl-2 {
     padding-left: calc(var(--spacing) * 2);
+  }
+  .pl-3 {
+    padding-left: calc(var(--spacing) * 3);
   }
   .text-center {
     text-align: center;
@@ -1232,6 +1253,12 @@
     color: var(--sidebar-foreground);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--sidebar-foreground) 60%, transparent);
+    }
+  }
+  .text-sidebar-foreground\/75 {
+    color: var(--sidebar-foreground);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--sidebar-foreground) 75%, transparent);
     }
   }
   .text-white {
