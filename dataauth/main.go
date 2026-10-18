@@ -1,6 +1,7 @@
 package dataauth
 
 import (
+	"bytes"
 	"database/sql"
 	"io/fs"
 	"log"
@@ -158,6 +159,21 @@ func localOrEmbeddedAssets(localDir string, embedded fs.FS) http.Handler {
 		if relative != "." && relative != ".." && !strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
 			localPath := filepath.Join(localDir, relative)
 			if info, err := os.Stat(localPath); err == nil && !info.IsDir() {
+				// Tailwind del consumidor no escanea los templates que viven
+				// dentro de la librería. Combinar ambos CSS conserva los estilos
+				// del RBAC y permite agregar estilos propios en el consumidor.
+				if relative == "output.css" {
+					if embeddedCSS, err := fs.ReadFile(embedded, relative); err == nil {
+						if localCSS, err := os.ReadFile(localPath); err == nil {
+							w.Header().Set("Content-Type", "text/css; charset=utf-8")
+							w.WriteHeader(http.StatusOK)
+							_, _ = bytes.NewBuffer(embeddedCSS).WriteTo(w)
+							_, _ = w.Write([]byte("\n"))
+							_, _ = bytes.NewBuffer(localCSS).WriteTo(w)
+							return
+						}
+					}
+				}
 				http.ServeFile(w, r, localPath)
 				return
 			}

@@ -198,7 +198,8 @@ var (
 
 func RutasFront(db *sql.DB) []*utilidad.Handlers2 {
 	ssr := []*utilidad.Handlers2{}
-	rutitas := xlogin.RutasAdmin(db)
+	conf := xlogin.Default()
+	rutitas := xlogin.RutasAdmin(db, conf)
 	ssr = append(ssr, rutitas...)
 
 	tcontroller := TestController{DB: db}
