@@ -24,6 +24,7 @@ type UsuariosPageData struct {
 	Pagina  int32
 	Size    int32
 	Rol     string
+	Nombre  string
 	Error   string
 }
 
@@ -31,6 +32,7 @@ type usuariosSignals struct {
 	Pagina int32  `json:"pagina"`
 	Size   int32  `json:"size"`
 	Rol    string `json:"rol"`
+	Nombre string `json:"nombre"`
 }
 
 func (c *Controller) UsuariosRender(w http.ResponseWriter, r *http.Request) {
@@ -57,10 +59,14 @@ func (c *Controller) usuariosTableData(r *http.Request) UsuariosPageData {
 	page := parsePositiveInt(r.URL.Query().Get("pagina"), 1)
 	size := parsePositiveInt(r.URL.Query().Get("size"), 10)
 	rol := strings.TrimSpace(r.URL.Query().Get("rol"))
-	data := UsuariosPageData{Pagina: page, Size: size, Rol: rol}
+	nombre := strings.TrimSpace(r.URL.Query().Get("nombre"))
+	data := UsuariosPageData{Pagina: page, Size: size, Rol: rol, Nombre: nombre}
 	query := model.QueryUsuarios{Pagina: page, Size: size}
 	if rol != "" {
 		query.Rol = &rol
+	}
+	if nombre != "" {
+		query.Nombre = &nombre
 	}
 	data.Listado, _ = xrepo.Usuarios2(r.Context(), c.DB, query)
 	if data.Listado == nil {
@@ -79,9 +85,13 @@ func (c *Controller) usuariosPatch(w http.ResponseWriter, r *http.Request, data 
 			data.Size = signals.Size
 		}
 		data.Rol = strings.TrimSpace(signals.Rol)
+		data.Nombre = strings.TrimSpace(signals.Nombre)
 		query := model.QueryUsuarios{Pagina: data.Pagina, Size: data.Size}
 		if data.Rol != "" {
 			query.Rol = &data.Rol
+		}
+		if data.Nombre != "" {
+			query.Nombre = &data.Nombre
 		}
 		data.Listado, _ = xrepo.Usuarios2(r.Context(), c.DB, query)
 		if data.Listado == nil {
@@ -93,12 +103,16 @@ func (c *Controller) usuariosPatch(w http.ResponseWriter, r *http.Request, data 
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#usuarios-table-region"), datastar.WithModeOuter())
 	_ = sse.ExecuteScript("history.replaceState({},''," + strconv.Quote(usuarioQueryURL(data)) + ")")
+	_ = sse.MarshalAndPatchSignals(map[string]bool{"usuariosLoading": false})
 }
 
 func usuarioQueryURL(data UsuariosPageData) string {
 	query := "?pagina=" + strconv.Itoa(int(data.Pagina)) + "&size=" + strconv.Itoa(int(data.Size))
 	if data.Rol != "" {
 		query += "&rol=" + urlQueryEscape(data.Rol)
+	}
+	if data.Nombre != "" {
+		query += "&nombre=" + urlQueryEscape(data.Nombre)
 	}
 	return ADMIN_USUARIOS + query
 }
@@ -201,11 +215,15 @@ func usuarioCanNext(data *model.UsuarioPaginado) bool {
 }
 
 func usuarioPageClick(page int32) string {
-	return "$pagina = " + strconv.Itoa(int(page)) + "; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.innerHTML = '<span class=\"inline-flex items-center gap-2\"><span class=\"size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent\"></span>Cargando...</span>'; } $pagina = " + strconv.Itoa(int(page)) + "; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
 }
 
 func usuarioRefreshScript() string {
-	return "$pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+	return "$usuariosLoading = true; $pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioLoadingButtonEffectScript(buttonSelector, iconSelector, labelSelector, label string) string {
+	return "const button = document.querySelector('" + buttonSelector + "'); if (button) { button.disabled = $usuariosLoading; if ($usuariosLoading) { button.setAttribute('aria-busy','true'); button.querySelector('" + iconSelector + "')?.classList.add('hidden'); const label = button.querySelector('" + labelSelector + "'); if (label) { label.classList.remove('sr-only'); label.textContent = 'Cargando...'; } } else { button.removeAttribute('aria-busy'); button.querySelector('" + iconSelector + "')?.classList.remove('hidden'); const label = button.querySelector('" + labelSelector + "'); if (label) { label.classList.add('sr-only'); label.textContent = '" + label + "'; } } }"
 }
 
 func usuarioRoleFilterScript() string {
@@ -214,4 +232,12 @@ func usuarioRoleFilterScript() string {
 
 func usuarioPageSizeScript() string {
 	return "$pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioNameSearchScript() string {
+	return "$usuariosLoading = true; $pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioNameSearchKeydownScript() string {
+	return "if (evt.key === 'Enter') { $usuariosLoading = true; $pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "') }"
 }

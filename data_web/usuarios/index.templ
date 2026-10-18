@@ -4,46 +4,72 @@ import "github.com/dsaldias/server/data_web/components/button"
 import "github.com/dsaldias/server/data_web/components/combobox"
 import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/icon"
-import "github.com/dsaldias/server/data_web/xutility"
+import "github.com/dsaldias/server/data_web/components/input"
+import "github.com/dsaldias/server/data_web/xutility/marco"
 
 templ RenderUsuarios(data UsuariosPageData) {
 	@dialog.Dialog(dialog.Props{ID: "usuario-dialog"}) {
 		@UsuarioModalLoading()
-		<div id="usuarios-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ usuarioSignalInt(data.Pagina) } data-signals:size={ usuarioSignalInt(data.Size) } data-signals:rol={ usuarioSignalString(data.Rol) }>
-			@xutility.PageHeader("Usuarios", "Administra los usuarios registrados en el sistema.") {
-				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": usuarioRefreshScript()}}) {
-					@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
-				}
-				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-on:click": usuarioModalRequestScript(ADMIN_USUARIOS_FORMHTML)}}) {
-					@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
-				}
-			}
-			@xutility.FilterBar() {
-				<div class="w-full sm:max-w-sm" data-on:combobox-change={ usuarioRoleFilterScript() }>
-					<label class="mb-2 block text-sm font-medium">Filtrar por rol</label>
-					@combobox.Combobox(combobox.Props{ID: "usuarios-role-filter", DefaultValue: data.Rol, Items: usuariosRoleItems(data.Roles)}) {
-						@combobox.Input(combobox.InputProps{Placeholder: "Todos los roles", ShowClear: true})
-						@combobox.Content(combobox.ContentProps{Class: "!bg-popover !text-popover-foreground !border !border-border !ring-0 shadow-lg"}) {
-							@combobox.Empty() { No hay roles disponibles. }
-							@combobox.List() {
-								for _, role := range data.Roles {
-									@combobox.Item(combobox.ItemProps{Value: role.ID, Label: role.Nombre}) { { role.Nombre } }
-								}
-							}
-						}
-					}
-				</div>
-				<div class="flex items-center gap-2">
-					<label for="usuarios-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label>
-				<select id="usuarios-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change={ usuarioPageSizeScript() }>
-						<option value="10">10</option>
-						<option value="20">20</option>
-						<option value="50">50</option>
-					</select>
-					<span class="text-sm text-muted-foreground">registros</span>
-				</div>
-			}
-			@UsuariosTableRegion(data)
-		</div>
+		@marco.AdminTable(marco.AdminTableProps{
+			Title: "Usuarios",
+			Description: "Administra los usuarios registrados en el sistema.",
+			RegionID: "usuarios-table-region",
+			Attributes: templ.Attributes{
+				"id": "usuarios-page",
+				"data-signals:pagina": usuarioSignalInt(data.Pagina),
+				"data-signals:size": usuarioSignalInt(data.Size),
+				"data-signals:rol": usuarioSignalString(data.Rol),
+				"data-signals:nombre": usuarioSignalString(data.Nombre),
+				"data-signals:usuariosLoading": "false",
+			},
+			HeaderActions: UsuarioHeaderActions(),
+			Filters: UsuarioFilters(data),
+		}) {
+			@UsuariosTableContent(data)
+		}
 	}
+}
+
+templ UsuarioHeaderActions() {
+	@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-usuarios-refresh": true, "data-on:click": usuarioRefreshScript(), "data-effect": usuarioLoadingButtonEffectScript("[data-usuarios-refresh]", "[data-usuarios-refresh-icon]", "[data-usuarios-refresh-label]", "Refrescar")}}) {
+		<span data-usuarios-refresh-icon>@icon.RefreshCw(icon.Props{Class: "size-4"})</span><span data-usuarios-refresh-label>Refrescar</span>
+	}
+	@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-on:click": usuarioModalRequestScript(ADMIN_USUARIOS_FORMHTML)}}) {
+		@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
+	}
+}
+
+templ UsuarioFilters(data UsuariosPageData) {
+	<div class="w-full sm:max-w-md">
+		<label for="usuarios-search" class="mb-2 block text-sm font-medium">Buscar usuario</label>
+		<div class="flex gap-2">
+			@input.Input(input.Props{ID: "usuarios-search", Type: "search", Value: data.Nombre, Placeholder: "Nombre o username", Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true, "data-on:keydown": usuarioNameSearchKeydownScript()}})
+			@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-usuarios-search": true, "data-on:click": usuarioNameSearchScript(), "data-effect": usuarioLoadingButtonEffectScript("[data-usuarios-search]", "[data-usuarios-search-icon]", "[data-usuarios-search-label]", "Buscar")}}) {
+				<span data-usuarios-search-icon>@icon.Search(icon.Props{Class: "size-4"})</span><span data-usuarios-search-label class="sr-only">Buscar</span>
+			}
+		</div>
+	</div>
+	<div class="w-full sm:max-w-sm" data-on:combobox-change={ usuarioRoleFilterScript() }>
+		<label class="mb-2 block text-sm font-medium">Filtrar por rol</label>
+		@combobox.Combobox(combobox.Props{ID: "usuarios-role-filter", DefaultValue: data.Rol, Items: usuariosRoleItems(data.Roles)}) {
+			@combobox.Input(combobox.InputProps{Placeholder: "Todos los roles", ShowClear: true})
+			@combobox.Content(combobox.ContentProps{Class: "!bg-popover !text-popover-foreground !border !border-border !ring-0 shadow-lg"}) {
+				@combobox.Empty() { No hay roles disponibles. }
+				@combobox.List() {
+					for _, role := range data.Roles {
+						@combobox.Item(combobox.ItemProps{Value: role.ID, Label: role.Nombre}) { { role.Nombre } }
+					}
+				}
+			}
+		}
+	</div>
+	<div class="flex items-center gap-2">
+		<label for="usuarios-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label>
+		<select id="usuarios-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change={ usuarioPageSizeScript() }>
+			<option value="10">10</option>
+			<option value="20">20</option>
+			<option value="50">50</option>
+		</select>
+		<span class="text-sm text-muted-foreground">registros</span>
+	</div>
 }
