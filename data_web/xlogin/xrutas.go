@@ -24,7 +24,11 @@ var (
 	ADMIN_AVISOS_ACTIVOS = "/adminx/avisos/activos"
 )
 
-func RutasAdmin(db *sql.DB, conf Config) []*utilidad.Handlers2 {
+// RutasAdmin registra el panel base y cualquier módulo adicional del
+// consumidor. Los módulos adicionales pasan por el mismo envoltorio que los
+// módulos propios, por lo que una navegación parcial y una actualización
+// completa conservan el layout administrativo.
+func RutasAdmin(db *sql.DB, conf Config, extraRoutes ...*utilidad.Handlers2) []*utilidad.Handlers2 {
 	controller := Controller{DB: db, Configur: &conf}
 	rutas := []*utilidad.Handlers2{}
 	rutas_usuarios := usuarios.Rutas(db)
@@ -49,6 +53,9 @@ func RutasAdmin(db *sql.DB, conf Config) []*utilidad.Handlers2 {
 	moduleRoutes = append(moduleRoutes, rutas_unidades...)
 	moduleRoutes = append(moduleRoutes, rutas_avisos...)
 	moduleRoutes = append(moduleRoutes, rutas_tickets...)
+
+	// estas rutas deben ir al final para dar prioridad a las rutas del consumidor
+	moduleRoutes = append(moduleRoutes, extraRoutes...)
 	for _, moduleRoute := range moduleRoutes {
 		route := moduleRoute
 		rutas = append(rutas, &utilidad.Handlers2{

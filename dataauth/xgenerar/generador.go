@@ -202,9 +202,8 @@ var (
 func RutasFront(db *sql.DB) []*utilidad.Handlers2 {
 	ssr := []*utilidad.Handlers2{}
 	conf := xlogin.Default()
-	rutitas := xlogin.RutasAdmin(db, conf)
+	rutitas := xlogin.RutasAdmin(db, conf, testmodule.Rutas(db)...)
 	ssr = append(ssr, rutitas...)
-	ssr = append(ssr, testmodule.Rutas(db)...)
 
 	return ssr
 }
@@ -323,12 +322,15 @@ func parchearRutasFront(path, module string) {
 			1,
 		)
 	}
-	if !strings.Contains(content, "testmodule.Rutas(db)") {
+	if strings.Contains(content, "xlogin.RutasAdmin(db, conf)") {
 		content = strings.Replace(content,
-			"ssr = append(ssr, rutitas...)",
-			"ssr = append(ssr, rutitas...)\n\tssr = append(ssr, testmodule.Rutas(db)...)",
+			"xlogin.RutasAdmin(db, conf)",
+			"xlogin.RutasAdmin(db, conf, testmodule.Rutas(db)...)",
 			1,
 		)
+	}
+	if strings.Contains(content, "\n\tssr = append(ssr, testmodule.Rutas(db)...)\n") {
+		content = strings.Replace(content, "\n\tssr = append(ssr, testmodule.Rutas(db)...)\n", "\n", 1)
 	}
 
 	if err := os.WriteFile(path, []byte(content), 0644); err != nil {

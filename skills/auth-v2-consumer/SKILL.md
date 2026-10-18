@@ -29,7 +29,8 @@ only business-domain modules and their authorization-aware content.
   `app/front/web/test`. It is available at `/webc/test` and is intentionally
   disposable: use it to verify the reusable frame, table, filters and
   pagination before replacing it with a business module.
-- Register the library's admin routes once. Do not recreate login, relogin,
+- Register the library's admin routes once, passing consumer module routes as
+  additional routes so direct refreshes receive the full admin layout. Do not recreate login, relogin,
   profile, role selection, menu loading, chat, or WebSocket routes in the consumer.
 - Render `xchat.ChatDialog()` once inside the main authenticated layout if the
   consumer uses the chat package independently of the bundled login layout.
