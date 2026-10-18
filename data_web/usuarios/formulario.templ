@@ -6,14 +6,27 @@ import "github.com/dsaldias/server/data_web/components/field"
 import "github.com/dsaldias/server/data_web/components/input"
 import "github.com/dsaldias/server/graph_auth/model"
 
-templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad) {
-	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
+templ UsuarioModalLoading() {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl", Attributes: templ.Attributes{"data-on:dialog-close": usuarioDialogCleanupScript()}}) {
 		@dialog.Header() {
-			@dialog.Title() { <span data-usuario-title>Nuevo usuario</span> }
-			@dialog.Description() { Registra la información del usuario y asigna sus roles por unidad. }
+			@dialog.Title() { <span data-usuario-title>Usuario</span> }
 		}
+		<div id="usuario-dialog-body" class="max-h-[calc(100vh-10rem)] overflow-x-hidden overflow-y-auto overscroll-contain">
+			<div id="usuario-dialog-content" class="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground" aria-live="polite">
+				<span class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+				Cargando, espere...
+			</div>
+		</div>
+	}
+}
 
-		<form id="usuario-form" data-usuario-form="shared" class="max-h-[calc(100vh-10rem)] space-y-5 overflow-y-auto pr-1" data-signals:foto64={ usuarioSignalString("") } data-signals:usuarioMode={ usuarioSignalString("create") } data-signals:usuarioID={ usuarioSignalString("") } data-signals:usuarioSaving="false" data-signals:usuarioSaved="false" data-effect="if ($usuarioSaving) { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Guardando...'; } } else { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = 'Guardar usuario'; } } if ($usuarioSaved) { window.templ?.dialog?.close('usuario-dialog'); $usuarioSaved = false; }" data-on:submit__prevent={ "$usuarioSaving = true; @post('/adminx/usuarios?pagina='+$pagina+'&size='+$size+'&rol='+encodeURIComponent($rol || '')+'&mode='+encodeURIComponent($usuarioMode || 'create')+'&id='+encodeURIComponent($usuarioID || ''))" }>
+templ UsuarioModalError(message string) {
+	<div id="usuario-dialog-content" class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">{ message }</div>
+}
+
+templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad) {
+	<div id="usuario-dialog-content">
+		<form id="usuario-form" data-usuario-form="shared" class="space-y-5" data-signals:foto64={ usuarioSignalString("") } data-signals:usuarioMode={ usuarioSignalString("create") } data-signals:usuarioID={ usuarioSignalString("") } data-signals:usuarioSaving="false" data-signals:usuarioSaved="false" data-effect="if ($usuarioSaving) { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Guardando...'; } } else { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = 'Guardar usuario'; } } if ($usuarioSaved) { window.templ?.dialog?.close('usuario-dialog'); $usuarioSaved = false; }" data-on:submit__prevent={ "$usuarioSaving = true; @post('/adminx/usuarios?pagina='+$pagina+'&size='+$size+'&rol='+encodeURIComponent($rol || '')+'&mode='+encodeURIComponent($usuarioMode || 'create')+'&id='+encodeURIComponent($usuarioID || ''))" }>
 			<div class="grid gap-4 sm:grid-cols-2">
 				@usuarioTextField("usuario-nombres", "Nombres", "nombres", "Ingrese los nombres", true)
 				@usuarioTextField("usuario-apellido1", "Primer apellido", "apellido1", "Ingrese el primer apellido", true)
@@ -75,7 +88,7 @@ templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad) {
 				@button.Button(button.Props{Type: button.TypeSubmit, ID: "usuario-submit"}) { Guardar usuario }
 			}
 		</form>
-	}
+	</div>
 }
 
 templ usuarioTextField(id, label, signal, placeholder string, required bool) {

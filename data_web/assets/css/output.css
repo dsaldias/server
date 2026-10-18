@@ -642,6 +642,9 @@
   .min-h-32 {
     min-height: calc(var(--spacing) * 32);
   }
+  .min-h-40 {
+    min-height: calc(var(--spacing) * 40);
+  }
   .min-h-48 {
     min-height: calc(var(--spacing) * 48);
   }
@@ -2943,7 +2946,7 @@
   scale: 1 !important;
   rotate: none !important;
   margin: 0 !important;
-  overflow-y: auto !important;
+  overflow: hidden !important;
 }
 @media (max-width: 767px) {
   #admin-shell:not([data-sidebar-collapsed="true"]) #admin-sidebar {

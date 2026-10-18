@@ -1,16 +1,10 @@
 package usuarios
 
-import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/xutility"
 import "github.com/dsaldias/server/graph_auth/model"
 
 templ Visualizar(user *model.ResponseUsuario) {
-	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
-		@dialog.Header() {
-			@dialog.Title() { Visualizar usuario }
-			@dialog.Description() { Consulta la información registrada del usuario. }
-		}
-		<div class="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto pr-1">
+	<div id="usuario-dialog-content" class="space-y-5">
 		<div class="grid gap-4 sm:grid-cols-2">
 			@xutility.ReadField("Nombres", user.Nombres)
 			@xutility.ReadField("Primer apellido", user.Apellido1)
@@ -70,6 +64,5 @@ templ Visualizar(user *model.ResponseUsuario) {
 				</div>
 			}
 		}
-		</div>
-	}
+	</div>
 }

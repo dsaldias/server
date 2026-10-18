@@ -54,26 +54,6 @@ type usuarioFormSignals struct {
 	ID        string `json:"usuarioID"`
 }
 
-func usuarioEditAttributes(dialogID string, user *model.ResponseUsuario) templ.Attributes {
-	roles := make([]map[string]string, 0, len(user.Roles))
-	for _, role := range user.Roles {
-		if role != nil {
-			roles = append(roles, map[string]string{"rol_id": role.RolID, "unidad_id": role.UnidadID, "rol_name": role.RolName, "unidad_name": role.UnidadName})
-		}
-	}
-	rolesJSON, _ := json.Marshal(roles)
-	return templ.Attributes{
-		"tabindex":                   "0",
-		"type":                       "button",
-		"data-slot":                  "dialog-trigger",
-		"data-base-ui-click-trigger": true,
-		"data-templ-controls":        dialogID,
-		"aria-haspopup":              "dialog",
-		"aria-expanded":              "false",
-		"data-on:click":              "" + usuarioEditScript(user, string(rolesJSON)),
-	}
-}
-
 func usuarioEditScript(user *model.ResponseUsuario, rolesJSON string) string {
 	js := func(value any) string {
 		data, _ := json.Marshal(value)
@@ -82,8 +62,42 @@ func usuarioEditScript(user *model.ResponseUsuario, rolesJSON string) string {
 	return "$usuarioMode = 'edit'; $usuarioID = " + js(user.ID) + "; $nombres = " + js(user.Nombres) + "; $apellido1 = " + js(user.Apellido1) + "; $apellido2 = " + js(optionalString(user.Apellido2)) + "; $documento = " + js(optionalString(user.Documento)) + "; $celular = " + js(optionalString(user.Celular)) + "; $correo = " + js(optionalString(user.Correo)) + "; $sexo = " + js(optionalString(user.Sexo)) + "; $direccion = " + js(optionalString(user.Direccion)) + "; $username = " + js(user.Username) + "; $password = ''; $foto64 = " + js("") + "; $rolesJson = " + js(rolesJSON) + "; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Editar usuario'); root?.querySelector('#usuario-password')?.removeAttribute('required'); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('#usuario-form-error')?.replaceChildren(); const list = root?.querySelector('[data-usuario-roles-list]'); if (list) { list.innerHTML = ''; JSON.parse($rolesJson || '[]').forEach((pair) => { const row = document.createElement('div'); row.className = 'flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2 text-sm'; row.dataset.usuarioPair = pair.unidad_id; const text = document.createElement('span'); text.textContent = pair.rol_name + ' · ' + pair.unidad_name; const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'text-xs text-muted-foreground hover:text-destructive'; remove.textContent = 'Quitar'; remove.onclick = () => { $rolesJson = JSON.stringify(JSON.parse($rolesJson || '[]').filter((item) => item.unidad_id !== row.dataset.usuarioPair)); row.remove(); }; row.append(text, remove); list.append(row); }); }"
 }
 
+func usuarioModalRequestScript(path string) string {
+	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "')"
+}
+
+func usuarioModalRequestWithIDScript(path string) string {
+	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "?id=' + encodeURIComponent(button?.dataset.usuarioId || ''))"
+}
+
+func usuarioModalReadyScript() string {
+	return "document.querySelectorAll('[data-usuario-modal-action]').forEach((button) => { button.disabled = false; button.removeAttribute('aria-busy'); });"
+}
+
+func usuarioDialogCleanupScript() string {
+	return "const content = document.getElementById('usuario-dialog-content'); if (content) { content.className = 'flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground'; content.innerHTML = '<span class=\"size-4 animate-spin rounded-full border-2 border-current border-t-transparent\"></span>Cargando, espere...'; } document.querySelectorAll('[data-usuario-modal-action]').forEach((button) => { button.disabled = false; button.removeAttribute('aria-busy'); }); const title = document.querySelector('#usuario-dialog [data-usuario-title]'); title?.replaceChildren(document.createTextNode('Usuario'));"
+}
+
+func usuarioModalTitleScript(title string) string {
+	data, _ := json.Marshal(title)
+	return "document.querySelector('#usuario-dialog [data-usuario-title]')?.replaceChildren(document.createTextNode(" + string(data) + "));"
+}
+
+func usuarioModalDescriptionScript(description string) string {
+	data, _ := json.Marshal(description)
+	return "document.querySelector('#usuario-dialog [data-templ-dialog-description]')?.replaceChildren(document.createTextNode(" + string(data) + "));"
+}
+
+func usuarioRequestID(r *http.Request) string {
+	id := strings.TrimSpace(r.URL.Query().Get("id"))
+	if id == "" {
+		id = strings.TrimSpace(r.FormValue("id"))
+	}
+	return id
+}
+
 func usuarioCreateResetScript() string {
-	return "$usuarioMode = 'create'; $usuarioID = ''; $nombres = ''; $apellido1 = ''; $apellido2 = ''; $documento = ''; $celular = ''; $correo = ''; $sexo = ''; $direccion = ''; $username = ''; $password = ''; $foto64 = ''; $rolesJson = ''; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Nuevo usuario'); root?.querySelector('#usuario-password')?.setAttribute('required', ''); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('[data-usuario-roles-list]')?.replaceChildren(); root?.querySelector('#usuario-form-error')?.replaceChildren(); root?.querySelector('[data-usuario-roles-error]')?.replaceChildren();"
+	return "$usuarioMode = 'create'; $usuarioID = ''; $nombres = ''; $apellido1 = ''; $apellido2 = ''; $documento = ''; $celular = ''; $correo = ''; $sexo = ''; $direccion = ''; $username = ''; $password = ''; $foto64 = ''; $rolesJson = ''; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Nuevo usuario'); root?.querySelectorAll('input, textarea, select').forEach((field) => { field.value = ''; field.dispatchEvent(new Event('input', { bubbles: true })); }); root?.querySelector('#usuario-password')?.setAttribute('required', ''); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('[data-usuario-roles-list]')?.replaceChildren(); root?.querySelector('#usuario-form-error')?.replaceChildren(); root?.querySelector('[data-usuario-roles-error]')?.replaceChildren();"
 }
 
 func usuarioBind(signal string) templ.Attributes {
@@ -133,25 +147,73 @@ func (c *Controller) usuariosPageData(r *http.Request) UsuariosPageData {
 		data.Error = "No fue posible cargar los usuarios."
 	}
 	data.Roles, _ = xrepo.Roles(r.Context(), c.DB)
-	data.Unidades, _ = xrepo.Unidades(r.Context(), c.DB)
-	data.Detalles = usuariosDetalles(r, c.DB, data.Listado)
 	return data
 }
 
-func usuariosDetalles(r *http.Request, db *sql.DB, listado *model.UsuarioPaginado) map[string]*model.ResponseUsuario {
-	detalles := make(map[string]*model.ResponseUsuario)
-	if listado == nil {
-		return detalles
+func (c *Controller) UsuarioFormularioRender(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
 	}
-	for _, user := range listado.Datos {
-		if user == nil {
-			continue
-		}
-		if detalle, err := xrepo.UsuarioByID(r.Context(), db, user.ID); err == nil && detalle != nil {
-			detalles[user.ID] = detalle
+	roles, _ := xrepo.Roles(r.Context(), c.DB)
+	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
+	c.patchUsuarioModal(w, r, Formulario(roles, unidades), usuarioCreateResetScript()+usuarioModalReadyScript())
+}
+
+func (c *Controller) UsuarioVisualizarRender(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+	detalle, err := xrepo.UsuarioByID(r.Context(), c.DB, usuarioRequestID(r))
+	if err != nil || detalle == nil {
+		c.patchUsuarioModal(w, r, UsuarioModalError("No fue posible cargar el usuario."), usuarioModalTitleScript("Usuario")+usuarioModalDescriptionScript("No fue posible cargar la información.")+usuarioModalReadyScript())
+		return
+	}
+	c.patchUsuarioModal(w, r, Visualizar(detalle), usuarioModalTitleScript("Visualizar usuario")+usuarioModalDescriptionScript("Consulta la información registrada del usuario.")+usuarioModalReadyScript())
+}
+
+func (c *Controller) UsuarioEditarRender(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+	detalle, err := xrepo.UsuarioByID(r.Context(), c.DB, usuarioRequestID(r))
+	if err != nil || detalle == nil {
+		c.patchUsuarioModal(w, r, UsuarioModalError("No fue posible cargar el usuario."), usuarioModalTitleScript("Usuario")+usuarioModalDescriptionScript("No fue posible cargar la información.")+usuarioModalReadyScript())
+		return
+	}
+	roles, _ := xrepo.Roles(r.Context(), c.DB)
+	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
+	rolesJSON, _ := json.Marshal(usuarioRolePairs(detalle))
+	c.patchUsuarioModal(w, r, Formulario(roles, unidades), usuarioEditScript(detalle, string(rolesJSON))+usuarioModalDescriptionScript("Registra la información del usuario y asigna sus roles por unidad.")+usuarioModalReadyScript())
+}
+
+func (c *Controller) patchUsuarioModal(w http.ResponseWriter, r *http.Request, component templ.Component, after string) {
+	var body strings.Builder
+	if err := component.Render(r.Context(), &body); err != nil {
+		http.Error(w, "No fue posible renderizar el modal", http.StatusInternalServerError)
+		return
+	}
+	if r.Header.Get("Datastar-Request") != "true" {
+		_, _ = w.Write([]byte(body.String()))
+		return
+	}
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#usuario-dialog-content"), datastar.WithModeOuter())
+	if after != "" {
+		_ = sse.ExecuteScript(after)
+	}
+}
+
+func usuarioRolePairs(user *model.ResponseUsuario) []map[string]string {
+	roles := make([]map[string]string, 0, len(user.Roles))
+	for _, role := range user.Roles {
+		if role != nil {
+			roles = append(roles, map[string]string{"rol_id": role.RolID, "unidad_id": role.UnidadID, "rol_name": role.RolName, "unidad_name": role.UnidadName})
 		}
 	}
-	return detalles
+	return roles
 }
 
 func (c *Controller) usuarioCreate(w http.ResponseWriter, r *http.Request) {
@@ -265,7 +327,6 @@ func (c *Controller) usuariosPatch(w http.ResponseWriter, r *http.Request, data 
 		if data.Listado == nil {
 			data.Error = "No fue posible cargar los usuarios."
 		}
-		data.Detalles = usuariosDetalles(r, c.DB, data.Listado)
 	}
 
 	var body strings.Builder

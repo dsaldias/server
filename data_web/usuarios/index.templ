@@ -8,12 +8,13 @@ import "github.com/dsaldias/server/data_web/xutility"
 
 templ RenderUsuarios(data UsuariosPageData) {
 	@dialog.Dialog(dialog.Props{ID: "usuario-dialog"}) {
+		@UsuarioModalLoading()
 		<div id="usuarios-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ usuarioSignalInt(data.Pagina) } data-signals:size={ usuarioSignalInt(data.Size) } data-signals:rol={ usuarioSignalString(data.Rol) }>
 			@xutility.PageHeader("Usuarios", "Administra los usuarios registrados en el sistema.") {
 					@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina = 1; @get('/adminx/usuarios')"}}) {
 						@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
 					}
-					@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": usuarioCreateResetScript()}}) {
+					@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-on:click": usuarioModalRequestScript(ADMIN_USUARIOS_FORMULARIO)}}) {
 						@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
 					}
 			}
@@ -44,13 +45,9 @@ templ RenderUsuarios(data UsuariosPageData) {
 			}
 
 			@UsuariosTableRegion(data)
-			@UsuarioViewDialogs(data)
 		</div>
-
-		@Formulario(data.Roles, data.Unidades)
 	}
 }
-
 templ UsuariosTableRegion(data UsuariosPageData) {
 	@xutility.TableRegion("usuarios-table-region") {
 		if data.Error != "" {
@@ -72,12 +69,8 @@ templ UsuariosTableRegion(data UsuariosPageData) {
 									<td class="px-3 py-2"><span class={ usuarioStatusClass(user.Estado) }>{ usuarioStatusLabel(user.Estado) }</span></td>
 									<td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ usuarioLastLogin(user.LastLogin) }</td>
 									<td class="px-3 py-2"><div class="flex justify-end gap-1">
-										@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: dialog.TriggerFor("usuario-view-" + user.ID)}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar usuario</span> }
-										if detalle, ok := data.Detalles[user.ID]; ok {
-											@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: usuarioEditAttributes("usuario-dialog", detalle)}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
-										} else {
-											@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: dialog.TriggerFor("usuario-dialog")}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
-										}
+						@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-usuario-id": user.ID, "data-on:click": usuarioModalRequestWithIDScript(ADMIN_USUARIOS_VISUALIZAR)}}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar usuario</span> }
+						@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-usuario-id": user.ID, "data-on:click": usuarioModalRequestWithIDScript(ADMIN_USUARIOS_EDITAR)}}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
 									</div></td>
 								</tr>
 							}
@@ -88,16 +81,4 @@ templ UsuariosTableRegion(data UsuariosPageData) {
 		}
 	}
 }
-}
-
-templ UsuarioViewDialogs(data UsuariosPageData) {
-	if data.Listado != nil {
-		for _, user := range data.Listado.Datos {
-			if detalle, ok := data.Detalles[user.ID]; ok {
-				@dialog.Dialog(dialog.Props{ID: "usuario-view-" + user.ID}) {
-					@Visualizar(detalle)
-				}
-			}
-		}
-	}
 }
