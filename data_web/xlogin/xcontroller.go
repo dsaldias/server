@@ -181,7 +181,7 @@ func (c *Controller) Chat(w http.ResponseWriter, r *http.Request) {
 	}
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-list"), datastar.WithModeOuter())
-	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	patchChatUnreadBadges(sse, unread)
 	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.remove('hidden'); document.getElementById('chat-conversation-view')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); const title=document.getElementById('chat-dialog-title'); if(title) title.textContent='Chat';")
 }
 
@@ -215,7 +215,7 @@ func (c *Controller) chatConversation(w http.ResponseWriter, r *http.Request, us
 	}
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
-	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	patchChatUnreadBadges(sse, unread)
 	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": conversation.ID, "chatRecipientID": chatConversationRecipient(conversation, userID), "chatRecipientName": conversation.Nombre, "chatText": "", "chatSending": false})
 	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden'); const title=document.getElementById('chat-dialog-title'); if(title) title.textContent=" + strconv.Quote(conversation.Nombre) + ";")
 }
@@ -285,6 +285,9 @@ func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
 		signals.RecipientID = r.FormValue("chatRecipientID")
 		signals.Text = r.FormValue("chatText")
 	}
+	if signals.RecipientID == "" {
+		signals.RecipientID = strings.TrimSpace(r.URL.Query().Get("recipient_id"))
+	}
 	signals.Text = strings.TrimSpace(signals.Text)
 	if signals.RecipientID == "" || signals.Text == "" {
 		c.chatError(w, r, "Selecciona un destinatario y escribe un mensaje.")
@@ -322,9 +325,9 @@ func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
 	unread, _ := xrepo.ChatsNoLeidos(r.Context(), c.DB, auth.SessionKey.UsuarioID)
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
-	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	patchChatUnreadBadges(sse, unread)
 	_ = sse.MarshalAndPatchSignals(map[string]any{"chatSending": false, "chatText": "", "chatConversationID": conversationID})
-	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden');")
+	_ = sse.ExecuteScript("const input=document.getElementById('chat-message-input'); if(input){input.value='';} document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden');")
 }
 
 func (c *Controller) chatError(w http.ResponseWriter, r *http.Request, message string) {
@@ -335,11 +338,16 @@ func (c *Controller) chatError(w http.ResponseWriter, r *http.Request, message s
 	_ = sse.MarshalAndPatchSignals(map[string]bool{"chatSending": false})
 }
 
-func chatUnreadBadgeHTML(count int32) string {
+func patchChatUnreadBadges(sse *datastar.ServerSentEventGenerator, count int32) {
+	_ = sse.PatchElements(chatUnreadBadgeHTML("chat-unread-badge-trigger", count), datastar.WithSelector("#chat-unread-badge-trigger"), datastar.WithModeOuter())
+	_ = sse.PatchElements(chatUnreadBadgeHTML("chat-unread-badge-menu", count), datastar.WithSelector("#chat-unread-badge-menu"), datastar.WithModeOuter())
+}
+
+func chatUnreadBadgeHTML(id string, count int32) string {
 	if count <= 0 {
-		return `<span id="chat-unread-badge" data-chat-unread class="hidden rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">0</span>`
+		return `<span id="` + id + `" data-chat-unread class="hidden rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">0</span>`
 	}
-	return `<span id="chat-unread-badge" data-chat-unread class="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">` + strconv.Itoa(int(count)) + `</span>`
+	return `<span id="` + id + `" data-chat-unread class="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">` + strconv.Itoa(int(count)) + `</span>`
 }
 
 func chatDate(value time.Time) string {
