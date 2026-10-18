@@ -11,7 +11,7 @@
     "path": "/assets/js"
   },
   "aliases": {
-    "components": "github.com/dsaldias/server/data_web/components",
-    "utils": "github.com/dsaldias/server/data_web/utils"
+    "components": "{{MODULE}}/app/front/componentes",
+    "utils": "{{MODULE}}/app/front/utils"
   }
 }

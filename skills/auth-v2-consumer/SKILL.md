@@ -20,8 +20,10 @@ only business-domain modules and their authorization-aware content.
   `serverx.go`, so transitive runtime dependencies such as
   `github.com/a-h/templ` are recorded in the consumer's `go.sum`. It also
   registers the `templ` and `shadcn-templ` tools required by the generated
-  `Taskfile.yml`. If automatic synchronization cannot run, execute `go mod tidy`
-  and register those tools manually.
+  `Taskfile.yml`, and generates consumer-local shadcn aliases under
+  `<module>/app/front/componentes` and `<module>/app/front/utils`. If automatic
+  synchronization cannot run, execute `go mod tidy` and register those tools
+  manually.
 - Register the library's admin routes once. Do not recreate login, relogin,
   profile, role selection, menu loading, chat, or WebSocket routes in the consumer.
 - Render `xchat.ChatDialog()` once inside the main authenticated layout if the
@@ -51,6 +53,20 @@ Follow the same structure used by the maintained CRUD modules:
 Compose the page with `data_web/xutility/marco` instead of copying table,
 filter, pagination, dialog, or loading markup. Supply only the business
 module's columns, filters, data, and operation handlers.
+
+The generated consumer `components.json` must use aliases inside the consumer
+module, not the library module path. The generator replaces `{{MODULE}}` with
+the value from the consumer's `go.mod`, for example:
+
+```json
+"aliases": {
+  "components": "my_server_app/app/front/componentes",
+  "utils": "my_server_app/app/front/utils"
+}
+```
+
+These aliases are for the consumer-side `shadcn-templ` CLI. They do not change
+the Go import paths of reusable library components.
 
 ## Datastar rules
 
