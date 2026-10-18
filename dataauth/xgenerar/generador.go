@@ -21,7 +21,7 @@ var sqlAppTemplate string
 //go:embed taskfile/Taskfile.yml
 var taskFile string
 
-//go:embed taskfile/input.css
+//go:embed taskfile/globals.css
 var inputCcs string
 
 //go:embed sql/database.sql
@@ -45,11 +45,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/coder/websocket"
-	"github.com/vektah/gqlparser/v2/ast"
-
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
+	"github.com/dsaldias/server/data_web/xutility"
 	"github.com/dsaldias/server/dataauth"
 	"github.com/dsaldias/server/dataauth/utilidad"
+	"github.com/vektah/gqlparser/v2/ast"
 )
 
 // # go run github.com/99designs/gqlgen generate
@@ -58,7 +57,7 @@ import (
 // # scp appname root@185.203.216.16:/root/apps/appname/
 func main() {
 
-	db := utils.Conexion()
+	db := utilidad.Conexion()
 	resolver := graph.Resolver{DB: db}
 	schema := graph.NewExecutableSchema(graph.Config{Resolvers: &resolver})
 	srv := handler.New(schema)
@@ -74,7 +73,7 @@ func main() {
 				OriginPatterns: []string{"*"},
 			},
 		},
-		InitFunc: utils.UaserIDMiddleware(db),
+		InitFunc: utilidad.UaserIDMiddleware(db),
 	})
 
 	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
@@ -89,7 +88,7 @@ func main() {
 	ssr := front.RutasFront(db)
 
 	// para dev, actualizamos los assets
-	principal.AssetVersion = uuid.New().String()
+	xutility.AssetVersion = uuid.New().String()
 
 	dataauth.Iniciar(srv, &schema, db, ssr, nil)
 }
@@ -140,10 +139,10 @@ defina su escuchador
 */
 func LoadCustomEvents() {
 	// EDIT THIS FILE IN YOUR APP
-	utils.SetOnUserExternalCreate(func(db *sql.DB, id, u, p string) {})
-	utils.SetOnUserRelogin(func(db *sql.DB, id, u, p string) {})
-	utils.SetOnTicketCreated(func(db *sql.DB, id string) {})
-	utils.SetOnUserExternalLogin(func(db *sql.DB, username, pass string) {})
+	utilidad.SetOnUserExternalCreate(func(db *sql.DB, id, u, p string) {})
+	utilidad.SetOnUserRelogin(func(db *sql.DB, id, u, p string) {})
+	utilidad.SetOnTicketCreated(func(db *sql.DB, id string) {})
+	utilidad.SetOnUserExternalLogin(func(db *sql.DB, username, pass string) {})
 }
 
 	`
@@ -163,12 +162,7 @@ package front
 import (
 	"database/sql"
 	"embed"
-	"io/fs"
 	"net/http"
-
-	"github.com/dsaldias/server/dataadmin"
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
 
 	"github.com/dsaldias/server/dataauth/utilidad"
 )
@@ -177,59 +171,24 @@ import (
 var Asset embed.FS
 
 /*
-// PARA UNA RUTA PUBLICA MAPEA A UN COMPONENTE QUE CARGUE LO SIGUIENTE: 
-package publico 
-
-import ( 
-  "github.com/dsaldias/server/dataadmin/pages/mainlayout/layoutconfig"
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
-)
-
-templ Publico() {
-	@principal.Layout("Landing page", layoutconfig.Default()){
-    Hola bienvenidos a mi sitio web
-  }
-}
+// PARA UNA RUTA PUBLICA MAPEA A UN COMPONENTE QUE CARGUE LO SIGUIENTE:
+package publico
 */
 
 var (
 	WEB_PATH_BASE = "/webc/"
 )
 
-func RutasFront(db *sql.DB) []*utils.Handlers2 {
-	fs1, err := fs.Sub(Asset, "asset")
-	if err != nil {
-		panic(err)
-	}
+func RutasFront(db *sql.DB) []*utilidad.Handlers2 {
+	ssr := []*utilidad.Handlers2{}
 
-	conf := mainlayout.LayoutConfig{
-		Title: "Hola Mundo!!!",
-		Subtitle:     "Sistema admin",
-		// ###### Personaliza clases, colores y asset desde el proyecto consumidor.
-		// Stylesheet: "/asset/css/output.css",
-		// MainClass:  "min-h-0 flex-1 overflow-auto px-6 pt-0 pb-16",
-		ExtraCSS:   []string{"/asset/css/output.css"},
-		// ExtraJS: []layoutconfig.JSLink{
-		// 	{Src: "/asset/custom.js"}, 
-		// },
-	}
+	tcontroller := TestController{DB: db}
 
-	cont_main := mainlayout.MainController{
-		DB:     db,
-		Config: conf,
-	}
-
-	ssr_admin := dataadmin.RutasFrontAdmin(db, conf)
-	ssr := []*utils.Handlers2{}
-	ssr = append(ssr, ssr_admin...)
-
-	tcontroller := TestController{DB: db, C: &cont_main}
-
-	ssr = append(ssr, &utils.Handlers2{Path: "/asset/*", H: http.StripPrefix("/asset/", http.FileServer(http.FS(fs1)))})
-	ssr = append(ssr, &utils.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(tcontroller.Listar)})
+	ssr = append(ssr, &utilidad.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(tcontroller.Listar)})
 
 	return ssr
 }
+
 `
 
 	content_controller1 := `
@@ -238,20 +197,14 @@ package front
 import (
 	"database/sql"
 	"net/http"
-
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout"
-	"github.com/dsaldias/server/dataadmin/pages/mainlayout/principal"
 )
 
 type TestController struct {
-	DB *sql.DB
-	C  *mainlayout.MainController
+	DB *sql.DB 
 }
 
 func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
-	ini := principal.Inicio()
-	// ini.Render(r.Context(), w)
-	c.C.RenderPage(w, r, ini)
+
 }
 
 `
@@ -286,7 +239,7 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	if err := os.MkdirAll("app/front/asset/css", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/asset/: %v\n", err)
 	} else {
-		escribirArchivo("app/front/asset/css/input.css", []byte(inputCcs))
+		escribirArchivo("app/front/asset/css/globals.css", []byte(inputCcs))
 	}
 
 	if err := os.MkdirAll("app/front/utils", 0755); err != nil {

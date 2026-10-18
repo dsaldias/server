@@ -1,54 +1,43 @@
-# yaml-language-server: $schema=https://taskfile.dev/schema.json
-
 version: "3"
+
+vars:
+  # The app port: an explicit 'task dev PORT=8091' wins, otherwise the next
+  # free port from 8090 up. The templ proxy and the app share the result,
+  # so hot reload never points at a foreign app.
+  FREE_PORT:
+    sh: port=8090; while nc -z localhost $port >/dev/null 2>&1; do port=$((port+1)); done; echo $port
+  PORT: '{{.PORT | default .FREE_PORT}}'
 
 tasks:
   templ:
     desc: Run templ with integrated server and hot reload
     cmds:
-      - templ generate --watch --proxy="http://localhost:8090" --cmd="go run ./serverx.go" --open-browser=false
+      - go tool templ generate --watch --proxy="http://localhost:{{.PORT}}" --cmd="go run ./server.go" --open-browser=false
+    env:
+      PORT: "{{.PORT}}"
 
   tailwind:
     desc: Watch Tailwind CSS changes
     cmds:
-      - |
-        TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)" && \
-        printf '%s\n' \
-          '@source "./**/*.templ";' \
-          "@source \"$TEMPLUI_PATH/components/**/*.templ\";" \
-          > ./app/front/asset/css/sources.generated.css && \
-        tailwindcss -i ./app/front/asset/css/input.css -o ./app/front/asset/css/output.css --watch
+      - "tailwindcss -i ./app/front/asset/css/globals.css -o ./app/front/asset/css/output.css --watch"
 
-  templui-assets:
-    desc: Copiar JavaScript de TemplUI a los assets
+  scripts-watch:
+    desc: Watch component scripts
     cmds:
-      - |
-        set -e
-        TEMPLUI_PATH="$(go list -mod=mod -m -f {{`'{{.Dir}}'`}} github.com/templui/templui)"
-        DEST="./app/front/asset/templui/js"
+      - go tool shadcn-templ bundle --watch
 
-        mkdir -p "$DEST"
-
-        for file in popover.min.js dropdown.min.js dialog.min.js sidebar.min.js collapsible.min.js tabs.min.js selectbox.min.js input.min.js; do
-          SOURCE="$(find "$TEMPLUI_PATH/components" -name "$file" -type f | head -n 1)"
-
-          if [ -z "$SOURCE" ]; then
-            echo "ERROR: No se encontró $file en TemplUI"
-            exit 1
-          fi
-
-          rm -f "$DEST/$file"
-          cp "$SOURCE" "$DEST/$file"
-        done
+  build:
+    desc: Build the application with production assets
+    cmds:
+      - mkdir -p bin
+      - tailwindcss -i ./app/front/asset/css/globals.css -o ./app/front/asset/css/output.css --minify
+      - go tool shadcn-templ bundle
+      - go tool templ generate
+      - go build -o bin/app .
 
   dev:
-    desc: Iniciar servidor de desarrollo con hot reload
+    env:
+      SHADCN_TEMPL_DEV: "true"
+    desc: Start development server with hot reload
     cmds:
-      - task templui-assets
-      - task --parallel tailwind templ
-
-  build: 
-    cmds: 
-      - templ generate
-      - task templui-assets
-      - go build -ldflags "-X github.com/dsaldias/server/dataadmin/pages/mainlayout/principal.AssetVersion=$(git rev-parse --short HEAD)" -o servidor ./serverx.go
+      - task --parallel tailwind scripts-watch templ
