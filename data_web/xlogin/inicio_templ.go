@@ -1368,9 +1368,9 @@ func reloginForm() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var68 string
-		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.ResolveAttributeValue("const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))")
+		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.ResolveAttributeValue("const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando datos...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 145, Col: 352}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 145, Col: 358}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var68)
 		if templ_7745c5c3_Err != nil {

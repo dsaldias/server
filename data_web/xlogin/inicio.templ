@@ -142,7 +142,7 @@ templ InicioContextError(message string) {
 }
 
 templ reloginForm() {
-	<form method="post" class="mt-6 space-y-4" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))" }>
+	<form method="post" class="mt-6 space-y-4" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando datos...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))" }>
 		<div class="space-y-2"><label for="relogin-username" class="text-sm font-medium">Usuario</label><input id="relogin-username" name="username" data-bind:username type="text" autocomplete="username" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"/></div>
 		<div class="space-y-2"><label for="relogin-password" class="text-sm font-medium">Contraseña</label><input id="relogin-password" name="password" data-bind:password type="password" autocomplete="current-password" required class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"/></div>
 		<div id="relogin-result"></div>

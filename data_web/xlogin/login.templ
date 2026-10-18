@@ -39,7 +39,7 @@ templ LoginRender() {
 						@card.Description(card.DescriptionProps{Class: "mt-3 text-sm leading-6"}) { Ingresa tus credenciales para acceder al sistema. }
 					}
 					@card.Content() {
-						<form method="post" class="space-y-5" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login')" }>
+						<form method="post" class="space-y-5" data-on:submit__prevent={ "const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando info...'; } @post('/adminx/login')" }>
 							@field.Group() {
 								@field.Field() {
 									@field.Label(field.LabelProps{For: "username"}) { Usuario }

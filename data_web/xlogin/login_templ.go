@@ -133,9 +133,9 @@ func LoginRender() templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue("const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando...'; } @post('/adminx/login')")
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue("const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando info...'; } @post('/adminx/login')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/login.templ`, Line: 42, Col: 241}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/login.templ`, Line: 42, Col: 246}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 				if templ_7745c5c3_Err != nil {
