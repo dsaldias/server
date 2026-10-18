@@ -10,7 +10,7 @@ import "github.com/dsaldias/server/graph_auth/model"
 templ ChatDialog() {
 	@dialog.Dialog(dialog.Props{ID: "chat-dialog"}) {
 		@dialog.Content(dialog.ContentProps{Class: "!w-[min(96vw,72rem)] !max-w-6xl !bg-card !text-card-foreground shadow-2xl", Attributes: templ.Attributes{"data-on:auth-v2-chat": ChatNotificationHandler()}}) {
-			<div id="chat-modal-shell" class="flex h-[min(82vh,52rem)] min-h-0 flex-col gap-3" data-signals:chatConversationID="''" data-signals:chatRecipientID="''" data-signals:chatRecipientName="''" data-signals:chatText="''" data-signals:chatSearch="''" data-signals:chatSending="false">
+			<div id="chat-modal-shell" class="flex h-[min(82vh,52rem)] min-h-0 flex-col gap-3" data-signals:chatConversationID="''" data-signals:chatRecipientID="''" data-signals:chatRecipientName="''" data-signals:chatText="''" data-signals:chatSearch="''" data-signals:chatSending="false" data-signals:chatScrollNonce="0">
 				<div class="flex items-center gap-2 border-b border-border/60 pb-3 pr-16">
 					@button.Button(button.Props{ID: "chat-back-button", Variant: button.VariantGhost, Size: button.SizeIconSm, Class: "hidden", Attributes: templ.Attributes{"data-on:click": ChatBackScript()}}) { @icon.ArrowLeft(icon.Props{Class: "size-4"})<span class="sr-only">Volver a conversaciones</span> }
 					<div class="min-w-0 flex-1"><h2 id="chat-dialog-title" class="truncate text-base font-semibold">Chat</h2><p class="text-xs text-muted-foreground">Conversaciones privadas</p></div>
@@ -68,23 +68,27 @@ templ ChatConversationList(conversations []*model.ResponseChatConversacion) {
 templ ChatConversationView(conversation *model.ResponseChatConversacion, messages []*model.ChatMensaje, currentUserID string, recipientID string, recipientName string) {
 	<div id="chat-conversation-view" class="flex min-h-0 h-full flex-1 flex-col gap-3" data-chat-active data-chat-recipient-id={ recipientID }>
 		<div class="flex items-center gap-3 rounded-lg border border-border/60 bg-muted/20 px-3 py-2">@chatConversationAvatar(conversation, recipientName)<div class="min-w-0"><p id="chat-conversation-recipient" class="truncate text-sm font-medium">{ recipientName }</p><p class="text-xs text-muted-foreground">Mensaje privado</p></div></div>
-		<div id="chat-messages" class="min-h-0 flex-1 space-y-2 overflow-y-auto scroll-smooth rounded-lg border border-border/60 bg-muted/20 p-3">
-			if len(messages) == 0 {
-				<p class="py-10 text-center text-xs text-muted-foreground">Escribe el primer mensaje.</p>
-			}
-			if len(messages) > 0 {
-				for _, message := range chatMessagesChronological(messages) {
-					if message != nil {
-						<div class={ chatMessageClass(message, currentUserID) }><p class="whitespace-pre-wrap break-words text-sm">{ message.Texto }</p><p class="mt-1 text-[10px] opacity-70">{ chatDate(message.CreatedAt) }</p></div>
-					}
-				}
-			}
-			<div id="chat-messages-end" class="h-px shrink-0"></div>
-		</div>
+		@ChatMessages(messages, currentUserID)
 		<form class="flex items-end gap-2" data-on:submit__prevent="const input=document.getElementById('chat-message-input');const view=document.getElementById('chat-conversation-view');$chatText=input?.value||'';$chatRecipientID=view?.dataset.chatRecipientId||$chatRecipientID;$chatSending=true;@post('/adminx/chat/enviar?recipientid='+encodeURIComponent($chatRecipientID||''))">
-			<textarea id="chat-message-input" class="min-h-10 max-h-28 min-w-0 flex-1 resize-y rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30" placeholder="Escribe un mensaje..." maxlength="255" data-bind:chatText required></textarea>
+			<textarea id="chat-message-input" class="min-h-10 max-h-28 min-w-0 flex-1 resize-y rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30" placeholder="Escribe un mensaje..." maxlength="255" data-bind:chatText data-effect="if($chatText===''){el.value='';}" required></textarea>
 			@button.Button(button.Props{ID: "chat-send-button", Type: button.TypeSubmit, Size: button.SizeIcon, Attributes: templ.Attributes{"aria-label": "Enviar mensaje", "data-effect": "this.disabled=$chatSending;this.setAttribute('aria-busy',$chatSending?'true':'false')"}}) { @icon.Send(icon.Props{Class: "size-4"}) }
 		</form>
+	</div>
+}
+
+templ ChatMessages(messages []*model.ChatMensaje, currentUserID string) {
+	<div id="chat-messages" class="min-h-0 flex-1 space-y-2 overflow-y-auto rounded-lg border border-border/60 bg-muted/20 p-3" data-effect={ chatMessagesScrollEffect() }>
+		if len(messages) == 0 {
+			<p class="py-10 text-center text-xs text-muted-foreground">Escribe el primer mensaje.</p>
+		}
+		if len(messages) > 0 {
+			for _, message := range chatMessagesChronological(messages) {
+				if message != nil {
+					<div class={ chatMessageClass(message, currentUserID) }><p class="whitespace-pre-wrap break-words text-sm">{ message.Texto }</p><p class="mt-1 text-[10px] opacity-70">{ chatDate(message.CreatedAt) }</p></div>
+				}
+			}
+		}
+		<div id="chat-messages-end" class="h-px shrink-0"></div>
 	</div>
 }
 

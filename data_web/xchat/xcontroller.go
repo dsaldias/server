@@ -88,8 +88,50 @@ func (c *Controller) ChatConversation(w http.ResponseWriter, r *http.Request) {
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
 	patchChatEmptyView(sse, r, true)
 	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
-	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": id, "chatRecipientID": recipientID, "chatRecipientName": conversation.Nombre, "chatText": "", "chatSending": false})
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": id, "chatRecipientID": recipientID, "chatRecipientName": conversation.Nombre, "chatText": "", "chatSending": false, "chatScrollNonce": time.Now().UnixNano()})
 	_ = sse.ExecuteScript("document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.remove('hidden');" + chatScrollToBottomScript() + "const title=document.getElementById('chat-dialog-title');if(title)title.textContent=" + strconv.Quote(conversation.Nombre) + ";")
+}
+
+func (c *Controller) ChatMessages(w http.ResponseWriter, r *http.Request) {
+	auth, err := utilidad.CtxValue(r.Context(), c.DB, "")
+	if err != nil || auth == nil || auth.SessionKey == nil || auth.SessionKey.UsuarioID == "" {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+	id := strings.TrimSpace(r.URL.Query().Get("conversationid"))
+	if id == "" {
+		c.chatError(w, r, "No se recibió la conversación.")
+		return
+	}
+	conversations, err := xrepo.ChatsByUser(r.Context(), c.DB, auth.SessionKey.UsuarioID)
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar tus conversaciones.")
+		return
+	}
+	var conversation *model.ResponseChatConversacion
+	for _, item := range conversations {
+		if item != nil && item.ID == id {
+			conversation = item
+			break
+		}
+	}
+	if conversation == nil {
+		c.chatError(w, r, "La conversación no existe o no está disponible.")
+		return
+	}
+	messages, err := xrepo.ChatMensajes(r.Context(), c.DB, id)
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar los mensajes.")
+		return
+	}
+	var body bytes.Buffer
+	_ = ChatMessages(messages, auth.SessionKey.UsuarioID).Render(r.Context(), &body)
+	sse := datastar.NewSSE(w, r)
+	patchChatConversationList(sse, r, conversations)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-messages"), datastar.WithModeOuter())
+	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatScrollNonce": time.Now().UnixNano()})
+	_ = sse.ExecuteScript(chatScrollToBottomScript())
 }
 
 func (c *Controller) ChatUsers(w http.ResponseWriter, r *http.Request) {
@@ -189,13 +231,13 @@ func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var body bytes.Buffer
-	_ = ChatConversationView(conversation, messages, auth.SessionKey.UsuarioID, conversationRecipient(conversation, auth.SessionKey.UsuarioID), conversation.Nombre).Render(r.Context(), &body)
+	_ = ChatMessages(messages, auth.SessionKey.UsuarioID).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
 	patchChatConversationList(sse, r, conversations)
-	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-messages"), datastar.WithModeOuter())
 	patchChatEmptyView(sse, r, true)
 	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
-	_ = sse.MarshalAndPatchSignals(map[string]any{"chatSending": false, "chatText": "", "chatConversationID": message.ConversacionID})
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatSending": false, "chatText": "", "chatConversationID": message.ConversacionID, "chatScrollNonce": time.Now().UnixNano()})
 	_ = sse.ExecuteScript("const input=document.getElementById('chat-message-input');if(input)input.value='';" + chatScrollToBottomScript())
 }
 
@@ -214,7 +256,11 @@ func patchChatConversationList(sse *datastar.ServerSentEventGenerator, r *http.R
 }
 
 func chatScrollToBottomScript() string {
-	return "setTimeout(()=>requestAnimationFrame(()=>{const messages=document.getElementById('chat-messages');if(messages){messages.scrollTop=messages.scrollHeight;const end=document.getElementById('chat-messages-end');if(end)end.scrollIntoView({block:'end'});}}),0);"
+	return "const scrollChat=()=>{const messages=document.getElementById('chat-messages');if(messages)messages.scrollTo({top:messages.scrollHeight,left:0,behavior:'auto'});};scrollChat();requestAnimationFrame(scrollChat);setTimeout(scrollChat,50);setTimeout(scrollChat,150);setTimeout(scrollChat,300);setTimeout(scrollChat,600);setTimeout(scrollChat,1000);"
+}
+
+func chatMessagesScrollEffect() string {
+	return "const scrollNonce=$chatScrollNonce;const scrollChat=()=>{el.scrollTo({top:el.scrollHeight,left:0,behavior:'auto'});};scrollChat();requestAnimationFrame(scrollChat);setTimeout(scrollChat,50);setTimeout(scrollChat,150);setTimeout(scrollChat,300);setTimeout(scrollChat,600);setTimeout(scrollChat,1000);"
 }
 
 func (c *Controller) chatError(w http.ResponseWriter, r *http.Request, message string) {
@@ -340,7 +386,7 @@ func ChatBackScript() string {
 	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-empty-view')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';@get('" + ADMIN_CHAT + "')"
 }
 func ChatNotificationHandler() string {
-	return "const data=evt.detail;if(data?.tipo==='chat'){const id=data.datos?.conversation_id;if($chatConversationID&&id===$chatConversationID){@get('" + ADMIN_CHAT_CONVERSATION + "?conversationid='+encodeURIComponent($chatConversationID))}else{@get('" + ADMIN_CHAT + "')}}"
+	return "const data=evt.detail;if(data?.tipo==='chat'){const id=String(data.datos?.conversation_id||'');if($chatConversationID&&id===String($chatConversationID)){@get('" + ADMIN_CHAT_MESSAGES + "?conversationid='+encodeURIComponent(String($chatConversationID)))}else{@get('" + ADMIN_CHAT + "')}}"
 }
 func ChatSearchRequestScript() string {
 	return "const input=document.getElementById('chat-user-search');const value=input?.value||'';$chatSearch=value;@get('" + ADMIN_CHAT_USERS + "?q='+encodeURIComponent(value))"
