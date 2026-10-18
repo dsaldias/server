@@ -2,12 +2,12 @@
   "$schema": "https://shadcn-templ.com/schema/components.json",
   "style": "base-nova",
   "tailwind": {
-    "css": "data_web/assets/css/globals.css",
+    "css": "app/front/asset/css/globals.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
   "scripts": {
-    "dir": "data_web/assets/js",
+    "dir": "app/front/asset/js",
     "path": "/assets/js"
   },
   "aliases": {
