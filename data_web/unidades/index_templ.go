@@ -69,7 +69,7 @@ func RenderUnidades(data UnidadesPageData) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = marco.AdminTable(marco.AdminTableProps{Title: "Unidades", Description: "Administra las unidades disponibles en el sistema.", RegionID: "unidades-table-region", Attributes: templ.Attributes{"id": "unidades-page", "data-signals:pagina": unidadSignalInt(data.Pagina), "data-signals:size": unidadSignalInt(data.Size), "data-signals:unidadBusqueda": unidadSignalString(data.Nombre), "data-signals:unidadesLoading": "false"}, HeaderActions: UnidadHeaderActions(), Filters: UnidadFilters(data)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = marco.AdminTable(marco.AdminTableProps{Title: "Unidades", Description: "Administra las unidades disponibles en el sistema.", RegionID: "unidades-table-region", Attributes: templ.Attributes{"id": "unidades-page", "data-signals:pagina": unidadSignalInt(data.Pagina), "data-signals:size": unidadSignalInt(data.Size), "data-signals:nombre": unidadSignalString(data.Nombre), "data-signals:unidadesLoading": "false"}, HeaderActions: UnidadHeaderActions(), Filters: UnidadFilters(data)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -189,32 +189,41 @@ func UnidadFilters(data UnidadesPageData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = input.Input(input.Props{ID: "unidades-search", Type: "search", Value: data.Nombre, Placeholder: "Ej. Unidad central", Class: "h-9", Attributes: templ.Attributes{"data-bind:unidadBusqueda": true, "data-on:keydown": unidadSearchKeydownScript()}}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = input.Input(input.Props{ID: "unidades-search", Type: "search", Value: data.Nombre, Placeholder: "Ej. Unidad central", Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true, "data-on:keydown": unidadSearchKeydownScript()}}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button type=\"button\" class=\"inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-border/70 px-3 text-sm hover:bg-muted disabled:opacity-50\" data-on:click=\"")
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span data-unidades-search-icon>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = icon.Search(icon.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><span data-unidades-search-label class=\"sr-only\">Buscar</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-unidades-search": true, "data-on:click": unidadSearchScript(), "data-effect": unidadSearchLoadingButtonEffectScript()}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadSearchScript())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/index.templ`, Line: 25, Col: 598}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-effect=\"this.disabled=$unidadesLoading\"><span data-unidades-search-icon>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = icon.Search(icon.Props{Class: "size-4"}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span><span data-unidades-search-label class=\"sr-only\">Buscar</span></button></div></div><div class=\"flex items-center gap-2\"><label for=\"unidades-page-size\" class=\"whitespace-nowrap text-sm text-muted-foreground\">Mostrar</label><select id=\"unidades-page-size\" class=\"h-9 rounded-md border border-border/70 bg-background px-3 text-sm\" data-bind:size data-on:change=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><div class=\"flex items-center gap-2\"><label for=\"unidades-page-size\" class=\"whitespace-nowrap text-sm text-muted-foreground\">Mostrar</label><select id=\"unidades-page-size\" class=\"h-9 rounded-md border border-border/70 bg-background px-3 text-sm\" data-bind:size data-on:change=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

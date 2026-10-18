@@ -26,7 +26,7 @@ type UnidadesPageData struct {
 type unidadSignals struct {
 	Pagina int32  `json:"pagina"`
 	Size   int32  `json:"size"`
-	Nombre string `json:"unidadBusqueda"`
+	Nombre string `json:"nombre"`
 }
 
 func (c *Controller) UnidadesRender(w http.ResponseWriter, r *http.Request) {
@@ -45,11 +45,7 @@ func (c *Controller) UnidadesListaHTML(w http.ResponseWriter, r *http.Request) {
 			if signals.Size > 0 {
 				data.Size = signals.Size
 			}
-			if _, hasNombre := r.URL.Query()["nombre"]; hasNombre {
-				data.Nombre = strings.TrimSpace(r.URL.Query().Get("nombre"))
-			} else {
-				data.Nombre = strings.TrimSpace(signals.Nombre)
-			}
+			data.Nombre = strings.TrimSpace(signals.Nombre)
 			data.Listado, _ = xrepo.Unidades2(r.Context(), c.DB, model.QueryUnidades{Pagina: data.Pagina, Size: data.Size, Nombre: optionalString(data.Nombre)})
 			if data.Listado == nil {
 				data.Error = "No fue posible cargar las unidades."
@@ -83,11 +79,11 @@ func (c *Controller) unidadesPatch(w http.ResponseWriter, r *http.Request, data 
 }
 
 func unidadRefreshScript() string {
-	return "$unidadesLoading=true; $pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "?pagina=1&size='+$size+'&nombre='+encodeURIComponent($unidadBusqueda||''))"
+	return "$unidadesLoading=true; $pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "')"
 }
 
 func unidadSearchScript() string {
-	return "const value=document.getElementById('unidades-search')?.value||$unidadBusqueda||'';$unidadBusqueda=value;$unidadesLoading=true;$pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "?pagina=1&size='+$size+'&nombre='+encodeURIComponent(value))"
+	return "$unidadesLoading=true; $pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "')"
 }
 
 func unidadSearchKeydownScript() string {
@@ -95,18 +91,22 @@ func unidadSearchKeydownScript() string {
 }
 
 func unidadPageSizeScript() string {
-	return "$unidadesLoading=true; $pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "?pagina=1&size='+$size+'&nombre='+encodeURIComponent($unidadBusqueda||''))"
+	return "$unidadesLoading=true; $pagina=1; @get('" + ADMIN_UNIDADES_LISTAHTML + "')"
 }
 
 func unidadPageClick(page int32) string {
 	if page < 1 {
 		page = 1
 	}
-	return "const button=evt.currentTarget;if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.innerHTML='<span class=\"inline-flex items-center gap-2\"><span class=\"size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent\"></span>Cargando...</span>';}$pagina=" + strconv.Itoa(int(page)) + ";$unidadesLoading=true; @get('" + ADMIN_UNIDADES_LISTAHTML + "?pagina=" + strconv.Itoa(int(page)) + "&size='+$size+'&nombre='+encodeURIComponent($unidadBusqueda||''))"
+	return "$pagina=" + strconv.Itoa(int(page)) + ";$unidadesLoading=true; @get('" + ADMIN_UNIDADES_LISTAHTML + "')"
 }
 
 func unidadLoadingButtonEffectScript() string {
 	return "const button=document.querySelector('[data-unidades-refresh]');if(button){button.disabled=$unidadesLoading;if($unidadesLoading){button.setAttribute('aria-busy','true');button.querySelector('[data-unidades-refresh-icon]')?.classList.add('hidden');const label=button.querySelector('[data-unidades-refresh-label]');if(label)label.textContent='Cargando...';}else{button.removeAttribute('aria-busy');button.querySelector('[data-unidades-refresh-icon]')?.classList.remove('hidden');const label=button.querySelector('[data-unidades-refresh-label]');if(label)label.textContent='Refrescar';}}"
+}
+
+func unidadSearchLoadingButtonEffectScript() string {
+	return "const button=document.querySelector('[data-unidades-search]');if(button){button.disabled=$unidadesLoading;if($unidadesLoading){button.setAttribute('aria-busy','true');button.querySelector('[data-unidades-search-icon]')?.classList.add('hidden');const label=button.querySelector('[data-unidades-search-label]');if(label){label.classList.remove('sr-only');label.textContent='Cargando...';}}else{button.removeAttribute('aria-busy');button.querySelector('[data-unidades-search-icon]')?.classList.remove('hidden');const label=button.querySelector('[data-unidades-search-label]');if(label){label.classList.add('sr-only');label.textContent='Buscar';}}}"
 }
 
 func positiveInt(value string, fallback int32) int32 {

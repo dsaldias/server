@@ -24,7 +24,7 @@ func unidadFormSubmitScript(unidad *model.Unidad) string {
 	if unidad != nil {
 		path = ADMIN_UNIDADES_EDITAR
 	}
-	return "$unidadSaving=true; @post('" + path + "?pagina='+$pagina+'&size='+$size+'&nombre='+encodeURIComponent($unidadBusqueda||''))"
+	return "$unidadSaving=true; @post('" + path + "?pagina='+$pagina+'&size='+$size+'&nombre='+encodeURIComponent($nombre||''))"
 }
 
 func unidadModalLoading() string {

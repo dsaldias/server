@@ -212,14 +212,14 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-signals:nombre=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" data-signals:unidadNombre=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadSignalString(unidadFormValue(unidad, "nombre")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 303}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 309}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -232,7 +232,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadSignalString(unidadFormValue(unidad, "descripcion")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 391}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 397}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -245,7 +245,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadFormOrden(unidad))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 438}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 444}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -258,7 +258,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadSignalString(unidadFormValue(unidad, "latitud")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 518}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 524}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadSignalString(unidadFormValue(unidad, "longitud")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 600}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 606}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -284,7 +284,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(unidadFormSubmitScript(unidad))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 1046}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/unidades/formulario.templ`, Line: 22, Col: 1052}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -328,7 +328,7 @@ func UnidadForm(unidad *model.Unidad) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = input.Input(input.Props{ID: "unidad-nombre", Placeholder: "Nombre de la unidad", Required: true, Value: unidadFormValue(unidad, "nombre"), Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true}}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.Input(input.Props{ID: "unidad-nombre", Name: "nombre", Placeholder: "Nombre de la unidad", Required: true, Value: unidadFormValue(unidad, "nombre"), Class: "h-9", Attributes: templ.Attributes{"data-bind:unidadNombre": true}}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

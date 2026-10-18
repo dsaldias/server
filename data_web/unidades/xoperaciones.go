@@ -12,12 +12,12 @@ import (
 )
 
 type unidadFormSignals struct {
-	Nombre      string `json:"nombre"`
-	Descripcion string `json:"descripcion"`
-	Orden       int32  `json:"orden"`
-	Latitud     string `json:"latitud"`
-	Longitud    string `json:"longitud"`
-	ID          string `json:"unidadID"`
+	UnidadNombre string `json:"unidadNombre"`
+	Descripcion  string `json:"descripcion"`
+	Orden        int32  `json:"orden"`
+	Latitud      string `json:"latitud"`
+	Longitud     string `json:"longitud"`
+	ID           string `json:"unidadID"`
 }
 
 func (c *Controller) UnidadCrear(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +40,7 @@ func (c *Controller) unidadSave(w http.ResponseWriter, r *http.Request, editing 
 	var signals unidadFormSignals
 	if err := datastar.ReadSignals(r, &signals); err != nil {
 		_ = r.ParseForm()
-		signals.Nombre = r.FormValue("nombre")
+		signals.UnidadNombre = r.FormValue("nombre")
 		signals.Descripcion = r.FormValue("descripcion")
 		signals.Orden = positiveInt(r.FormValue("orden"), 0)
 		signals.Latitud = r.FormValue("latitud")
@@ -48,7 +48,7 @@ func (c *Controller) unidadSave(w http.ResponseWriter, r *http.Request, editing 
 		signals.ID = r.FormValue("unidadID")
 	}
 	input := model.NewUnidad{
-		Nombre:      strings.TrimSpace(signals.Nombre),
+		Nombre:      strings.TrimSpace(signals.UnidadNombre),
 		Descripcion: optionalString(signals.Descripcion),
 		Orden:       signals.Orden,
 		Latitud:     optionalFloat(signals.Latitud),
