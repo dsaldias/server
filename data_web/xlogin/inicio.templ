@@ -17,6 +17,7 @@ templ InicioRender(data InicioData) {
 		if data.Me != nil && data.Me.Usuario != nil {
 			@PerfilDialog(data.Me.Usuario)
 		}
+		@ChatDialog()
 		<div class="flex min-w-0 flex-1 flex-col">
 		<header class="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-header px-3 shadow-sm sm:px-5">
 			<div class="flex min-w-0 items-center gap-3">
@@ -126,6 +127,7 @@ templ InicioSidebar(data InicioData) {
 				@dropdownmenu.Content(dropdownmenu.ContentProps{Class: "w-56"}) {
 					@dropdownmenu.Label() { { inicioUserName(data.Me) } }
 					@dropdownmenu.Separator()
+					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: chatTriggerAttributes()}) { @icon.MessageCircle(icon.Props{Class: "size-4"}) <span class="flex-1">Chat</span> <span id="chat-unread-badge" data-chat-unread class={ chatUnreadBadgeClass(data.ChatUnread) }>{ chatUnreadString(data.ChatUnread) }</span> }
 					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: perfilTriggerAttributes(inicioUser(data.Me))}) { @icon.User(icon.Props{Class: "size-4"}) Mi perfil }
 					@dropdownmenu.Item(dropdownmenu.ItemProps{Variant: dropdownmenu.ItemVariantDestructive, Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/logout'"}}) { @icon.LogOut(icon.Props{Class: "size-4"}) Cerrar sesión }
 				}

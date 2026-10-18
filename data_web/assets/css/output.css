@@ -64,6 +64,7 @@
     --leading-snug: 1.375;
     --leading-normal: 1.5;
     --radius-md: calc(var(--radius) - 2px);
+    --radius-2xl: 1rem;
     --radius-3xl: 1.5rem;
     --animate-spin: spin 1s linear infinite;
     --blur-xs: 4px;
@@ -325,6 +326,9 @@
   .left-1\/2 {
     left: calc(1 / 2 * 100%);
   }
+  .left-3 {
+    left: calc(var(--spacing) * 3);
+  }
   .isolate {
     isolation: isolate;
   }
@@ -417,6 +421,9 @@
   }
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
+  }
+  .mr-auto {
+    margin-right: auto;
   }
   .-mb-4 {
     margin-bottom: calc(var(--spacing) * -4);
@@ -522,6 +529,10 @@
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
   }
+  .size-12 {
+    width: calc(var(--spacing) * 12);
+    height: calc(var(--spacing) * 12);
+  }
   .size-full {
     width: 100%;
     height: 100%;
@@ -571,6 +582,9 @@
   .h-\[calc\(--spacing\(5\.25\)\)\] {
     height: calc(calc(var(--spacing) * 5.25));
   }
+  .h-\[min\(78vh\,42rem\)\] {
+    height: min(78vh, 42rem);
+  }
   .h-auto {
     height: auto;
   }
@@ -585,6 +599,9 @@
   }
   .max-h-\(--available-height\) {
     max-height: var(--available-height);
+  }
+  .max-h-28 {
+    max-height: calc(var(--spacing) * 28);
   }
   .max-h-72 {
     max-height: calc(var(--spacing) * 72);
@@ -606,6 +623,9 @@
   }
   .min-h-8 {
     min-height: calc(var(--spacing) * 8);
+  }
+  .min-h-10 {
+    min-height: calc(var(--spacing) * 10);
   }
   .min-h-16 {
     min-height: calc(var(--spacing) * 16);
@@ -697,6 +717,9 @@
   .max-w-96 {
     max-width: calc(var(--spacing) * 96);
   }
+  .max-w-\[85\%\] {
+    max-width: 85%;
+  }
   .max-w-\[calc\(100\%-2rem\)\] {
     max-width: calc(100% - 2rem);
   }
@@ -776,6 +799,9 @@
   }
   .resize-none {
     resize: none;
+  }
+  .resize-y {
+    resize: vertical;
   }
   .scroll-py-1 {
     scroll-padding-block: var(--spacing);
@@ -929,6 +955,9 @@
   .overscroll-contain {
     overscroll-behavior: contain;
   }
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
+  }
   .rounded-3xl {
     border-radius: var(--radius-3xl);
   }
@@ -967,6 +996,12 @@
     border-bottom-right-radius: calc(var(--radius) + 4px);
     border-bottom-left-radius: calc(var(--radius) + 4px);
   }
+  .rounded-br-sm {
+    border-bottom-right-radius: calc(var(--radius) - 4px);
+  }
+  .rounded-bl-sm {
+    border-bottom-left-radius: calc(var(--radius) - 4px);
+  }
   .\!border {
     border-style: var(--tw-border-style) !important;
     border-width: 1px !important;
@@ -998,6 +1033,10 @@
   .border-l {
     border-left-style: var(--tw-border-style);
     border-left-width: 1px;
+  }
+  .border-dashed {
+    --tw-border-style: dashed;
+    border-style: dashed;
   }
   .\!border-border {
     border-color: var(--border) !important;
@@ -1308,6 +1347,9 @@
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
   }
+  .py-10 {
+    padding-block: calc(var(--spacing) * 10);
+  }
   .pt-0 {
     padding-top: 0px;
   }
@@ -1323,8 +1365,14 @@
   .pr-8 {
     padding-right: calc(var(--spacing) * 8);
   }
+  .pr-16 {
+    padding-right: calc(var(--spacing) * 16);
+  }
   .pb-2 {
     padding-bottom: calc(var(--spacing) * 2);
+  }
+  .pb-3 {
+    padding-bottom: calc(var(--spacing) * 3);
   }
   .pb-16 {
     padding-bottom: calc(var(--spacing) * 16);
@@ -1340,6 +1388,9 @@
   }
   .pl-6 {
     padding-left: calc(var(--spacing) * 6);
+  }
+  .pl-9 {
+    padding-left: calc(var(--spacing) * 9);
   }
   .text-center {
     text-align: center;
@@ -1451,6 +1502,9 @@
   .text-wrap {
     text-wrap: wrap;
   }
+  .break-words {
+    overflow-wrap: break-word;
+  }
   .whitespace-nowrap {
     white-space: nowrap;
   }
@@ -1561,6 +1615,9 @@
   }
   .opacity-50 {
     opacity: 50%;
+  }
+  .opacity-70 {
+    opacity: 70%;
   }
   .opacity-75 {
     opacity: 75%;
@@ -1874,6 +1931,14 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:bg-muted\/40:hover {
         background-color: color-mix(in oklab, var(--muted) 40%, transparent);
+      }
+    }
+    .hover\:bg-muted\/60:hover {
+      background-color: var(--muted);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-muted\/60:hover {
+        background-color: color-mix(in oklab, var(--muted) 60%, transparent);
       }
     }
     .hover\:bg-primary\/80:hover {
@@ -2364,6 +2429,9 @@
     }
     .sm\:hidden {
       display: none;
+    }
+    .sm\:inline {
+      display: inline;
     }
     .sm\:max-w-2xl {
       max-width: var(--container-2xl);

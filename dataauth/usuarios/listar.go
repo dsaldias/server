@@ -26,17 +26,13 @@ func GetUsuarios(db *sql.DB, query model.QueryUsuarios) ([]*model.Usuario, error
 	}
 	offset := (query.Pagina - 1) * query.Size
 
-	filter_by_rol := ""
-	if query.Rol != nil {
-		filter_by_rol = "where id in (select usuario_id from rbac_rol_usuario_unidades where rol_id='%s')"
-		filter_by_rol = fmt.Sprintf(filter_by_rol, *query.Rol)
-	}
+	filterBy, args := usuariosFilter(query)
 
 	sql := `select id, nombres,apellido1,apellido2,documento,celular,correo,sexo,direccion,estado,username,last_login,oauth_id,foto_url,ST_X(ubicacion) AS latitud,ST_Y(ubicacion) AS longitud,fecha_registro,fecha_update from rbac_usuarios %s`
-	sql = fmt.Sprintf(sql, filter_by_rol)
+	sql = fmt.Sprintf(sql, filterBy)
 	sql += fmt.Sprintf("LIMIT %d OFFSET %d", query.Size, offset)
 
-	rows, err := db.Query(sql)
+	rows, err := db.Query(sql, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,16 +62,12 @@ func GetUsuarios2(db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado
 		return nil, err
 	}
 
-	filter_by_rol := ""
-	if query.Rol != nil {
-		filter_by_rol = "where id in (select usuario_id from rbac_rol_usuario_unidades where rol_id='%s')"
-		filter_by_rol = fmt.Sprintf(filter_by_rol, *query.Rol)
-	}
+	filterBy, args := usuariosFilter(query)
 	queryTotal := ` select count(*) from rbac_usuarios %s`
-	queryTotal = fmt.Sprintf(queryTotal, filter_by_rol)
+	queryTotal = fmt.Sprintf(queryTotal, filterBy)
 
 	var total int32
-	if err := db.QueryRow(queryTotal).Scan(&total); err != nil {
+	if err := db.QueryRow(queryTotal, args...).Scan(&total); err != nil {
 		return nil, err
 	}
 	paginas := utilidad.CalcularPaginas(total, int32(query.Size))
@@ -92,6 +84,30 @@ func GetUsuarios2(db *sql.DB, query model.QueryUsuarios) (*model.UsuarioPaginado
 	}
 
 	return &dt, nil
+}
+
+func usuariosFilter(query model.QueryUsuarios) (string, []any) {
+	conditions := make([]string, 0, 2)
+	args := make([]any, 0, 3)
+
+	if query.Rol != nil && strings.TrimSpace(*query.Rol) != "" {
+		conditions = append(conditions, "id in (select usuario_id from rbac_rol_usuario_unidades where rol_id=?)")
+		args = append(args, strings.TrimSpace(*query.Rol))
+	}
+
+	if query.Nombre != nil {
+		nombre := strings.TrimSpace(*query.Nombre)
+		if nombre != "" {
+			like := "%" + nombre + "%"
+			conditions = append(conditions, "(CONCAT_WS(' ', nombres, apellido1, apellido2) LIKE ? OR username LIKE ?)")
+			args = append(args, like, like)
+		}
+	}
+
+	if len(conditions) == 0 {
+		return "", args
+	}
+	return "where " + strings.Join(conditions, " and "), args
 }
 
 func GetUsuariosConectados(db *sql.DB) ([]*model.Usuario, error) {

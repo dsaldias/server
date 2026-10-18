@@ -11772,7 +11772,7 @@ func (ec *executionContext) unmarshalInputQueryUsuarios(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"pagina", "size", "rol"}
+	fieldsInOrder := [...]string{"pagina", "size", "rol", "nombre"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11800,6 +11800,13 @@ func (ec *executionContext) unmarshalInputQueryUsuarios(ctx context.Context, obj
 				return it, err
 			}
 			it.Rol = data
+		case "nombre":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nombre"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Nombre = data
 		}
 	}
 	return it, nil

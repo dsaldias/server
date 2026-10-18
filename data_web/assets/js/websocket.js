@@ -146,6 +146,8 @@
           showVersionUpdate(data.datos?.assets_version);
         } else if (data.tipo === "alerta") {
           refreshActiveAlerts();
+        } else if (data.tipo === "chat") {
+          document.getElementById("chat-dialog")?.dispatchEvent(new CustomEvent("auth-v2-chat", { detail: data }));
         } else if (!data.tipo) {
           showNotification(notification.title);
         }

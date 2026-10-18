@@ -230,6 +230,7 @@ type QueryUsuarios struct {
 	Pagina int32   `json:"pagina"`
 	Size   int32   `json:"size"`
 	Rol    *string `json:"rol,omitempty"`
+	Nombre *string `json:"nombre,omitempty"`
 }
 
 type RespTickets struct {

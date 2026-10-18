@@ -19,6 +19,10 @@ var (
 	ADMIN_INICIO         = "/adminx/inicio"
 	ADMIN_CONTEXT        = "/adminx/context"
 	ADMIN_PERFIL         = "/adminx/perfil"
+	ADMIN_CHAT           = "/adminx/chat"
+	ADMIN_CHAT_USERS     = "/adminx/chat/users"
+	ADMIN_CHAT_COMPOSE   = "/adminx/chat/compose"
+	ADMIN_CHAT_SEND      = "/adminx/chat/send"
 	ADMIN_CONECTADOS     = "/adminx/conectados"
 	ADMIN_AVISOS_ACTIVOS = "/adminx/avisos/activos"
 )
@@ -39,6 +43,10 @@ func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_INICIO, H: http.HandlerFunc(controller.InicioRender)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CONTEXT, H: http.HandlerFunc(controller.ContextSubmit)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_PERFIL, H: http.HandlerFunc(controller.Perfil)})
+	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CHAT, H: http.HandlerFunc(controller.Chat)})
+	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CHAT_USERS, H: http.HandlerFunc(controller.ChatUsers)})
+	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CHAT_COMPOSE, H: http.HandlerFunc(controller.ChatCompose)})
+	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CHAT_SEND, H: http.HandlerFunc(controller.ChatSend)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_CONECTADOS, H: http.HandlerFunc(controller.ConnectedUsers)})
 	rutas = append(rutas, &utilidad.Handlers2{Path: ADMIN_AVISOS_ACTIVOS, H: http.HandlerFunc(controller.ActiveAlerts)})
 

@@ -388,6 +388,7 @@ input QueryUsuarios {
   pagina: Int!
   size: Int!
   rol: ID
+  nombre: String
 }
 
 input QueryTickets {

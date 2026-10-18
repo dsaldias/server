@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/dsaldias/server/data_web/components/combobox"
@@ -27,6 +29,7 @@ type Controller struct {
 type InicioData struct {
 	Authenticated bool
 	Me            *model.ResponseMe
+	ChatUnread    int32
 	UnidadID      string
 	RolID         string
 	Content       templ.Component
@@ -57,6 +60,12 @@ type perfilSubmitInput struct {
 	Foto64    string `json:"foto64"`
 	Latitud   string `json:"latitud"`
 	Longitud  string `json:"longitud"`
+}
+
+type chatMessageInput struct {
+	ConversationID string `json:"chatConversationID"`
+	RecipientID    string `json:"chatRecipientID"`
+	Text           string `json:"chatText"`
 }
 
 func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
@@ -145,6 +154,307 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 	ctx := templ.WithChildren(r.Context(), InicioRender(c.inicioData(r)))
 	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+}
+
+func (c *Controller) Chat(w http.ResponseWriter, r *http.Request) {
+	auth, err := utilidad.CtxValue(r.Context(), c.DB, "")
+	if err != nil || auth == nil || auth.SessionKey == nil || auth.SessionKey.UsuarioID == "" {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+
+	if conversationID := strings.TrimSpace(r.URL.Query().Get("conversation_id")); conversationID != "" {
+		c.chatConversation(w, r, auth.SessionKey.UsuarioID, conversationID)
+		return
+	}
+
+	conversations, err := xrepo.ChatsByUser(r.Context(), c.DB, auth.SessionKey.UsuarioID)
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar tus conversaciones.")
+		return
+	}
+	unread, _ := xrepo.ChatsNoLeidos(r.Context(), c.DB, auth.SessionKey.UsuarioID)
+	var body bytes.Buffer
+	if err := ChatConversationList(conversations).Render(r.Context(), &body); err != nil {
+		c.chatError(w, r, "No fue posible renderizar tus conversaciones.")
+		return
+	}
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-list"), datastar.WithModeOuter())
+	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.remove('hidden'); document.getElementById('chat-conversation-view')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); const title=document.getElementById('chat-dialog-title'); if(title) title.textContent='Chat';")
+}
+
+func (c *Controller) chatConversation(w http.ResponseWriter, r *http.Request, userID, conversationID string) {
+	conversations, err := xrepo.ChatsByUser(r.Context(), c.DB, userID)
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar tus conversaciones.")
+		return
+	}
+	var conversation *model.ResponseChatConversacion
+	for _, item := range conversations {
+		if item != nil && item.ID == conversationID {
+			conversation = item
+			break
+		}
+	}
+	if conversation == nil {
+		c.chatError(w, r, "La conversación no existe o no está disponible.")
+		return
+	}
+	messages, err := xrepo.ChatMensajes(r.Context(), c.DB, conversationID)
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar los mensajes.")
+		return
+	}
+	unread, _ := xrepo.ChatsNoLeidos(r.Context(), c.DB, userID)
+	var body bytes.Buffer
+	if err := ChatConversationView(conversation, messages, userID, chatConversationRecipient(conversation, userID), conversation.Nombre).Render(r.Context(), &body); err != nil {
+		c.chatError(w, r, "No fue posible renderizar la conversación.")
+		return
+	}
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": conversation.ID, "chatRecipientID": chatConversationRecipient(conversation, userID), "chatRecipientName": conversation.Nombre, "chatText": "", "chatSending": false})
+	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden'); const title=document.getElementById('chat-dialog-title'); if(title) title.textContent=" + strconv.Quote(conversation.Nombre) + ";")
+}
+
+func (c *Controller) ChatUsers(w http.ResponseWriter, r *http.Request) {
+	if !c.authenticated(r) {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+	auth, _ := utilidad.CtxValue(r.Context(), c.DB, "")
+	query := strings.TrimSpace(r.URL.Query().Get("q"))
+	var nombre *string
+	if query != "" {
+		nombre = &query
+	}
+	users, err := xrepo.Usuarios(r.Context(), c.DB, model.QueryUsuarios{Pagina: 1, Size: 100, Nombre: nombre})
+	if err != nil {
+		c.chatError(w, r, "No fue posible cargar los usuarios.")
+		return
+	}
+	filtered := make([]*model.Usuario, 0, len(users))
+	for _, user := range users {
+		if user == nil || user.ID == auth.SessionKey.UsuarioID {
+			continue
+		}
+		filtered = append(filtered, user)
+	}
+	var body bytes.Buffer
+	if err := ChatUserList(filtered).Render(r.Context(), &body); err != nil {
+		c.chatError(w, r, "No fue posible renderizar los usuarios.")
+		return
+	}
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-users"), datastar.WithModeOuter())
+}
+
+func (c *Controller) ChatCompose(w http.ResponseWriter, r *http.Request) {
+	auth, err := utilidad.CtxValue(r.Context(), c.DB, "")
+	if err != nil || auth == nil || auth.SessionKey == nil || auth.SessionKey.UsuarioID == "" {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+	recipientID := strings.TrimSpace(r.URL.Query().Get("recipient_id"))
+	recipientName := strings.TrimSpace(r.URL.Query().Get("name"))
+	if recipientID == "" || recipientName == "" || recipientID == auth.SessionKey.UsuarioID {
+		c.chatError(w, r, "El destinatario seleccionado no es válido.")
+		return
+	}
+	var body bytes.Buffer
+	_ = ChatConversationView(nil, nil, auth.SessionKey.UsuarioID, recipientID, recipientName).Render(r.Context(), &body)
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": "", "chatRecipientID": recipientID, "chatRecipientName": recipientName, "chatText": "", "chatSending": false})
+	_ = sse.ExecuteScript("document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden'); const title=document.getElementById('chat-dialog-title'); if(title) title.textContent=" + strconv.Quote(recipientName) + ";")
+}
+
+func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
+	auth, err := utilidad.CtxValue(r.Context(), c.DB, "")
+	if err != nil || auth == nil || auth.SessionKey == nil || auth.SessionKey.UsuarioID == "" {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+	var signals chatMessageInput
+	if err := datastar.ReadSignals(r, &signals); err != nil {
+		_ = r.ParseForm()
+		signals.ConversationID = r.FormValue("chatConversationID")
+		signals.RecipientID = r.FormValue("chatRecipientID")
+		signals.Text = r.FormValue("chatText")
+	}
+	signals.Text = strings.TrimSpace(signals.Text)
+	if signals.RecipientID == "" || signals.Text == "" {
+		c.chatError(w, r, "Selecciona un destinatario y escribe un mensaje.")
+		return
+	}
+	tipo := model.ChatMensajeTipoText
+	message, err := xrepo.ChatEnviarMensaje(r.Context(), c.DB, model.ChatEnviarMensajeInput{SenderID: auth.SessionKey.UsuarioID, DestinatorID: signals.RecipientID, Tipo: tipo, Texto: signals.Text})
+	if err != nil || message == nil {
+		if err == nil {
+			err = fmt.Errorf("no fue posible enviar el mensaje")
+		}
+		c.chatError(w, r, err.Error())
+		return
+	}
+	conversationID := message.ConversacionID
+	conversations, err := xrepo.ChatsByUser(r.Context(), c.DB, auth.SessionKey.UsuarioID)
+	if err != nil {
+		c.chatError(w, r, "El mensaje se envió, pero no se pudo actualizar la conversación.")
+		return
+	}
+	var conversation *model.ResponseChatConversacion
+	for _, item := range conversations {
+		if item != nil && item.ID == conversationID {
+			conversation = item
+			break
+		}
+	}
+	messages, err := xrepo.ChatMensajes(r.Context(), c.DB, conversationID)
+	if err != nil || conversation == nil {
+		c.chatError(w, r, "El mensaje se envió, pero no se pudo actualizar la conversación.")
+		return
+	}
+	var body bytes.Buffer
+	_ = ChatConversationView(conversation, messages, auth.SessionKey.UsuarioID, chatConversationRecipient(conversation, auth.SessionKey.UsuarioID), conversation.Nombre).Render(r.Context(), &body)
+	unread, _ := xrepo.ChatsNoLeidos(r.Context(), c.DB, auth.SessionKey.UsuarioID)
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	_ = sse.PatchElements(chatUnreadBadgeHTML(unread), datastar.WithSelector("#chat-unread-badge"), datastar.WithModeOuter())
+	_ = sse.MarshalAndPatchSignals(map[string]any{"chatSending": false, "chatText": "", "chatConversationID": conversationID})
+	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.add('hidden'); document.getElementById('chat-users-view')?.classList.add('hidden'); document.getElementById('chat-conversation-view')?.classList.remove('hidden');")
+}
+
+func (c *Controller) chatError(w http.ResponseWriter, r *http.Request, message string) {
+	sse := datastar.NewSSE(w, r)
+	var body bytes.Buffer
+	_ = ChatError(message).Render(r.Context(), &body)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-error"), datastar.WithModeOuter())
+	_ = sse.MarshalAndPatchSignals(map[string]bool{"chatSending": false})
+}
+
+func chatUnreadBadgeHTML(count int32) string {
+	if count <= 0 {
+		return `<span id="chat-unread-badge" data-chat-unread class="hidden rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">0</span>`
+	}
+	return `<span id="chat-unread-badge" data-chat-unread class="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">` + strconv.Itoa(int(count)) + `</span>`
+}
+
+func chatDate(value time.Time) string {
+	if value.IsZero() {
+		return ""
+	}
+	return value.Local().Format("02/01/2006 15:04")
+}
+
+func chatUnreadString(count int32) string {
+	if count > 99 {
+		return "99+"
+	}
+	return strconv.Itoa(int(count))
+}
+
+func chatUnreadBadgeClass(count int32) string {
+	if count <= 0 {
+		return "hidden rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground"
+	}
+	return "rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground"
+}
+
+func chatInitials(name string) string {
+	parts := strings.Fields(name)
+	if len(parts) == 0 {
+		return "U"
+	}
+	if len(parts) == 1 {
+		return strings.ToUpper(string([]rune(parts[0])[0]))
+	}
+	return strings.ToUpper(string([]rune(parts[0])[0]) + string([]rune(parts[len(parts)-1])[0]))
+}
+
+func chatConversationPhotoURL(conversation *model.ResponseChatConversacion) string {
+	if conversation == nil || conversation.FotoURL == nil {
+		return ""
+	}
+	return chatPathURL(*conversation.FotoURL)
+}
+
+func chatPathURL(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" || strings.HasPrefix(value, "http://") || strings.HasPrefix(value, "https://") || strings.HasPrefix(value, "/") {
+		return value
+	}
+	return "/" + strings.TrimPrefix(value, "./")
+}
+
+func chatMessagesChronological(messages []*model.ChatMensaje) []*model.ChatMensaje {
+	result := make([]*model.ChatMensaje, len(messages))
+	for index, message := range messages {
+		result[len(messages)-index-1] = message
+	}
+	return result
+}
+
+func chatMessageClass(message *model.ChatMensaje, currentUserID string) string {
+	if message != nil && message.SenderID == currentUserID {
+		return "ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-primary-foreground"
+	}
+	return "mr-auto max-w-[85%] rounded-2xl rounded-bl-sm bg-background px-3 py-2 text-foreground shadow-sm"
+}
+
+func chatConversationRecipient(conversation *model.ResponseChatConversacion, currentUserID string) string {
+	if conversation == nil {
+		return ""
+	}
+	for _, member := range conversation.Miembros {
+		if member != nil && member.UsuarioID != currentUserID {
+			return member.UsuarioID
+		}
+	}
+	return ""
+}
+
+func chatConversationClick(id string) string {
+	return "$chatConversationID=" + strconv.Quote(id) + ";$chatSending=false;$chatText='';@get('/adminx/chat?conversation_id='+encodeURIComponent($chatConversationID))"
+}
+
+func chatUserClick(user *model.Usuario) string {
+	if user == nil {
+		return ""
+	}
+	name := inicioUserName(&model.ResponseMe{Usuario: user})
+	return "$chatRecipientID=" + strconv.Quote(user.ID) + ";$chatRecipientName=" + strconv.Quote(name) + ";$chatConversationID='';$chatText='';$chatSending=false;@get('/adminx/chat/compose?recipient_id='+encodeURIComponent($chatRecipientID)+'&name='+encodeURIComponent($chatRecipientName))"
+}
+
+func chatNewScript() string {
+	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-conversation-list')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.remove('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Nuevo chat';@get('/adminx/chat/users')"
+}
+
+func chatBackScript() string {
+	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-conversation-list')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';@get('/adminx/chat')"
+}
+
+func chatNotificationHandler() string {
+	return "const data=evt.detail;if(data?.tipo==='chat'){const id=data.datos?.conversation_id;if($chatConversationID&&id===$chatConversationID){@get('/adminx/chat?conversation_id='+encodeURIComponent($chatConversationID))}else{@get('/adminx/chat')}}"
+}
+
+func chatSearchRequestScript() string {
+	return "const input=document.getElementById('chat-user-search');const value=input?.value||'';$chatSearch=value;@get('/adminx/chat/users?q='+encodeURIComponent(value))"
+}
+
+func chatTriggerAttributes() templ.Attributes {
+	return templ.Attributes{
+		"tabindex":                   "0",
+		"type":                       "button",
+		"data-slot":                  "dialog-trigger",
+		"data-base-ui-click-trigger": true,
+		"data-templ-controls":        "chat-dialog",
+		"aria-haspopup":              "dialog",
+		"aria-expanded":              "false",
+		"data-on:click":              "$chatConversationID='';$chatText='';$chatSending=false;@get('/adminx/chat')",
+	}
 }
 
 func (c *Controller) Perfil(w http.ResponseWriter, r *http.Request) {
@@ -337,7 +647,7 @@ func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
 	cookie.UnidadID = unidadID
 	utilidad.CtxSetCookie(r.Context(), *cookie)
 
-	data := InicioData{Authenticated: true, Me: me, UnidadID: unidadID, RolID: rolID, ActivePath: inicioActivePath(r)}
+	data := InicioData{Authenticated: true, Me: me, ChatUnread: chatUnread(r.Context(), c.DB, cookie.UserID), UnidadID: unidadID, RolID: rolID, ActivePath: inicioActivePath(r)}
 	data.Me.Menus = menus
 
 	var body bytes.Buffer
@@ -349,6 +659,17 @@ func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#admin-sidebar"), datastar.WithModeOuter())
 	_ = sse.ExecuteScript("const role = document.getElementById('active-role'); if (role) role.textContent = " + strconv.Quote(inicioSelectedRole(me, unidadID, rolID)) + "; const result = document.getElementById('context-result'); if (result) result.replaceChildren(); const selector = document.querySelector('[data-context-selector]'); if (selector) { selector.removeAttribute('aria-busy'); selector.querySelectorAll('input,button').forEach(element => element.disabled = false); }")
+}
+
+func chatUnread(ctx context.Context, db *sql.DB, userID string) int32 {
+	if userID == "" {
+		return 0
+	}
+	count, err := xrepo.ChatsNoLeidos(ctx, db, userID)
+	if err != nil || count < 0 {
+		return 0
+	}
+	return count
 }
 
 func (c *Controller) contextError(w http.ResponseWriter, r *http.Request, message string) {
@@ -379,6 +700,7 @@ func (c *Controller) inicioData(r *http.Request) InicioData {
 
 	data := InicioData{
 		Authenticated: true,
+		ChatUnread:    chatUnread(r.Context(), c.DB, auth.SessionKey.UsuarioID),
 		UnidadID:      auth.UnidadID,
 		RolID:         auth.RolID,
 		ActivePath:    inicioActivePath(r),
