@@ -43,8 +43,9 @@ func (c *Controller) Chat(w http.ResponseWriter, r *http.Request) {
 	}
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-list"), datastar.WithModeOuter())
+	patchChatEmptyView(sse, r, false)
 	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
-	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.remove('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';")
+	_ = sse.ExecuteScript("document.getElementById('chat-empty-view')?.classList.remove('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';")
 }
 
 func (c *Controller) ChatConversation(w http.ResponseWriter, r *http.Request) {
@@ -83,10 +84,12 @@ func (c *Controller) ChatConversation(w http.ResponseWriter, r *http.Request) {
 	var body bytes.Buffer
 	_ = ChatConversationView(conversation, messages, auth.SessionKey.UsuarioID, recipientID, conversation.Nombre).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
+	patchChatConversationList(sse, r, conversations)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	patchChatEmptyView(sse, r, true)
 	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
 	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": id, "chatRecipientID": recipientID, "chatRecipientName": conversation.Nombre, "chatText": "", "chatSending": false})
-	_ = sse.ExecuteScript("document.getElementById('chat-conversation-list')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.remove('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent=" + strconv.Quote(conversation.Nombre) + ";")
+	_ = sse.ExecuteScript("document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.remove('hidden');" + chatScrollToBottomScript() + "const title=document.getElementById('chat-dialog-title');if(title)title.textContent=" + strconv.Quote(conversation.Nombre) + ";")
 }
 
 func (c *Controller) ChatUsers(w http.ResponseWriter, r *http.Request) {
@@ -115,6 +118,7 @@ func (c *Controller) ChatUsers(w http.ResponseWriter, r *http.Request) {
 	_ = ChatUserList(filtered).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-users"), datastar.WithModeOuter())
+	patchChatEmptyView(sse, r, true)
 }
 
 func (c *Controller) ChatCompose(w http.ResponseWriter, r *http.Request) {
@@ -133,8 +137,9 @@ func (c *Controller) ChatCompose(w http.ResponseWriter, r *http.Request) {
 	_ = ChatConversationView(nil, nil, auth.SessionKey.UsuarioID, recipientID, recipientName).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	patchChatEmptyView(sse, r, true)
 	_ = sse.MarshalAndPatchSignals(map[string]any{"chatConversationID": "", "chatRecipientID": recipientID, "chatRecipientName": recipientName, "chatText": "", "chatSending": false})
-	_ = sse.ExecuteScript("document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-list')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.remove('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent=" + strconv.Quote(recipientName) + ";")
+	_ = sse.ExecuteScript("document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.remove('hidden');" + chatScrollToBottomScript() + "const title=document.getElementById('chat-dialog-title');if(title)title.textContent=" + strconv.Quote(recipientName) + ";")
 }
 
 func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
@@ -186,9 +191,30 @@ func (c *Controller) ChatSend(w http.ResponseWriter, r *http.Request) {
 	var body bytes.Buffer
 	_ = ChatConversationView(conversation, messages, auth.SessionKey.UsuarioID, conversationRecipient(conversation, auth.SessionKey.UsuarioID), conversation.Nombre).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
+	patchChatConversationList(sse, r, conversations)
 	_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-view"), datastar.WithModeOuter())
+	patchChatEmptyView(sse, r, true)
 	patchUnreadBadges(sse, unreadCount(r.Context(), c.DB, auth.SessionKey.UsuarioID))
 	_ = sse.MarshalAndPatchSignals(map[string]any{"chatSending": false, "chatText": "", "chatConversationID": message.ConversacionID})
+	_ = sse.ExecuteScript("const input=document.getElementById('chat-message-input');if(input)input.value='';" + chatScrollToBottomScript())
+}
+
+func patchChatEmptyView(sse *datastar.ServerSentEventGenerator, r *http.Request, hidden bool) {
+	var body bytes.Buffer
+	if err := ChatEmptyView(hidden).Render(r.Context(), &body); err == nil {
+		_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-empty-view"), datastar.WithModeOuter())
+	}
+}
+
+func patchChatConversationList(sse *datastar.ServerSentEventGenerator, r *http.Request, conversations []*model.ResponseChatConversacion) {
+	var body bytes.Buffer
+	if err := ChatConversationList(conversations).Render(r.Context(), &body); err == nil {
+		_ = sse.PatchElements(body.String(), datastar.WithSelector("#chat-conversation-list"), datastar.WithModeOuter())
+	}
+}
+
+func chatScrollToBottomScript() string {
+	return "setTimeout(()=>requestAnimationFrame(()=>{const messages=document.getElementById('chat-messages');if(messages){messages.scrollTop=messages.scrollHeight;const end=document.getElementById('chat-messages-end');if(end)end.scrollIntoView({block:'end'});}}),0);"
 }
 
 func (c *Controller) chatError(w http.ResponseWriter, r *http.Request, message string) {
@@ -308,10 +334,10 @@ func ChatUserClick(u *model.Usuario) string {
 	return "$chatRecipientID=" + strconv.Quote(u.ID) + ";$chatRecipientName=" + strconv.Quote(name) + ";$chatConversationID='';$chatText='';$chatSending=false;@get('" + ADMIN_CHAT_COMPOSE + "?userid='+encodeURIComponent($chatRecipientID)+'&name='+encodeURIComponent($chatRecipientName))"
 }
 func ChatNewScript() string {
-	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-conversation-list')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.remove('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Nuevo chat';@get('" + ADMIN_CHAT_USERS + "')"
+	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-empty-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-users-view')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.remove('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Nuevo chat';@get('" + ADMIN_CHAT_USERS + "')"
 }
 func ChatBackScript() string {
-	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-conversation-list')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';@get('" + ADMIN_CHAT + "')"
+	return "$chatConversationID='';$chatRecipientID='';$chatRecipientName='';$chatText='';$chatSending=false;document.getElementById('chat-users-view')?.classList.add('hidden');document.getElementById('chat-conversation-view')?.classList.add('hidden');document.getElementById('chat-empty-view')?.classList.remove('hidden');document.getElementById('chat-back-button')?.classList.add('hidden');const title=document.getElementById('chat-dialog-title');if(title)title.textContent='Chat';@get('" + ADMIN_CHAT + "')"
 }
 func ChatNotificationHandler() string {
 	return "const data=evt.detail;if(data?.tipo==='chat'){const id=data.datos?.conversation_id;if($chatConversationID&&id===$chatConversationID){@get('" + ADMIN_CHAT_CONVERSATION + "?conversationid='+encodeURIComponent($chatConversationID))}else{@get('" + ADMIN_CHAT + "')}}"
