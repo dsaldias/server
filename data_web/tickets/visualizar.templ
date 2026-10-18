@@ -1,34 +1,41 @@
 package tickets
 
-import "github.com/dsaldias/server/data_web/components/dialog"
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/icon"
+import "github.com/dsaldias/server/data_web/xutility"
 import "github.com/dsaldias/server/graph_auth/model"
 
-templ TicketDialogs(data TicketsPageData) {
-	for _, ticket := range data.Listado {
-		@dialog.Dialog(dialog.Props{ID: "ticket-view-" + ticket.ID}) { @TicketView(ticket, data.Detalles[ticket.ID]) }
-	}
+templ TicketView(ticket *model.Ticket) {
+	<div id="ticket-dialog-content">
+		<div class="max-h-[calc(100vh-12rem)] space-y-4 overflow-y-auto pr-1">
+			<div class="grid gap-4 sm:grid-cols-2">
+				@xutility.ReadField("Identificador", ticket.ID)
+				@xutility.ReadField("Estado", ticket.Estado)
+				@xutility.ReadField("Fecha de registro", ticketDate(ticket.FechaRegistro))
+			</div>
+			@xutility.ReadSection("Problema o solicitud") {
+				<p class="whitespace-pre-wrap text-sm">{ ticket.Problema }</p>
+			}
+			@xutility.ReadSection("Historial de respuestas") {
+				if len(ticket.Respuestas) == 0 {
+					@xutility.EmptyState("Todavía no hay respuestas.")
+				} else {
+					<div class="space-y-3">
+						for _, respuesta := range ticket.Respuestas {
+							if respuesta != nil {
+								<div class="rounded-lg border border-border/60 bg-muted/10 p-3">
+									<div class="flex items-center justify-between gap-3"><span class="text-xs font-medium text-muted-foreground">Usuario { respuesta.UsuarioID }</span><span class="text-xs text-muted-foreground">{ ticketDate(respuesta.FechaRegistro) }</span></div>
+									<p class="mt-2 whitespace-pre-wrap text-sm">{ respuesta.Respuesta }</p>
+								</div>
+							}
+						}
+					</div>
+				}
+			}
+		if ticket.Estado != "cerrado" {
+			<form class="space-y-3" data-signals:ticketID={ ticketSignalString(ticket.ID) } data-signals:ticketRespuesta="''" data-signals:ticketSaving="false" data-on:submit__prevent={ ticketReplySubmitScript(ticket.ID) }><label for={ "ticket-response-" + ticket.ID } class="text-sm font-medium">Responder<textarea id={ "ticket-response-" + ticket.ID } name="respuesta" required class="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:ticketRespuesta placeholder="Escribe una respuesta..."></textarea></label><div id="ticket-response-form-error"></div>@button.Button(button.Props{Type: button.TypeSubmit, ID: "ticket-response-submit", Attributes: templ.Attributes{"data-effect": "this.disabled=$ticketSaving;this.setAttribute('aria-busy',$ticketSaving?'true':'false');this.textContent=$ticketSaving?'Enviando...':'Enviar respuesta'"}}) { @icon.Send(icon.Props{Class: "size-4"}) Enviar respuesta }</form>
+		}
+	</div></div>
 }
 
-templ TicketView(ticket *model.RespTickets, detail *model.Ticket) {
-	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-2xl"}) {
-		@dialog.Header() { @dialog.Title() { Ticket #{ ticket.ID } } @dialog.Description() { Detalle de la solicitud y sus respuestas. } }
-		<div class="max-h-[calc(100vh-12rem)] space-y-4 overflow-y-auto pr-1"><div class="rounded-lg border border-border/60 bg-muted/20 p-4"><p class="text-xs uppercase tracking-wide text-muted-foreground">Problema</p><p class="mt-2 whitespace-pre-wrap text-sm">{ ticket.Problema }</p></div>
-			if detail != nil && len(detail.Respuestas) > 0 {
-				<div class="space-y-3"><h3 class="text-sm font-semibold">Respuestas</h3>
-					for _, respuesta := range detail.Respuestas {
-						<div class="rounded-lg border border-border/60 p-3"><p class="whitespace-pre-wrap text-sm">{ respuesta.Respuesta }</p><p class="mt-2 text-xs text-muted-foreground">{ ticketDate(respuesta.FechaRegistro) }</p></div>
-					}
-				</div>
-			} else {
-				<p class="text-sm text-muted-foreground">{ ticketText(ticket.Respuesta) }</p>
-			}
-			if ticket.Estado != "cerrado" {
-				<form class="space-y-3" data-signals:ticketID={ ticketSignalString(ticket.ID) } data-signals:ticketAction="'reply'" data-signals:ticketSaving="false" data-on:submit__prevent="$ticketSaving=true; $ticketAction='reply'; @post('/adminx/tickets?action=reply')">
-					<label for={ "ticket-response-" + ticket.ID } class="text-sm font-medium">Responder<textarea id={ "ticket-response-" + ticket.ID } name="respuesta" required class="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-bind:respuesta placeholder="Escribe una respuesta..."></textarea></label>
-					<div id="ticket-response-form-error"></div>
-					<button type="submit" class="inline-flex h-9 items-center justify-center bg-primary px-4 text-sm font-medium text-primary-foreground disabled:pointer-events-none disabled:opacity-50" data-on:click="if($ticketSaving){evt.preventDefault();return};$ticketSaving=true;this.disabled=true;this.setAttribute('aria-busy','true');this.textContent='Enviando...'" data-effect="this.disabled=$ticketSaving">Enviar respuesta</button>
-				</form>
-			}
-		</div>
-	}
-}
+templ TicketModalError(message string) { <div id="ticket-dialog-content"><div class="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive" role="alert">{ message }</div></div> }

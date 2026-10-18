@@ -1,0 +1,39 @@
+package tickets
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/icon"
+import "github.com/dsaldias/server/data_web/xutility/marco"
+
+templ TicketsTableRegion(data TicketsPageData) {
+	@marco.TableRegion("tickets-table-region") { @TicketsTableContent(data) }
+}
+
+templ TicketsTableContent(data TicketsPageData) {
+	if data.Error != "" {
+		@marco.ErrorState(data.Error)
+	} else if len(data.Listado) == 0 {
+		@marco.EmptyState("No hay tickets para mostrar.")
+	} else {
+		@marco.TableCard() {
+			<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-3 py-2 font-medium">Ticket</th><th class="px-3 py-2 font-medium">Usuario</th><th class="px-3 py-2 font-medium">Problema</th><th class="px-3 py-2 font-medium">Estado</th><th class="px-3 py-2 font-medium">Registro</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr></thead><tbody class="divide-y divide-border/60">
+				for _, ticket := range data.Listado {
+					if ticket != nil {
+						<tr class="transition-colors hover:bg-muted/40">
+							<td class="whitespace-nowrap px-3 py-2 font-medium">#{ ticket.ID }</td>
+							<td class="whitespace-nowrap px-3 py-2">{ ticket.Usuario }</td>
+							<td class="max-w-96 truncate px-3 py-2 text-muted-foreground">{ ticket.Problema }</td>
+							<td class="px-3 py-2"><span class={ "inline-flex rounded-full px-2 py-1 text-xs font-medium " + ticketStatusClass(ticket.Estado) }>{ ticket.Estado }</span></td>
+							<td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ ticketDate(ticket.FechaRegistro) }</td>
+							<td class="px-3 py-2"><div class="flex justify-end gap-1">
+								@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "ticket-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-ticket-modal-action": true, "data-on:click": ticketModalRequestWithIDScript(ADMIN_TICKETS_VERHTML, ticket.ID)}}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar ticket</span> }
+								if ticket.Estado != "cerrado" {
+									@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": ticketCloseScript(ticket.ID), "data-ticket-close": true}}) { @icon.Check(icon.Props{Class: "size-4"})<span class="sr-only">Cerrar ticket</span> }
+								}
+							</div></td>
+						</tr>
+					}
+				}
+			</tbody></table></div>
+		}
+	}
+}
