@@ -586,9 +586,6 @@
   .h-\[calc\(--spacing\(5\.25\)\)\] {
     height: calc(calc(var(--spacing) * 5.25));
   }
-  .h-\[min\(78vh\,42rem\)\] {
-    height: min(78vh, 42rem);
-  }
   .h-\[min\(82vh\,52rem\)\] {
     height: min(82vh, 52rem);
   }
