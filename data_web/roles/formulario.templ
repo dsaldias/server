@@ -8,18 +8,31 @@ import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/components/input"
 import "github.com/dsaldias/server/graph_auth/model"
 
-templ RoleForm(permisos []*model.Permiso, menus []*model.Menus) {
+templ RoleModalLoading() {
+	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl", Attributes: templ.Attributes{"data-on:dialog-close": roleModalLoading()}}) {
+		@dialog.Header() { @dialog.Title() { <span data-rol-title>Rol</span> } @dialog.Description() { Gestiona la información y asignaciones del rol. } }
+		<div id="rol-dialog-content" class="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground" aria-live="polite"><span class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>Cargando, espere...</div>
+	}
+}
+
+templ RoleModalError(message string) {
+	<div id="rol-dialog-content" class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">{ message }</div>
+}
+
+templ RoleForm(permisos []*model.Permiso, menus []*model.Menus, role *model.Rol) {
+	<div id="rol-dialog-content">
 	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
 		@dialog.Header() {
 			@dialog.Title() { <span data-rol-title>Nuevo rol</span> }
 			@dialog.Description() { Define la información, permisos y menús asignados al rol. }
 		}
-		<form id="rol-form" class="max-h-[calc(100vh-10rem)] space-y-5 overflow-y-auto pr-1" data-signals:rolMode="'create'" data-signals:rolID="''" data-signals:rolSaving="false" data-signals:rolSaved="false" data-signals:permisos="[]" data-signals:menus="[]" data-effect="if ($rolSaving) { const button=document.getElementById('rol-submit'); if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Guardando...';} } else { const button=document.getElementById('rol-submit'); if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent='Guardar rol';} } if($rolSaved){window.templ?.dialog?.close('rol-dialog');$rolSaved=false;}" data-on:submit__prevent="$rolSaving=true; @post('/adminx/roles?pagina='+$pagina+'&size='+$size+'&mode='+encodeURIComponent($rolMode||'create')+'&id='+encodeURIComponent($rolID||''))">
+		<form id="rol-form" class="max-h-[calc(100vh-10rem)] space-y-5 overflow-y-auto pr-1" data-signals:rolMode={ roleSignalString(roleFormMode(role)) } data-signals:rolID={ roleSignalString(roleFormID(role)) } data-signals:nombre={ roleSignalString(roleFormValue(role, "nombre")) } data-signals:descripcion={ roleSignalString(roleFormValue(role, "descripcion")) } data-signals:jerarquia={ roleFormInt(role) } data-signals:permisos={ roleFormIDs(role, false) } data-signals:menus={ roleFormIDs(role, true) } data-signals:rolSaving="false" data-signals:rolSaved="false" data-effect="const button=document.getElementById('rol-submit');if(button){button.disabled=$rolSaving;button.setAttribute('aria-busy',$rolSaving?'true':'false');button.textContent=$rolSaving?'Guardando...':'Guardar rol';}if($rolSaved){window.templ?.dialog?.close('rol-dialog');$rolSaved=false;}" data-on:submit__prevent={ roleFormSubmitScript(role) }>
+			<input type="hidden" data-bind:rolID />
 			<div class="grid gap-4 sm:grid-cols-2">
-				@field.Field() { @field.Label(field.LabelProps{For: "rol-nombre"}) { Nombre } @input.Input(input.Props{ID: "rol-nombre", Placeholder: "Nombre del rol", Required: true, Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true}}) }
-				@field.Field() { @field.Label(field.LabelProps{For: "rol-jerarquia"}) { Jerarquía } <input id="rol-jerarquia" type="number" min="0" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:jerarquia /> }
+				@field.Field() { @field.Label(field.LabelProps{For: "rol-nombre"}) { Nombre } @input.Input(input.Props{ID: "rol-nombre", Placeholder: "Nombre del rol", Required: true, Value: roleFormValue(role, "nombre"), Class: "h-9", Attributes: templ.Attributes{"data-bind:nombre": true}}) }
+				@field.Field() { @field.Label(field.LabelProps{For: "rol-jerarquia"}) { Jerarquía } <input id="rol-jerarquia" type="number" min="0" value={ roleFormInt(role) } class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm" data-bind:jerarquia /> }
 			</div>
-			@field.Field() { @field.Label(field.LabelProps{For: "rol-descripcion"}) { Descripción } <textarea id="rol-descripcion" maxlength="100" class="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Descripción del rol" data-bind:descripcion></textarea> }
+			@field.Field() { @field.Label(field.LabelProps{For: "rol-descripcion"}) { Descripción } <textarea id="rol-descripcion" maxlength="100" class="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Descripción del rol" data-bind:descripcion>{ roleFormValue(role, "descripcion") }</textarea> }
 			<div class="grid gap-4 sm:grid-cols-2">
 				<div class="space-y-2 rounded-lg border border-border/60 bg-muted/10 p-3"><div><p class="text-sm font-medium">Permisos</p><p class="text-xs text-muted-foreground">Busca y selecciona uno o varios permisos.</p></div><div data-on:combobox-change="$permisos = evt.detail.values">
 					@combobox.Combobox(combobox.Props{ID: "rol-permisos", Multiple: true, Items: rolePermissionItems(permisos)}) {
@@ -62,4 +75,5 @@ templ RoleForm(permisos []*model.Permiso, menus []*model.Menus) {
 			@dialog.Footer() { @button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: dialog.Close(ctx)}) { Cancelar } @button.Button(button.Props{Type: button.TypeSubmit, ID: "rol-submit"}) { Guardar rol } }
 		</form>
 	}
+	</div>
 }
