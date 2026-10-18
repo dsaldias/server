@@ -24,8 +24,8 @@ var (
 	ADMIN_AVISOS_ACTIVOS = "/adminx/avisos/activos"
 )
 
-func RutasAdmin(db *sql.DB) []*utilidad.Handlers2 {
-	controller := Controller{DB: db}
+func RutasAdmin(db *sql.DB, conf Config) []*utilidad.Handlers2 {
+	controller := Controller{DB: db, Configur: &conf}
 	rutas := []*utilidad.Handlers2{}
 	rutas_usuarios := usuarios.Rutas(db)
 	rutas_roles := roles.Rutas(db)

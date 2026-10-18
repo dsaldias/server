@@ -21,7 +21,8 @@ import (
 )
 
 type Controller struct {
-	DB *sql.DB
+	DB       *sql.DB
+	Configur *Config
 }
 
 type InicioData struct {
@@ -67,7 +68,7 @@ func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := templ.WithChildren(r.Context(), LoginRender())
-	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+	MainLayout("Acceso | Panel administrativo", c.Configur.WithDefaults(), xutility.AssetVersion).Render(ctx, w)
 }
 
 func (c *Controller) LoginSubmit(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +146,7 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 	ctx := templ.WithChildren(r.Context(), InicioRender(c.inicioData(r)))
-	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+	MainLayout("Acceso | Panel administrativo", c.Configur.WithDefaults(), xutility.AssetVersion).Render(ctx, w)
 }
 func (c *Controller) Perfil(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -299,7 +300,7 @@ func (c *Controller) renderModuleRoute(w http.ResponseWriter, r *http.Request, m
 		w.WriteHeader(recorder.Code)
 	}
 	ctx := templ.WithChildren(r.Context(), InicioRender(data))
-	_ = MainLayout("Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+	_ = MainLayout("Panel administrativo", c.Configur.WithDefaults(), xutility.AssetVersion).Render(ctx, w)
 }
 
 func (c *Controller) ContextSubmit(w http.ResponseWriter, r *http.Request) {
