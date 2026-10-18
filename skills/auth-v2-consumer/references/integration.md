@@ -2,13 +2,24 @@
 
 ## Server
 
-1. Construct the database handle and the auth repository dependencies required
+1. Add the library branch before generating the consumer files:
+
+   ```bash
+   go get github.com/dsaldias/server@version_shadcn
+   go get -tool github.com/dsaldias/server/dataauth/xgenerar@version_shadcn
+   go tool xgenerar init
+   ```
+
+   `xgenerar init` runs `go mod tidy` after generating `serverx.go`, which
+   records `templ` and the other transitive dependencies automatically. If it
+   reports that synchronization could not run, execute `go mod tidy` manually.
+2. Construct the database handle and the auth repository dependencies required
    by the library.
-2. Register the library's `RutasAdmin(db)` or the exported module route set at
+3. Register the library's `RutasAdmin(db)` or the exported module route set at
    the `/adminx` prefix. Register it once to avoid duplicate handlers.
-3. Serve the library assets, including the compiled component assets and the
+4. Serve the library assets, including the compiled component assets and the
    shared WebSocket client.
-4. Keep the WebSocket endpoint and event payload fields compatible with the
+5. Keep the WebSocket endpoint and event payload fields compatible with the
    library. Chat events must include the conversation identifier when one is
    available.
 

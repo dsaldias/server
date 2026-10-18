@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -267,6 +268,24 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	copiarSkills()
 	generarClaudeMD(module)
 	generarSQLApp(module)
+	ejecutarGoModTidy()
+}
+
+func ejecutarGoModTidy() {
+	if _, err := os.Stat("go.mod"); err != nil {
+		fmt.Println("ℹ️  no se encontró go.mod; omitiendo go mod tidy")
+		return
+	}
+
+	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  no fue posible completar go mod tidy automáticamente: %v\n", err)
+		fmt.Fprintln(os.Stderr, "   ejecuta nuevamente: go mod tidy")
+		return
+	}
+	fmt.Println("✅ dependencias del consumidor sincronizadas con go mod tidy")
 }
 
 func escribirArchivo(path string, content []byte) {
