@@ -3,63 +3,26 @@ package unidades
 import "github.com/dsaldias/server/data_web/components/button"
 import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/icon"
-import "github.com/dsaldias/server/data_web/xutility"
+import "github.com/dsaldias/server/data_web/components/input"
+import "github.com/dsaldias/server/data_web/xutility/marco"
 
 templ RenderUnidades(data UnidadesPageData) {
 	@dialog.Dialog(dialog.Props{ID: "unidad-dialog"}) {
-		<div id="unidades-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ unidadSignalInt(data.Pagina) } data-signals:size={ unidadSignalInt(data.Size) } data-signals:unidadBusqueda={ unidadSignalString(data.Nombre) }>
-			@xutility.PageHeader("Unidades", "Administra las unidades disponibles en el sistema.") {
-				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina=1; @get('/adminx/unidades')"}}) { @icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar }
-				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "unidad-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": unidadCreateResetScript()}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nueva unidad }
-			}
-			@xutility.FilterBar() {
-				<div class="w-full sm:max-w-md"><label for="unidades-search" class="mb-2 block text-sm font-medium">Buscar por nombre</label><div class="flex gap-2"><input id="unidades-search" type="search" class="h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30" placeholder="Ej. Unidad central" data-bind:unidadBusqueda data-on:keydown="if(evt.key==='Enter'){ $pagina=1; @get('/adminx/unidades') }" /><button type="button" class="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-border/70 px-3 text-sm hover:bg-muted" data-on:click="document.getElementById('unidades-search').value=''; $unidadBusqueda=''; $pagina=1; @get('/adminx/unidades?pagina=1&size='+$size+'&nombre=')">Limpiar</button></div></div>
-				<div class="flex items-center gap-2"><label for="unidades-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label><select id="unidades-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina=1; @get('/adminx/unidades')"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select><span class="text-sm text-muted-foreground">registros</span></div>
-			}
-			@UnidadesTableRegion(data)
-			@UnidadViewDialogs(data)
-		</div>
-		@UnidadForm()
-	}
-}
-
-templ UnidadesTableRegion(data UnidadesPageData) {
-	@xutility.TableRegion("unidades-table-region") {
-		if data.Error != "" {
-			@xutility.ErrorState(data.Error)
-		} else if data.Listado != nil && len(data.Listado.Datos) > 0 {
-			@xutility.TableCard() {
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-3 py-2 font-medium">Nombre</th><th class="px-3 py-2 font-medium">Descripción</th><th class="px-3 py-2 font-medium">Orden</th><th class="px-3 py-2 font-medium">Latitud</th><th class="px-3 py-2 font-medium">Longitud</th><th class="px-3 py-2 font-medium">Registro</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr></thead>
-						<tbody class="divide-y divide-border/60">
-							for _, unidad := range data.Listado.Datos {
-								if unidad != nil {
-									<tr class="transition-colors hover:bg-muted/40"><td class="whitespace-nowrap px-3 py-2 font-medium">{ unidad.Nombre }</td><td class="max-w-64 truncate px-3 py-2 text-muted-foreground">{ unidadText(unidad.Descripcion) }</td><td class="px-3 py-2 text-muted-foreground">{ unidadStatus(unidad.Orden) }</td><td class="px-3 py-2 text-muted-foreground">{ unidadFloat(unidad.Latitud) }</td><td class="px-3 py-2 text-muted-foreground">{ unidadFloat(unidad.Longitud) }</td><td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ unidadDate(unidad.FechaRegistro) }</td><td class="px-3 py-2"><div class="flex justify-end gap-1">
-										@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: dialog.TriggerFor("unidad-view-" + unidad.ID)}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar unidad</span> }
-										if detail, ok := data.Detalles[unidad.ID]; ok {
-											@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: unidadEditAttributes(detail)}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar unidad</span> }
-										}
-									</div></td></tr>
-								}
-							}
-						</tbody>
-					</table>
-				</div>
-				@xutility.Pagination(unidadPageSummary(data.Listado), unidadPageLabel(data.Listado), !unidadCanPrevious(data.Listado), !unidadCanNext(data.Listado), templ.Attributes{"data-on:click": unidadPageClick(data.Pagina - 1)}, templ.Attributes{"data-on:click": unidadPageClick(data.Pagina + 1)})
-			}
-		} else {
-			@xutility.EmptyState("No hay unidades registradas.")
+		@UnidadModalLoading()
+		@marco.AdminTable(marco.AdminTableProps{Title: "Unidades", Description: "Administra las unidades disponibles en el sistema.", RegionID: "unidades-table-region", Attributes: templ.Attributes{"id": "unidades-page", "data-signals:pagina": unidadSignalInt(data.Pagina), "data-signals:size": unidadSignalInt(data.Size), "data-signals:unidadBusqueda": unidadSignalString(data.Nombre), "data-signals:unidadesLoading": "false"}, HeaderActions: UnidadHeaderActions(), Filters: UnidadFilters(data)}) {
+			@UnidadesTableContent(data)
 		}
 	}
 }
 
-templ UnidadViewDialogs(data UnidadesPageData) {
-	if data.Listado != nil {
-		for _, unidad := range data.Listado.Datos {
-			if detail, ok := data.Detalles[unidad.ID]; ok {
-				@dialog.Dialog(dialog.Props{ID: "unidad-view-" + unidad.ID}) { @UnidadView(detail) }
-			}
-		}
-	}
+templ UnidadHeaderActions() {
+	@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-unidades-refresh": true, "data-on:click": unidadRefreshScript(), "data-effect": unidadLoadingButtonEffectScript()}}) { <span data-unidades-refresh-icon>@icon.RefreshCw(icon.Props{Class: "size-4"})</span><span data-unidades-refresh-label>Refrescar</span> }
+	@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "unidad-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-unidad-modal-action": true, "data-on:click": unidadModalRequestScript(ADMIN_UNIDADES_FORMHTML)}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nueva unidad }
+}
+
+templ UnidadFilters(data UnidadesPageData) {
+	<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-end">
+		<div class="w-full sm:max-w-md"><label for="unidades-search" class="mb-2 block text-sm font-medium">Buscar por nombre</label><div class="flex gap-2">@input.Input(input.Props{ID: "unidades-search", Type: "search", Value: data.Nombre, Placeholder: "Ej. Unidad central", Class: "h-9", Attributes: templ.Attributes{"data-bind:unidadBusqueda": true, "data-on:keydown": unidadSearchKeydownScript()}})<button type="button" class="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-border/70 px-3 text-sm hover:bg-muted disabled:opacity-50" data-on:click={ unidadSearchScript() } data-effect="this.disabled=$unidadesLoading"><span data-unidades-search-icon>@icon.Search(icon.Props{Class: "size-4"})</span><span data-unidades-search-label class="sr-only">Buscar</span></button></div></div>
+		<div class="flex items-center gap-2"><label for="unidades-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label><select id="unidades-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change={ unidadPageSizeScript() }><option value="10">10</option><option value="20">20</option><option value="50">50</option></select><span class="text-sm text-muted-foreground">registros</span></div>
+	</div>
 }
