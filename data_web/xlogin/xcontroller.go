@@ -43,6 +43,22 @@ type loginSubmitInput struct {
 	Context  string `json:"context"`
 }
 
+type perfilSubmitInput struct {
+	Nombres   string `json:"nombres"`
+	Apellido1 string `json:"apellido1"`
+	Apellido2 string `json:"apellido2"`
+	Documento string `json:"documento"`
+	Celular   string `json:"celular"`
+	Correo    string `json:"correo"`
+	Sexo      string `json:"sexo"`
+	Direccion string `json:"direccion"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Foto64    string `json:"foto64"`
+	Latitud   string `json:"latitud"`
+	Longitud  string `json:"longitud"`
+}
+
 func (c *Controller) LoginRender(w http.ResponseWriter, r *http.Request) {
 	if c.authenticated(r) {
 		http.Redirect(w, r, ADMIN_INICIO, http.StatusSeeOther)
@@ -129,6 +145,96 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) InicioRender(w http.ResponseWriter, r *http.Request) {
 	ctx := templ.WithChildren(r.Context(), InicioRender(c.inicioData(r)))
 	MainLayout("Acceso | Panel administrativo", Default(), xutility.AssetVersion).Render(ctx, w)
+}
+
+func (c *Controller) Perfil(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, ADMIN_INICIO, http.StatusSeeOther)
+		return
+	}
+
+	auth, err := utilidad.CtxValue(r.Context(), c.DB, "update_perfil")
+	if err != nil || auth == nil || auth.SessionKey == nil || auth.SessionKey.UsuarioID == "" {
+		http.Error(w, "Sesión no autorizada", http.StatusUnauthorized)
+		return
+	}
+
+	var signals perfilSubmitInput
+	if err := datastar.ReadSignals(r, &signals); err != nil {
+		_ = r.ParseForm()
+		signals.Nombres = r.FormValue("nombres")
+		signals.Apellido1 = r.FormValue("apellido1")
+		signals.Apellido2 = r.FormValue("apellido2")
+		signals.Documento = r.FormValue("documento")
+		signals.Celular = r.FormValue("celular")
+		signals.Correo = r.FormValue("correo")
+		signals.Sexo = r.FormValue("sexo")
+		signals.Direccion = r.FormValue("direccion")
+		signals.Username = r.FormValue("username")
+		signals.Password = r.FormValue("password")
+		signals.Foto64 = r.FormValue("foto64")
+		signals.Latitud = r.FormValue("latitud")
+		signals.Longitud = r.FormValue("longitud")
+	}
+
+	input := model.UpdatePerfil{
+		ID:        auth.SessionKey.UsuarioID,
+		Nombres:   strings.TrimSpace(signals.Nombres),
+		Apellido1: strings.TrimSpace(signals.Apellido1),
+		Apellido2: perfilOptionalString(signals.Apellido2),
+		Documento: perfilOptionalString(signals.Documento),
+		Celular:   perfilOptionalString(signals.Celular),
+		Correo:    perfilOptionalString(signals.Correo),
+		Sexo:      perfilOptionalString(signals.Sexo),
+		Direccion: perfilOptionalString(signals.Direccion),
+		Username:  perfilOptionalString(signals.Username),
+		Password:  perfilOptionalString(signals.Password),
+		Foto64:    perfilOptionalString(signals.Foto64),
+	}
+	if input.Nombres == "" || input.Apellido1 == "" {
+		c.perfilError(w, r, "Nombres y primer apellido son obligatorios.")
+		return
+	}
+	if signals.Latitud != "" {
+		value, parseErr := strconv.ParseFloat(strings.TrimSpace(signals.Latitud), 64)
+		if parseErr != nil {
+			c.perfilError(w, r, "La latitud no es válida.")
+			return
+		}
+		input.Latitud = &value
+	}
+	if signals.Longitud != "" {
+		value, parseErr := strconv.ParseFloat(strings.TrimSpace(signals.Longitud), 64)
+		if parseErr != nil {
+			c.perfilError(w, r, "La longitud no es válida.")
+			return
+		}
+		input.Longitud = &value
+	}
+
+	if _, err := xrepo.UpdatePerfil(r.Context(), c.DB, input); err != nil {
+		c.perfilError(w, r, err.Error())
+		return
+	}
+
+	sse := datastar.NewSSE(w, r)
+	_ = sse.MarshalAndPatchSignals(map[string]bool{"perfilSaving": false, "perfilSaved": true})
+}
+
+func (c *Controller) perfilError(w http.ResponseWriter, r *http.Request, message string) {
+	var body bytes.Buffer
+	_ = PerfilFormError(message).Render(r.Context(), &body)
+	sse := datastar.NewSSE(w, r)
+	_ = sse.PatchElements(body.String(), datastar.WithSelector("#perfil-form-error"), datastar.WithModeOuter())
+	_ = sse.MarshalAndPatchSignals(map[string]bool{"perfilSaving": false, "perfilSaved": false})
+}
+
+func perfilOptionalString(value string) *string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil
+	}
+	return &value
 }
 
 func (c *Controller) ConnectedUsers(w http.ResponseWriter, r *http.Request) {
@@ -342,6 +448,13 @@ func inicioUserName(me *model.ResponseMe) string {
 	return strings.TrimSpace(me.Usuario.Nombres + " " + me.Usuario.Apellido1)
 }
 
+func inicioUser(me *model.ResponseMe) *model.Usuario {
+	if me == nil {
+		return nil
+	}
+	return me.Usuario
+}
+
 func inicioUserInitials(me *model.ResponseMe) string {
 	name := inicioUserName(me)
 	parts := strings.Fields(name)
@@ -352,6 +465,93 @@ func inicioUserInitials(me *model.ResponseMe) string {
 		return strings.ToUpper(string([]rune(parts[0])[0]))
 	}
 	return strings.ToUpper(string([]rune(parts[0])[0]) + string([]rune(parts[len(parts)-1])[0]))
+}
+
+func perfilUserString(user *model.Usuario, field string) string {
+	if user == nil {
+		return ""
+	}
+	switch field {
+	case "nombres":
+		return user.Nombres
+	case "apellido1":
+		return user.Apellido1
+	case "apellido2":
+		return perfilStringValue(user.Apellido2)
+	case "documento":
+		return perfilStringValue(user.Documento)
+	case "celular":
+		return perfilStringValue(user.Celular)
+	case "correo":
+		return perfilStringValue(user.Correo)
+	case "sexo":
+		return perfilStringValue(user.Sexo)
+	case "direccion":
+		return perfilStringValue(user.Direccion)
+	case "username":
+		return user.Username
+	case "latitud":
+		if user.Latitud != nil {
+			return strconv.FormatFloat(*user.Latitud, 'f', -1, 64)
+		}
+	case "longitud":
+		if user.Longitud != nil {
+			return strconv.FormatFloat(*user.Longitud, 'f', -1, 64)
+		}
+	}
+	return ""
+}
+
+func perfilStringValue(value *string) string {
+	if value == nil {
+		return ""
+	}
+	return *value
+}
+
+func perfilSignalString(value string) string {
+	return strconv.Quote(value)
+}
+
+func perfilBind(signal string) templ.Attributes {
+	return templ.Attributes{"data-bind:" + signal: true}
+}
+
+func perfilPhotoURL(user *model.Usuario) string {
+	if user == nil || user.FotoURL == nil || strings.TrimSpace(*user.FotoURL) == "" {
+		return ""
+	}
+	path := strings.TrimSpace(*user.FotoURL)
+	if strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "/") {
+		return path
+	}
+	return "/" + strings.TrimPrefix(path, "./")
+}
+
+func perfilTriggerAttributes(user *model.Usuario) templ.Attributes {
+	return templ.Attributes{
+		"tabindex":                   "0",
+		"type":                       "button",
+		"data-slot":                  "dialog-trigger",
+		"data-base-ui-click-trigger": true,
+		"data-templ-controls":        "perfil-dialog",
+		"aria-haspopup":              "dialog",
+		"aria-expanded":              "false",
+		"data-on:click":              perfilResetScript(user),
+	}
+}
+
+func perfilResetScript(user *model.Usuario) string {
+	assign := func(signal, field string) string {
+		return "$" + signal + "=" + strconv.Quote(perfilUserString(user, field))
+	}
+	return strings.Join([]string{
+		assign("nombres", "nombres"), assign("apellido1", "apellido1"), assign("apellido2", "apellido2"),
+		assign("documento", "documento"), assign("celular", "celular"), assign("correo", "correo"),
+		assign("sexo", "sexo"), assign("direccion", "direccion"), assign("username", "username"),
+		assign("latitud", "latitud"), assign("longitud", "longitud"),
+		"$password='';$foto64='';$perfilSaving=false;$perfilSaved=false;const error=document.getElementById('perfil-form-error');if(error){error.replaceChildren();}const file=document.getElementById('perfil-foto');if(file){file.value='';}const image=document.getElementById('perfil-photo-preview');if(image){image.src=" + strconv.Quote(perfilPhotoURL(user)) + ";image.hidden=!image.src;}",
+	}, ";")
 }
 
 func inicioSelectedRole(me *model.ResponseMe, unidadID, rolID string) string {
