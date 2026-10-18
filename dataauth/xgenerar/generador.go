@@ -22,7 +22,7 @@ var sqlAppTemplate string
 //go:embed taskfile/Taskfile.yml
 var taskFilex string
 
-//go:embed taskfile/componetesjson
+//go:embed taskfile/components.json
 var componetesjsonx string
 
 //go:embed taskfile/globals.css
