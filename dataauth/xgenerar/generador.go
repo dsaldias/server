@@ -36,6 +36,13 @@ var consumerTools = []string{
 	"github.com/axadrn/shadcn-templ/v2/cmd/shadcn-templ@v2.0.0-beta.15",
 }
 
+// Dependencias runtime que usan los paquetes frontend de la librería.
+// Se registran en el consumidor porque no son herramientas de Go y deben
+// quedar disponibles en su go.mod/go.sum antes de compilar serverx.go.
+var consumerDependencies = []string{
+	"github.com/starfederation/datastar-go@v1.2.2",
+}
+
 func Init() {
 	module := getModuleName()
 
@@ -276,8 +283,23 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	copiarSkills()
 	generarClaudeMD(module)
 	generarSQLApp(module)
+	instalarDependenciasConsumidor()
 	instalarHerramientasConsumidor()
 	ejecutarGoModTidy()
+}
+
+func instalarDependenciasConsumidor() {
+	for _, dependency := range consumerDependencies {
+		cmd := exec.Command("go", "get", dependency)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "⚠️  no fue posible registrar la dependencia %s: %v\n", dependency, err)
+			fmt.Fprintln(os.Stderr, "   puedes registrarla manualmente con: go get "+dependency)
+			continue
+		}
+		fmt.Println("✅ dependencia registrada: " + dependency)
+	}
 }
 
 func instalarHerramientasConsumidor() {

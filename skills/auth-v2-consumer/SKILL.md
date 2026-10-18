@@ -18,7 +18,8 @@ only business-domain modules and their authorization-aware content.
 - Reuse the library's `data_web/xlogin` layout and `data_web/xutility` shared components.
 - `go tool xgenerar init` synchronizes the consumer module after generating
   `serverx.go`, so transitive runtime dependencies such as
-  `github.com/a-h/templ` are recorded in the consumer's `go.sum`. It also
+  `github.com/a-h/templ` and `github.com/starfederation/datastar-go` are
+  recorded in the consumer's `go.sum`. It also
   registers the `templ` and `shadcn-templ` tools required by the generated
   `Taskfile.yml`, and generates consumer-local shadcn aliases under
   `<module>/app/front/componentes` and `<module>/app/front/utils`. If automatic
