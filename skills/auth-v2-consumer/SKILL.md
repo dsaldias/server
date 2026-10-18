@@ -25,6 +25,10 @@ only business-domain modules and their authorization-aware content.
   `<module>/app/front/componentes` and `<module>/app/front/utils`. If automatic
   synchronization cannot run, execute `go mod tidy` and register those tools
   manually.
+- The generator also creates a minimal sample module under
+  `app/front/web/test`. It is available at `/webc/test` and is intentionally
+  disposable: use it to verify the reusable frame, table, filters and
+  pagination before replacing it with a business module.
 - Register the library's admin routes once. Do not recreate login, relogin,
   profile, role selection, menu loading, chat, or WebSocket routes in the consumer.
 - Render `xchat.ChatDialog()` once inside the main authenticated layout if the

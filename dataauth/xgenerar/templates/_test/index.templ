@@ -1,0 +1,27 @@
+package test
+
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/icon"
+import "github.com/dsaldias/server/data_web/components/input"
+import "github.com/dsaldias/server/data_web/xutility/marco"
+
+templ Index(data PageData) {
+	@marco.AdminTable(marco.AdminTableProps{Title: "Usuarios de prueba", Description: "Ejemplo mínimo de un módulo consumidor usando el marco reutilizable.", RegionID: "test-table-region", HeaderActions: TestHeaderActions(), Filters: TestFilters()}) {
+		@TestTable(data)
+	}
+}
+
+templ TestHeaderActions() {
+	@button.Button(button.Props{Variant: button.VariantOutline, Href: "/webc/test"}) { @icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar }
+	@button.Button(button.Props{Type: button.TypeButton}) { @icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro }
+}
+
+templ TestFilters() {
+	<div class="w-full sm:max-w-md">
+		<label for="test-search" class="mb-2 block text-sm font-medium">Buscar usuario</label>
+		<div class="flex gap-2">
+			@input.Input(input.Props{ID: "test-search", Type: "search", Placeholder: "Nombre o username", Class: "h-9"})
+			@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton}) { @icon.Search(icon.Props{Class: "size-4"})<span class="sr-only">Buscar</span> }
+		</div>
+	</div>
+}

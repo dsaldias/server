@@ -1,0 +1,22 @@
+package test
+
+import "strconv"
+import "github.com/dsaldias/server/data_web/components/button"
+import "github.com/dsaldias/server/data_web/components/icon"
+import "github.com/dsaldias/server/data_web/xutility/marco"
+
+templ TestTable(data PageData) {
+	@marco.TableCard() {
+		<div class="overflow-x-auto">
+			<table class="w-full text-sm">
+				<thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-3 py-2 font-medium">Usuario</th><th class="px-3 py-2 font-medium">Username</th><th class="px-3 py-2 font-medium">Estado</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr></thead>
+				<tbody class="divide-y divide-border/60">
+					for _, row := range data.Rows {
+						<tr class="transition-colors hover:bg-muted/40"><td class="px-3 py-2 font-medium">{ row.Nombre }</td><td class="px-3 py-2 text-muted-foreground">{ row.Username }</td><td class="px-3 py-2"><span class={ testStatusClass(row.Estado) }>{ row.Estado }</span></td><td class="px-3 py-2"><div class="flex justify-end gap-1">@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar</span> } @button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar</span> }</div></td></tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<div class="flex flex-col gap-3 border-t border-border/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between"><span class="text-muted-foreground">Mostrando { testFirstRow(data) }–{ testLastRow(data) } de { strconv.Itoa(data.Total) }</span><div class="flex items-center gap-1">@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Href: pageURL(data.Pagina-1, data.Size), Disabled: data.Pagina <= 1}) { Anterior }<span class="px-2 text-muted-foreground">Página { strconv.Itoa(data.Pagina) } de { strconv.Itoa(data.TotalPage) }</span>@button.Button(button.Props{Variant: button.VariantOutline, Size: button.SizeSm, Href: pageURL(data.Pagina+1, data.Size), Disabled: data.Pagina >= data.TotalPage}) { Siguiente }</div></div>
+	}
+}

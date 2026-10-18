@@ -13,6 +13,9 @@ import (
 //go:embed skills
 var skillsFS embed.FS
 
+//go:embed templates/_test
+var testModuleFS embed.FS
+
 //go:embed docs/CLAUDE.md.tmpl
 var claudeMDTemplate string
 
@@ -178,9 +181,9 @@ package front
 import (
 	"database/sql"
 	"embed"
-	"net/http"
 
 	"github.com/dsaldias/server/data_web/xlogin"
+	testmodule "{{MODULE}}/app/front/web/test"
 	"github.com/dsaldias/server/dataauth/utilidad"
 )
 
@@ -201,30 +204,9 @@ func RutasFront(db *sql.DB) []*utilidad.Handlers2 {
 	conf := xlogin.Default()
 	rutitas := xlogin.RutasAdmin(db, conf)
 	ssr = append(ssr, rutitas...)
-
-	tcontroller := TestController{DB: db}
-
-	ssr = append(ssr, &utilidad.Handlers2{Path: WEB_PATH_BASE, H: http.HandlerFunc(tcontroller.Listar)})
+	ssr = append(ssr, testmodule.Rutas(db)...)
 
 	return ssr
-}
-
-`
-
-	content_controller1 := `
-package front
-
-import (
-	"database/sql"
-	"net/http"
-)
-
-type TestController struct {
-	DB *sql.DB 
-}
-
-func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
-
 }
 
 `
@@ -247,7 +229,12 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	if err := os.MkdirAll("app/front", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/: %v\n", err)
 	} else {
-		escribirArchivo("app/front/rutas_front.go", []byte(content_rutas_cli))
+		contentRoutes := strings.ReplaceAll(content_rutas_cli, "{{MODULE}}", module)
+		if _, err := os.Stat("app/front/rutas_front.go"); err == nil {
+			parchearRutasFront("app/front/rutas_front.go", module)
+		} else {
+			escribirArchivo("app/front/rutas_front.go", []byte(contentRoutes))
+		}
 	}
 
 	if err := os.MkdirAll("app/front/asset", 0755); err != nil {
@@ -268,9 +255,9 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 
 	if err := os.MkdirAll("app/front/componentes", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/front/componentes/: %v\n", err)
-	} else {
-		escribirArchivo("app/front/test.go", []byte(content_controller1))
 	}
+
+	generarModuloPrueba()
 
 	if err := os.MkdirAll("app/back", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio app/back/: %v\n", err)
@@ -290,6 +277,65 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	instalarDependenciasConsumidor()
 	instalarHerramientasConsumidor()
 	ejecutarGoModTidy()
+}
+
+func generarModuloPrueba() {
+	err := fs.WalkDir(testModuleFS, "templates/_test", func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() {
+			return nil
+		}
+
+		content, err := testModuleFS.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		relative := strings.TrimPrefix(path, "templates/_test/")
+		destination := filepath.Join("app/front/web/test", relative)
+		if err := os.MkdirAll(filepath.Dir(destination), 0755); err != nil {
+			return err
+		}
+		escribirArchivo(destination, content)
+		return nil
+	})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "❌ error generando módulo de prueba: %v\n", err)
+		return
+	}
+	fmt.Println("✅ módulo de prueba generado en app/front/web/test/")
+}
+
+func parchearRutasFront(path, module string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  no fue posible leer %s: %v\n", path, err)
+		return
+	}
+
+	content := string(data)
+	importPath := fmt.Sprintf("%s/app/front/web/test", module)
+	if !strings.Contains(content, importPath) {
+		content = strings.Replace(content,
+			"\"github.com/dsaldias/server/data_web/xlogin\"",
+			"\"github.com/dsaldias/server/data_web/xlogin\"\n\ttestmodule \""+importPath+"\"",
+			1,
+		)
+	}
+	if !strings.Contains(content, "testmodule.Rutas(db)") {
+		content = strings.Replace(content,
+			"ssr = append(ssr, rutitas...)",
+			"ssr = append(ssr, rutitas...)\n\tssr = append(ssr, testmodule.Rutas(db)...)",
+			1,
+		)
+	}
+
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  no fue posible actualizar %s: %v\n", path, err)
+		return
+	}
+	fmt.Printf("✅ %s actualizado con el módulo de prueba\n", path)
 }
 
 func instalarDependenciasConsumidor() {
