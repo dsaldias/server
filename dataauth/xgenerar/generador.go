@@ -180,6 +180,7 @@ import (
 	"embed"
 	"net/http"
 
+	"github.com/dsaldias/server/data_web/xlogin"
 	"github.com/dsaldias/server/dataauth/utilidad"
 )
 
@@ -197,6 +198,8 @@ var (
 
 func RutasFront(db *sql.DB) []*utilidad.Handlers2 {
 	ssr := []*utilidad.Handlers2{}
+	rutitas := xlogin.RutasAdmin(db)
+	ssr = append(ssr, rutitas...)
 
 	tcontroller := TestController{DB: db}
 
