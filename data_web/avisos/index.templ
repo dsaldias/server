@@ -3,37 +3,19 @@ package avisos
 import "github.com/dsaldias/server/data_web/components/button"
 import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/icon"
-import "github.com/dsaldias/server/data_web/xutility"
+import "github.com/dsaldias/server/data_web/xutility/marco"
 
 templ RenderAvisos(data AvisosPageData) {
 	@dialog.Dialog(dialog.Props{ID: "aviso-dialog"}) {
-		<div id="avisos-page" class="mx-auto max-w-7xl space-y-6" data-signals:avisoTimezone="''">
-			@xutility.PageHeader("Avisos", "Administra los avisos activos del sistema.") {
-				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "@get('/adminx/avisos')"}}) { @icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar }
-				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "aviso-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-on:click": avisoCreateResetScript()}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nuevo aviso }
-			}
-			@AvisosTableRegion(data)
-			@AvisoViewDialogs(data)
-		</div>
-		@AvisoForm()
-	}
-}
-templ AvisosTableRegion(data AvisosPageData) {
-	@xutility.TableRegion("avisos-table-region") {
-		if data.Error != "" {
-			@xutility.ErrorState(data.Error)
-		} else if len(data.Listado) > 0 {
-			@xutility.TableCard() {
-				<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-3 py-2 font-medium">Mensaje</th><th class="px-3 py-2 font-medium">Desde</th><th class="px-3 py-2 font-medium">Hasta</th><th class="px-3 py-2 font-medium">Registro</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr></thead><tbody class="divide-y divide-border/60">
-					for _, aviso := range data.Listado {
-						if aviso != nil {
-							<tr class="transition-colors hover:bg-muted/40"><td class="max-w-xl whitespace-pre-wrap px-3 py-2 font-medium">{ aviso.Mensaje }</td><td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ avisoDate(aviso.Desde) }</td><td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ avisoDate(aviso.Hasta) }</td><td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ avisoDate(aviso.FechaRegistro) }</td><td class="px-3 py-2"><div class="flex justify-end gap-1">@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: avisoViewAttributes(aviso.ID)}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar aviso</span> } @button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: avisoEditAttributes(aviso)}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar aviso</span> }</div></td></tr>
-						}
-					}
-				</tbody></table></div>
-			}
-		} else {
-			@xutility.EmptyState("No hay avisos activos.")
+		@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-2xl", Attributes: templ.Attributes{"data-on:dialog-close": avisoModalLoadingScript()}}) {
+			@dialog.Header() { @dialog.Title() { <span data-aviso-title>Nuevo aviso</span> } @dialog.Description() { <span data-templ-dialog-description>Define el mensaje y el periodo en el que estará activo.</span> } }
+			@AvisoModalLoading()
 		}
 	}
+	@marco.AdminTable(marco.AdminTableProps{Title: "Avisos", Description: "Administra los avisos activos del sistema.", RegionID: "avisos-table-region", Attributes: templ.Attributes{"id": "avisos-page", "data-signals:avisosLoading": "false"}, HeaderActions: AvisoHeaderActions(), Filters: nil}) { @AvisosTableContent(data) }
+}
+
+templ AvisoHeaderActions() {
+	@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-avisos-refresh": true, "data-on:click": avisosRefreshScript(), "data-effect": avisosLoadingEffectScript()}}) { <span data-avisos-refresh-icon>@icon.RefreshCw(icon.Props{Class: "size-4"})</span><span data-avisos-refresh-label>Refrescar</span> }
+	@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "aviso-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-aviso-modal-action": true, "data-on:click": avisoModalRequestScript(ADMIN_AVISOS_FORMHTML)}}) { @icon.Plus(icon.Props{Class: "size-4"}) Nuevo aviso }
 }
