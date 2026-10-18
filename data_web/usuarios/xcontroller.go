@@ -2,14 +2,12 @@ package usuarios
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/a-h/templ"
 	"github.com/dsaldias/server/data_web/components/combobox"
 	"github.com/dsaldias/server/dataauth/xrepo"
 	"github.com/dsaldias/server/graph_auth/model"
@@ -21,14 +19,12 @@ type Controller struct {
 }
 
 type UsuariosPageData struct {
-	Listado  *model.UsuarioPaginado
-	Roles    []*model.ResponseRoles
-	Unidades []*model.Unidad
-	Detalles map[string]*model.ResponseUsuario
-	Pagina   int32
-	Size     int32
-	Rol      string
-	Error    string
+	Listado *model.UsuarioPaginado
+	Roles   []*model.ResponseRoles
+	Pagina  int32
+	Size    int32
+	Rol     string
+	Error   string
 }
 
 type usuariosSignals struct {
@@ -37,152 +33,30 @@ type usuariosSignals struct {
 	Rol    string `json:"rol"`
 }
 
-type usuarioFormSignals struct {
-	Nombres   string `json:"nombres"`
-	Apellido1 string `json:"apellido1"`
-	Apellido2 string `json:"apellido2"`
-	Documento string `json:"documento"`
-	Celular   string `json:"celular"`
-	Correo    string `json:"correo"`
-	Sexo      string `json:"sexo"`
-	Direccion string `json:"direccion"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Foto64    string `json:"foto64"`
-	RolesJSON string `json:"rolesJson"`
-	Mode      string `json:"usuarioMode"`
-	ID        string `json:"usuarioID"`
-}
-
-func usuarioModalRequestScript(path string) string {
-	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "')"
-}
-
-func usuarioModalRequestWithIDScript(path string) string {
-	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "?id=' + encodeURIComponent(button?.dataset.usuarioId || ''))"
-}
-
-func usuarioModalReadyScript() string {
-	return "document.querySelectorAll('[data-usuario-modal-action]').forEach((button) => { button.disabled = false; button.removeAttribute('aria-busy'); });"
-}
-
-func usuarioDialogCleanupScript() string {
-	return "const content = document.getElementById('usuario-dialog-content'); if (content) { content.className = 'flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground'; content.innerHTML = '<span class=\"size-4 animate-spin rounded-full border-2 border-current border-t-transparent\"></span>Cargando, espere...'; } document.querySelectorAll('[data-usuario-modal-action]').forEach((button) => { button.disabled = false; button.removeAttribute('aria-busy'); }); const title = document.querySelector('#usuario-dialog [data-usuario-title]'); title?.replaceChildren(document.createTextNode('Usuario'));"
-}
-
-func usuarioModalTitleScript(title string) string {
-	data, _ := json.Marshal(title)
-	return "document.querySelector('#usuario-dialog [data-usuario-title]')?.replaceChildren(document.createTextNode(" + string(data) + "));"
-}
-
-func usuarioModalDescriptionScript(description string) string {
-	data, _ := json.Marshal(description)
-	return "document.querySelector('#usuario-dialog [data-templ-dialog-description]')?.replaceChildren(document.createTextNode(" + string(data) + "));"
-}
-
-func usuarioRequestID(r *http.Request) string {
-	id := strings.TrimSpace(r.URL.Query().Get("id"))
-	if id == "" {
-		id = strings.TrimSpace(r.FormValue("id"))
-	}
-	return id
-}
-
-func usuarioFormMode(user *model.ResponseUsuario) string {
-	if user == nil {
-		return "create"
-	}
-	return "edit"
-}
-
-func usuarioFormID(user *model.ResponseUsuario) string {
-	if user == nil {
-		return ""
-	}
-	return user.ID
-}
-
-func usuarioFormValue(user *model.ResponseUsuario, field string) string {
-	if user == nil {
-		return ""
-	}
-	switch field {
-	case "nombres":
-		return user.Nombres
-	case "apellido1":
-		return user.Apellido1
-	case "apellido2":
-		return optionalStringValue(user.Apellido2)
-	case "documento":
-		return optionalStringValue(user.Documento)
-	case "celular":
-		return optionalStringValue(user.Celular)
-	case "correo":
-		return optionalStringValue(user.Correo)
-	case "sexo":
-		return optionalStringValue(user.Sexo)
-	case "direccion":
-		return optionalStringValue(user.Direccion)
-	case "username":
-		return user.Username
-	default:
-		return ""
-	}
-}
-
-func usuarioFormRolesJSON(user *model.ResponseUsuario) string {
-	if user == nil {
-		return ""
-	}
-	roles, _ := json.Marshal(usuarioRolePairs(user))
-	return string(roles)
-}
-
-func usuarioCreateResetScript() string {
-	return "setTimeout(() => { $usuarioMode = 'create'; $usuarioID = ''; $nombres = ''; $apellido1 = ''; $apellido2 = ''; $documento = ''; $celular = ''; $correo = ''; $sexo = ''; $direccion = ''; $username = ''; $password = ''; $foto64 = ''; $rolesJson = ''; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Nuevo usuario'); root?.querySelectorAll('input, textarea, select').forEach((field) => { field.value = ''; field.dispatchEvent(new Event('input', { bubbles: true })); }); root?.querySelector('#usuario-password')?.setAttribute('required', ''); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('[data-usuario-roles-list]')?.replaceChildren(); root?.querySelector('#usuario-form-error')?.replaceChildren(); root?.querySelector('[data-usuario-roles-error]')?.replaceChildren(); }, 0);"
-}
-
-func usuarioBind(signal string) templ.Attributes {
-	return templ.Attributes{"data-bind:" + signal: true}
-}
-
-func usuarioInputType(signal string) string {
-	if signal == "password" {
-		return "password"
-	}
-	if signal == "correo" {
-		return "email"
-	}
-	return "text"
-}
-
-func usuarioAddRoleUnitScript() string {
-	return `const root = document.getElementById('usuario-dialog'); const error = root?.querySelector('[data-usuario-roles-error]'); if (!$rolForm || !$unidadForm) { if (error) error.innerHTML = '<p class="text-xs text-destructive">Seleccione un rol y una unidad.</p>'; return; }; const pairs = JSON.parse($rolesJson || '[]'); if (pairs.some((pair) => pair.unidad_id === $unidadForm)) { if (error) error.innerHTML = '<p class="text-xs text-destructive">La unidad ya tiene un rol asignado.</p>'; return; }; pairs.push({rol_id: $rolForm, unidad_id: $unidadForm}); $rolesJson = JSON.stringify(pairs); if (error) error.innerHTML = ''; const roleLabel = root?.querySelector('[data-usuario-role] option:checked')?.textContent || ''; const unitLabel = root?.querySelector('[data-usuario-unit] option:checked')?.textContent || ''; const list = root?.querySelector('[data-usuario-roles-list]'); if (!list) return; const row = document.createElement('div'); row.className = 'flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2 text-sm'; row.dataset.usuarioPair = $unidadForm; const text = document.createElement('span'); text.textContent = roleLabel + ' · ' + unitLabel; const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'text-xs text-muted-foreground hover:text-destructive'; remove.textContent = 'Quitar'; remove.onclick = () => { const current = JSON.parse($rolesJson || '[]').filter((pair) => pair.unidad_id !== row.dataset.usuarioPair); $rolesJson = JSON.stringify(current); row.remove(); }; row.append(text, remove); list.append(row); $rolForm = ''; $unidadForm = '';`
-}
-
-func usuarioRemoveRoleUnitScript() string {
-	return "const row = evt.currentTarget.closest('[data-usuario-pair]'); if (!row) return; $rolesJson = JSON.stringify(JSON.parse($rolesJson || '[]').filter((pair) => pair.unidad_id !== row.dataset.usuarioPair)); row.remove();"
-}
-
 func (c *Controller) UsuariosRender(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		c.usuarioCreate(w, r)
-		return
-	}
 	data := c.usuariosPageData(r)
+	_ = RenderUsuarios(data).Render(r.Context(), w)
+}
+
+func (c *Controller) UsuariosListaHTML(w http.ResponseWriter, r *http.Request) {
+	data := c.usuariosTableData(r)
 	if r.Header.Get("Datastar-Request") == "true" {
 		c.usuariosPatch(w, r, data)
 		return
 	}
-
-	_ = RenderUsuarios(data).Render(r.Context(), w)
+	_ = UsuariosTableRegion(data).Render(r.Context(), w)
 }
 
 func (c *Controller) usuariosPageData(r *http.Request) UsuariosPageData {
+	data := c.usuariosTableData(r)
+	data.Roles, _ = xrepo.Roles(r.Context(), c.DB)
+	return data
+}
+
+func (c *Controller) usuariosTableData(r *http.Request) UsuariosPageData {
 	page := parsePositiveInt(r.URL.Query().Get("pagina"), 1)
 	size := parsePositiveInt(r.URL.Query().Get("size"), 10)
 	rol := strings.TrimSpace(r.URL.Query().Get("rol"))
-
 	data := UsuariosPageData{Pagina: page, Size: size, Rol: rol}
 	query := model.QueryUsuarios{Pagina: page, Size: size}
 	if rol != "" {
@@ -192,166 +66,7 @@ func (c *Controller) usuariosPageData(r *http.Request) UsuariosPageData {
 	if data.Listado == nil {
 		data.Error = "No fue posible cargar los usuarios."
 	}
-	data.Roles, _ = xrepo.Roles(r.Context(), c.DB)
 	return data
-}
-
-func (c *Controller) UsuarioFormularioRender(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-	roles, _ := xrepo.Roles(r.Context(), c.DB)
-	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
-	c.patchUsuarioModal(w, r, Formulario(roles, unidades, nil), usuarioCreateResetScript()+usuarioModalReadyScript())
-}
-
-func (c *Controller) UsuarioVisualizarRender(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-	detalle, err := xrepo.UsuarioByID(r.Context(), c.DB, usuarioRequestID(r))
-	if err != nil || detalle == nil {
-		c.patchUsuarioModal(w, r, UsuarioModalError("No fue posible cargar el usuario."), usuarioModalTitleScript("Usuario")+usuarioModalDescriptionScript("No fue posible cargar la información.")+usuarioModalReadyScript())
-		return
-	}
-	c.patchUsuarioModal(w, r, Visualizar(detalle), usuarioModalTitleScript("Visualizar usuario")+usuarioModalDescriptionScript("Consulta la información registrada del usuario.")+usuarioModalReadyScript())
-}
-
-func (c *Controller) UsuarioEditarRender(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-	detalle, err := xrepo.UsuarioByID(r.Context(), c.DB, usuarioRequestID(r))
-	if err != nil || detalle == nil {
-		c.patchUsuarioModal(w, r, UsuarioModalError("No fue posible cargar el usuario."), usuarioModalTitleScript("Usuario")+usuarioModalDescriptionScript("No fue posible cargar la información.")+usuarioModalReadyScript())
-		return
-	}
-	roles, _ := xrepo.Roles(r.Context(), c.DB)
-	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
-	c.patchUsuarioModal(w, r, Formulario(roles, unidades, detalle), usuarioModalTitleScript("Editar usuario")+usuarioModalDescriptionScript("Registra la información del usuario y asigna sus roles por unidad.")+usuarioModalReadyScript())
-}
-
-func (c *Controller) patchUsuarioModal(w http.ResponseWriter, r *http.Request, component templ.Component, after string) {
-	var body strings.Builder
-	if err := component.Render(r.Context(), &body); err != nil {
-		http.Error(w, "No fue posible renderizar el modal", http.StatusInternalServerError)
-		return
-	}
-	if r.Header.Get("Datastar-Request") != "true" {
-		_, _ = w.Write([]byte(body.String()))
-		return
-	}
-	sse := datastar.NewSSE(w, r)
-	_ = sse.PatchElements(body.String(), datastar.WithSelector("#usuario-dialog-content"), datastar.WithModeOuter())
-	if after != "" {
-		_ = sse.ExecuteScript(after)
-	}
-}
-
-func usuarioRolePairs(user *model.ResponseUsuario) []map[string]string {
-	roles := make([]map[string]string, 0, len(user.Roles))
-	for _, role := range user.Roles {
-		if role != nil {
-			roles = append(roles, map[string]string{"rol_id": role.RolID, "unidad_id": role.UnidadID, "rol_name": role.RolName, "unidad_name": role.UnidadName})
-		}
-	}
-	return roles
-}
-
-func (c *Controller) usuarioCreate(w http.ResponseWriter, r *http.Request) {
-	var signals usuarioFormSignals
-	if err := datastar.ReadSignals(r, &signals); err != nil {
-		_ = r.ParseForm()
-		signals.Nombres = r.FormValue("nombres")
-		signals.Apellido1 = r.FormValue("apellido1")
-		signals.Apellido2 = r.FormValue("apellido2")
-		signals.Documento = r.FormValue("documento")
-		signals.Celular = r.FormValue("celular")
-		signals.Correo = r.FormValue("correo")
-		signals.Sexo = r.FormValue("sexo")
-		signals.Direccion = r.FormValue("direccion")
-		signals.Username = r.FormValue("username")
-		signals.Password = r.FormValue("password")
-		signals.RolesJSON = r.FormValue("rolesJson")
-		signals.Mode = r.FormValue("usuarioMode")
-		signals.ID = r.FormValue("usuarioID")
-	}
-	if mode := strings.TrimSpace(r.URL.Query().Get("mode")); mode != "" {
-		signals.Mode = mode
-	}
-	if id := strings.TrimSpace(r.URL.Query().Get("id")); id != "" {
-		signals.ID = id
-	}
-
-	roles := make([]*model.RolUnidad, 0)
-	if signals.RolesJSON != "" {
-		if err := json.Unmarshal([]byte(signals.RolesJSON), &roles); err != nil {
-			roles = nil
-		}
-	}
-	input := model.NewUsuario{
-		Nombres: signals.Nombres, Apellido1: signals.Apellido1,
-		Apellido2: usuarioOptional(signals.Apellido2), Documento: usuarioOptional(signals.Documento),
-		Celular: usuarioOptional(signals.Celular), Correo: usuarioOptional(signals.Correo),
-		Sexo: usuarioOptional(signals.Sexo), Direccion: usuarioOptional(signals.Direccion),
-		Username: signals.Username, Password: signals.Password, Foto64: usuarioOptional(signals.Foto64),
-		Roles: roles, PermisosSueltos: []string{}, MenusSueltos: []string{},
-	}
-	var err error
-	if signals.Mode == "edit" && strings.TrimSpace(signals.ID) != "" {
-		_, err = xrepo.UpdateUsuario(r.Context(), c.DB, model.UpdateUsuario{ID: signals.ID, Nombres: input.Nombres, Apellido1: input.Apellido1, Apellido2: input.Apellido2, Documento: input.Documento, Celular: input.Celular, Correo: input.Correo, Sexo: input.Sexo, Direccion: input.Direccion, Username: input.Username, Password: usuarioOptional(input.Password), Foto64: input.Foto64, Roles: input.Roles, PermisosSueltos: []string{}, MenusSueltos: []string{}})
-	} else {
-		_, err = xrepo.CreateUsuario(r.Context(), c.DB, input)
-	}
-	sse := datastar.NewSSE(w, r)
-	if err != nil {
-		var body strings.Builder
-		_ = UsuarioFormError(err.Error()).Render(r.Context(), &body)
-		_ = sse.PatchElements(body.String(), datastar.WithSelector("#usuario-form-error"), datastar.WithModeOuter())
-		_ = sse.MarshalAndPatchSignals(map[string]bool{
-			"usuarioSaving": false,
-			"usuarioSaved":  false,
-		})
-		return
-	}
-
-	data := c.usuariosPageData(r)
-	var table strings.Builder
-	_ = UsuariosTableRegion(data).Render(r.Context(), &table)
-	_ = sse.PatchElements(table.String(), datastar.WithSelector("#usuarios-table-region"), datastar.WithModeOuter())
-	_ = sse.MarshalAndPatchSignals(map[string]bool{
-		"usuarioSaving": false,
-		"usuarioSaved":  true,
-	})
-}
-
-func usuarioOptional(value string) *string {
-	value = strings.TrimSpace(value)
-	if value == "" {
-		return nil
-	}
-	return &value
-}
-
-func usuarioTime(value time.Time) string {
-	if value.IsZero() {
-		return "—"
-	}
-	return value.Local().Format("02/01/2006 15:04")
-}
-
-func usuarioFloat(value *float64) string {
-	if value == nil {
-		return "—"
-	}
-	return strconv.FormatFloat(*value, 'f', 6, 64)
-}
-
-func usuarioInt(value int32) string {
-	return strconv.Itoa(int(value))
 }
 
 func (c *Controller) usuariosPatch(w http.ResponseWriter, r *http.Request, data UsuariosPageData) {
@@ -373,7 +88,6 @@ func (c *Controller) usuariosPatch(w http.ResponseWriter, r *http.Request, data 
 			data.Error = "No fue posible cargar los usuarios."
 		}
 	}
-
 	var body strings.Builder
 	_ = UsuariosTableRegion(data).Render(r.Context(), &body)
 	sse := datastar.NewSSE(w, r)
@@ -389,9 +103,7 @@ func usuarioQueryURL(data UsuariosPageData) string {
 	return ADMIN_USUARIOS + query
 }
 
-func urlQueryEscape(value string) string {
-	return url.QueryEscape(value)
-}
+func urlQueryEscape(value string) string { return url.QueryEscape(value) }
 
 func parsePositiveInt(value string, fallback int32) int32 {
 	parsed, err := strconv.Atoi(value)
@@ -401,13 +113,9 @@ func parsePositiveInt(value string, fallback int32) int32 {
 	return int32(parsed)
 }
 
-func usuarioSignalString(value string) string {
-	return strconv.Quote(value)
-}
+func usuarioSignalString(value string) string { return strconv.Quote(value) }
 
-func usuarioSignalInt(value int32) string {
-	return strconv.Itoa(int(value))
-}
+func usuarioSignalInt(value int32) string { return strconv.Itoa(int(value)) }
 
 func usuariosRoleItems(roles []*model.ResponseRoles) []combobox.ItemData {
 	items := make([]combobox.ItemData, 0, len(roles))
@@ -454,6 +162,22 @@ func usuarioLastLogin(value *time.Time) string {
 	return value.Local().Format("02/01/2006 15:04")
 }
 
+func usuarioTime(value time.Time) string {
+	if value.IsZero() {
+		return "—"
+	}
+	return value.Local().Format("02/01/2006 15:04")
+}
+
+func usuarioFloat(value *float64) string {
+	if value == nil {
+		return "—"
+	}
+	return strconv.FormatFloat(*value, 'f', 6, 64)
+}
+
+func usuarioInt(value int32) string { return strconv.Itoa(int(value)) }
+
 func usuarioPaginationSummary(data *model.UsuarioPaginado) string {
 	if data == nil || data.Paginacion == nil {
 		return "Sin registros"
@@ -477,5 +201,17 @@ func usuarioCanNext(data *model.UsuarioPaginado) bool {
 }
 
 func usuarioPageClick(page int32) string {
-	return "$pagina = " + strconv.Itoa(int(page)) + "; @get('" + ADMIN_USUARIOS + "')"
+	return "$pagina = " + strconv.Itoa(int(page)) + "; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioRefreshScript() string {
+	return "$pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioRoleFilterScript() string {
+	return "$rol = evt.detail.values[0]; $pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
+}
+
+func usuarioPageSizeScript() string {
+	return "$pagina = 1; @get('" + ADMIN_USUARIOS_LISTAHTML + "')"
 }

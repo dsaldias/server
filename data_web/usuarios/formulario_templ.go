@@ -325,9 +325,9 @@ func Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad, user *mo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue("$usuarioSaving = true; @post('/adminx/usuarios?pagina='+$pagina+'&size='+$size+'&rol='+encodeURIComponent($rol || '')+'&mode='+encodeURIComponent($usuarioMode || 'create')+'&id='+encodeURIComponent($usuarioID || ''))")
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(usuarioFormSubmitScript(user))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/usuarios/formulario.templ`, Line: 29, Col: 1873}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/usuarios/formulario.templ`, Line: 29, Col: 1684}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {

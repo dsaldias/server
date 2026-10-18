@@ -11,15 +11,15 @@ templ RenderUsuarios(data UsuariosPageData) {
 		@UsuarioModalLoading()
 		<div id="usuarios-page" class="mx-auto max-w-7xl space-y-6" data-signals:pagina={ usuarioSignalInt(data.Pagina) } data-signals:size={ usuarioSignalInt(data.Size) } data-signals:rol={ usuarioSignalString(data.Rol) }>
 			@xutility.PageHeader("Usuarios", "Administra los usuarios registrados en el sistema.") {
-					@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": "$pagina = 1; @get('/adminx/usuarios')"}}) {
-						@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
-					}
-					@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-on:click": usuarioModalRequestScript(ADMIN_USUARIOS_FORMULARIO)}}) {
-						@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
-					}
+				@button.Button(button.Props{Variant: button.VariantOutline, Type: button.TypeButton, Attributes: templ.Attributes{"data-on:click": usuarioRefreshScript()}}) {
+					@icon.RefreshCw(icon.Props{Class: "size-4"}) Refrescar
+				}
+				@button.Button(button.Props{Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-on:click": usuarioModalRequestScript(ADMIN_USUARIOS_FORMHTML)}}) {
+					@icon.Plus(icon.Props{Class: "size-4"}) Nuevo registro
+				}
 			}
 			@xutility.FilterBar() {
-				<div class="w-full sm:max-w-sm" data-on:combobox-change="$rol = evt.detail.values[0]; $pagina = 1; @get('/adminx/usuarios')">
+				<div class="w-full sm:max-w-sm" data-on:combobox-change={ usuarioRoleFilterScript() }>
 					<label class="mb-2 block text-sm font-medium">Filtrar por rol</label>
 					@combobox.Combobox(combobox.Props{ID: "usuarios-role-filter", DefaultValue: data.Rol, Items: usuariosRoleItems(data.Roles)}) {
 						@combobox.Input(combobox.InputProps{Placeholder: "Todos los roles", ShowClear: true})
@@ -35,7 +35,7 @@ templ RenderUsuarios(data UsuariosPageData) {
 				</div>
 				<div class="flex items-center gap-2">
 					<label for="usuarios-page-size" class="whitespace-nowrap text-sm text-muted-foreground">Mostrar</label>
-					<select id="usuarios-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change="$pagina = 1; @get('/adminx/usuarios')">
+				<select id="usuarios-page-size" class="h-9 rounded-md border border-border/70 bg-background px-3 text-sm" data-bind:size data-on:change={ usuarioPageSizeScript() }>
 						<option value="10">10</option>
 						<option value="20">20</option>
 						<option value="50">50</option>
@@ -43,42 +43,7 @@ templ RenderUsuarios(data UsuariosPageData) {
 					<span class="text-sm text-muted-foreground">registros</span>
 				</div>
 			}
-
 			@UsuariosTableRegion(data)
 		</div>
 	}
-}
-templ UsuariosTableRegion(data UsuariosPageData) {
-	@xutility.TableRegion("usuarios-table-region") {
-		if data.Error != "" {
-			@xutility.ErrorState(data.Error)
-		} else if data.Listado != nil {
-			@xutility.TableCard() {
-				<div class="overflow-x-auto">
-					<table class="w-full text-sm">
-						<thead class="border-b border-border/60 bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-							<tr><th class="px-3 py-2 font-medium">Usuario</th><th class="px-3 py-2 font-medium">Username</th><th class="px-3 py-2 font-medium">Correo</th><th class="px-3 py-2 font-medium">Documento</th><th class="px-3 py-2 font-medium">Estado</th><th class="px-3 py-2 font-medium">Último acceso</th><th class="px-3 py-2 text-right font-medium">Acciones</th></tr>
-						</thead>
-						<tbody class="divide-y divide-border/60">
-							for _, user := range data.Listado.Datos {
-								<tr class="transition-colors hover:bg-muted/40">
-									<td class="whitespace-nowrap px-3 py-2 font-medium">{ user.Nombres + " " + user.Apellido1 }</td>
-									<td class="px-3 py-2 text-muted-foreground">{ user.Username }</td>
-									<td class="px-3 py-2 text-muted-foreground">{ optionalString(user.Correo) }</td>
-									<td class="px-3 py-2 text-muted-foreground">{ optionalString(user.Documento) }</td>
-									<td class="px-3 py-2"><span class={ usuarioStatusClass(user.Estado) }>{ usuarioStatusLabel(user.Estado) }</span></td>
-									<td class="whitespace-nowrap px-3 py-2 text-muted-foreground">{ usuarioLastLogin(user.LastLogin) }</td>
-									<td class="px-3 py-2"><div class="flex justify-end gap-1">
-						@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-usuario-id": user.ID, "data-on:click": usuarioModalRequestWithIDScript(ADMIN_USUARIOS_VISUALIZAR)}}) { @icon.Eye(icon.Props{Class: "size-4"})<span class="sr-only">Visualizar usuario</span> }
-						@button.Button(button.Props{Variant: button.VariantGhost, Size: button.SizeIconSm, Type: button.TypeButton, Attributes: templ.Attributes{"tabindex": "0", "type": "button", "data-slot": "dialog-trigger", "data-base-ui-click-trigger": true, "data-templ-controls": "usuario-dialog", "aria-haspopup": "dialog", "aria-expanded": "false", "data-usuario-modal-action": true, "data-usuario-id": user.ID, "data-on:click": usuarioModalRequestWithIDScript(ADMIN_USUARIOS_EDITAR)}}) { @icon.Pencil(icon.Props{Class: "size-4"})<span class="sr-only">Editar usuario</span> }
-									</div></td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-				@xutility.Pagination(usuarioPaginationSummary(data.Listado), usuarioPageLabel(data.Listado), !usuarioCanPrevious(data.Listado), !usuarioCanNext(data.Listado), templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina - 1)}, templ.Attributes{"data-on:click": usuarioPageClick(data.Pagina + 1)})
-		}
-	}
-}
 }
