@@ -11,8 +11,14 @@
    ```
 
    `xgenerar init` runs `go mod tidy` after generating `serverx.go`, which
-   records `templ` and the other transitive dependencies automatically. If it
-   reports that synchronization could not run, execute `go mod tidy` manually.
+   registers `templ` and `shadcn-templ` as Go tools, and records the other
+   transitive dependencies automatically. If it reports that synchronization
+   could not run, execute `go mod tidy` manually and register the tools with:
+
+   ```bash
+   go get -tool github.com/a-h/templ/cmd/templ@v0.3.1070
+   go get -tool github.com/axadrn/shadcn-templ/v2/cmd/shadcn-templ@v2.0.0-beta.15
+   ```
 2. Construct the database handle and the auth repository dependencies required
    by the library.
 3. Register the library's `RutasAdmin(db)` or the exported module route set at

@@ -18,8 +18,10 @@ only business-domain modules and their authorization-aware content.
 - Reuse the library's `data_web/xlogin` layout and `data_web/xutility` shared components.
 - `go tool xgenerar init` synchronizes the consumer module after generating
   `serverx.go`, so transitive runtime dependencies such as
-  `github.com/a-h/templ` are recorded in the consumer's `go.sum`. If automatic
-  synchronization cannot run, execute `go mod tidy` manually after generation.
+  `github.com/a-h/templ` are recorded in the consumer's `go.sum`. It also
+  registers the `templ` and `shadcn-templ` tools required by the generated
+  `Taskfile.yml`. If automatic synchronization cannot run, execute `go mod tidy`
+  and register those tools manually.
 - Register the library's admin routes once. Do not recreate login, relogin,
   profile, role selection, menu loading, chat, or WebSocket routes in the consumer.
 - Render `xchat.ChatDialog()` once inside the main authenticated layout if the

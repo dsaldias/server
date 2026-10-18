@@ -28,6 +28,11 @@ var inputCcs string
 //go:embed sql/database.sql
 var sqlRBAC string
 
+var consumerTools = []string{
+	"github.com/a-h/templ/cmd/templ@v0.3.1070",
+	"github.com/axadrn/shadcn-templ/v2/cmd/shadcn-templ@v2.0.0-beta.15",
+}
+
 func Init() {
 	module := getModuleName()
 
@@ -268,7 +273,22 @@ func (c *TestController) Listar(w http.ResponseWriter, r *http.Request) {
 	copiarSkills()
 	generarClaudeMD(module)
 	generarSQLApp(module)
+	instalarHerramientasConsumidor()
 	ejecutarGoModTidy()
+}
+
+func instalarHerramientasConsumidor() {
+	for _, tool := range consumerTools {
+		cmd := exec.Command("go", "get", "-tool", tool)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "⚠️  no fue posible registrar la herramienta %s: %v\n", tool, err)
+			fmt.Fprintln(os.Stderr, "   puedes registrarla manualmente con: go get -tool "+tool)
+			continue
+		}
+		fmt.Println("✅ herramienta registrada: " + tool)
+	}
 }
 
 func ejecutarGoModTidy() {
