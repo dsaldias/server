@@ -25,7 +25,7 @@ func roleModalRequestScript(path string) string {
 }
 
 func roleModalRequestWithIDScript(path string) string {
-	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "?roleid=' + encodeURIComponent(button?.dataset.roleId || ''))"
+	return "const button = evt.currentTarget; const roleID = button?.getAttribute('data-role-id') || ''; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "?roleid=' + encodeURIComponent(roleID) + '&id=' + encodeURIComponent(roleID))"
 }
 
 func roleFormSubmitScript(role *model.Rol) string {
@@ -57,7 +57,13 @@ func roleModalDescriptionScript(description string) string {
 func roleRequestID(r *http.Request) string {
 	id := strings.TrimSpace(r.URL.Query().Get("roleid"))
 	if id == "" {
+		id = strings.TrimSpace(r.URL.Query().Get("id"))
+	}
+	if id == "" {
 		id = strings.TrimSpace(r.FormValue("roleid"))
+	}
+	if id == "" {
+		id = strings.TrimSpace(r.FormValue("id"))
 	}
 	return id
 }
@@ -98,6 +104,11 @@ func roleFormInt(role *model.Rol) string {
 }
 
 func roleFormIDs(role *model.Rol, menus bool) string {
+	data, _ := json.Marshal(roleFormSelectionIDs(role, menus))
+	return string(data)
+}
+
+func roleFormSelectionIDs(role *model.Rol, menus bool) []string {
 	values := make([]string, 0)
 	if role != nil {
 		if menus {
@@ -114,8 +125,7 @@ func roleFormIDs(role *model.Rol, menus bool) string {
 			}
 		}
 	}
-	data, _ := json.Marshal(values)
-	return string(data)
+	return values
 }
 
 func (c *Controller) RolFormularioRender(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +143,12 @@ func (c *Controller) RolVisualizarRender(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	role, err := xrepo.RolByID(r.Context(), c.DB, roleRequestID(r))
+	roleID := roleRequestID(r)
+	if roleID == "" {
+		c.patchRoleModal(w, r, RoleModalError("No se recibió el identificador del rol."), roleModalTitleScript("Rol")+roleModalDescriptionScript("Falta el identificador para consultar la información.")+roleModalReadyScript())
+		return
+	}
+	role, err := xrepo.RolByID(r.Context(), c.DB, roleID)
 	if err != nil || role == nil {
 		c.patchRoleModal(w, r, RoleModalError("No fue posible cargar el rol."), roleModalTitleScript("Rol")+roleModalDescriptionScript("No fue posible cargar la información.")+roleModalReadyScript())
 		return
@@ -146,14 +161,19 @@ func (c *Controller) RolEditarRender(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	role, err := xrepo.RolByID(r.Context(), c.DB, roleRequestID(r))
+	roleID := roleRequestID(r)
+	if roleID == "" {
+		c.patchRoleModal(w, r, RoleModalError("No se recibió el identificador del rol."), roleModalTitleScript("Editar rol")+roleModalDescriptionScript("Falta el identificador para cargar la información.")+roleModalReadyScript())
+		return
+	}
+	role, err := xrepo.RolByID(r.Context(), c.DB, roleID)
 	if err != nil || role == nil {
 		c.patchRoleModal(w, r, RoleModalError("No fue posible cargar el rol."), roleModalTitleScript("Rol")+roleModalDescriptionScript("No fue posible cargar la información.")+roleModalReadyScript())
 		return
 	}
 	permisos, _ := xrepo.Permisos(r.Context(), c.DB)
 	menus, _ := xrepo.Menus(r.Context(), c.DB)
-	after := roleModalTitleScript("Editar rol") + roleModalDescriptionScript("Define la información, permisos y menús asignados al rol.") + roleSelectionSyncScript() + "syncRoleSelections('rol-permisos', " + roleFormIDs(role, false) + "); syncRoleSelections('rol-menus', " + roleFormIDs(role, true) + ");" + roleModalReadyScript()
+	after := roleModalTitleScript("Editar rol") + roleModalDescriptionScript("Define la información, permisos y menús asignados al rol.") + roleModalReadyScript()
 	c.patchRoleModal(w, r, RoleForm(permisos, menus, role), after)
 }
 

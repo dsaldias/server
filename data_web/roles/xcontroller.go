@@ -211,7 +211,3 @@ func roleMenuClass(menu *model.Menus) string {
 func roleFormError(message string) string {
 	return `<div id="rol-form-error" role="alert" class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">` + html.EscapeString(message) + `</div>`
 }
-
-func roleSelectionSyncScript() string {
-	return `const syncRoleSelections=(id,values)=>{const content=document.getElementById(id);if(!content)return;const wanted=new Set(values||[]);content.querySelectorAll('[data-slot="combobox-item"]').forEach(item=>{const selected=item.hasAttribute('data-selected');const shouldSelect=wanted.has(item.getAttribute('data-templ-value')||'');if(selected!==shouldSelect)item.click();});};`
-}

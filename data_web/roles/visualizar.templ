@@ -1,13 +1,11 @@
 package roles
 
-import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/xutility"
 import "github.com/dsaldias/server/graph_auth/model"
 
 templ RoleView(role *model.Rol) {
-	@dialog.Content(dialog.ContentProps{Class: "!bg-card !text-card-foreground shadow-2xl sm:max-w-3xl"}) {
-		@dialog.Header() { @dialog.Title() { Visualizar rol } @dialog.Description() { Consulta la información y asignaciones del rol. } }
+	<div id="rol-dialog-content">
 		<div class="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto pr-1">
 			<div class="grid gap-4 sm:grid-cols-2">
 				@xutility.ReadField("Nombre", role.Nombre)
@@ -53,5 +51,5 @@ templ RoleView(role *model.Rol) {
 				}
 			}
 		</div>
-	}
+	</div>
 }

@@ -9,6 +9,16 @@ import (
 )
 
 func Actualizar(db *sql.DB, input model.UpdateRol) (*model.Rol, error) {
+	xin := model.NewRol{
+		Nombre:      input.Nombre,
+		Descripcion: input.Descripcion,
+		Jerarquia:   input.Jerarquia,
+		Permisos:    input.Permisos,
+		Menus:       input.Menus,
+	}
+	if err := validar_campos(xin); err != nil {
+		return nil, err
+	}
 	sql := `update rbac_roles set nombre=?, descripcion=?,jerarquia=? where id=?`
 	tx, err := db.Begin()
 	if err != nil {
