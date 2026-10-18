@@ -1,0 +1,17 @@
+{
+  "$schema": "https://shadcn-templ.com/schema/components.json",
+  "style": "base-nova",
+  "tailwind": {
+    "css": "data_web/assets/css/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "scripts": {
+    "dir": "data_web/assets/js",
+    "path": "/assets/js"
+  },
+  "aliases": {
+    "components": "github.com/dsaldias/server/data_web/components",
+    "utils": "github.com/dsaldias/server/data_web/utils"
+  }
+}

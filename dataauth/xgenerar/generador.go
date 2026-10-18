@@ -20,7 +20,10 @@ var claudeMDTemplate string
 var sqlAppTemplate string
 
 //go:embed taskfile/Taskfile.yml
-var taskFile string
+var taskFilex string
+
+//go:embed taskfile/componetesjson
+var componetesjsonx string
 
 //go:embed taskfile/globals.css
 var inputCcs string
@@ -364,6 +367,7 @@ func generarSQLApp(module string) {
 	sqlDir := filepath.Join("assets", "sqls")
 	dest := filepath.Join(sqlDir, "database-"+shortName+".sql")
 	dest2 := "Taskfile.yml"
+	dest3 := "components.json"
 
 	if err := os.MkdirAll(sqlDir, 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ error creando directorio %s/: %v\n", sqlDir, err)
@@ -374,8 +378,11 @@ func generarSQLApp(module string) {
 	content := strings.ReplaceAll(sqlAppTemplate, "{{MODULE}}", module)
 	escribirArchivo(dest, []byte(content))
 
-	content2 := strings.ReplaceAll(taskFile, "{{MODULE}}", module)
+	content2 := strings.ReplaceAll(taskFilex, "{{MODULE}}", module)
 	escribirArchivo(dest2, []byte(content2))
+
+	content3 := strings.ReplaceAll(componetesjsonx, "{{MODULE}}", module)
+	escribirArchivo(dest3, []byte(content3))
 }
 
 func copiarSkills() {

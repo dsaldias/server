@@ -78,6 +78,35 @@ http://localhost:8038/app
 
 ---
 
+---
+
+## 📁 Ejemplo de flujo con shadcn
+
+```bash
+mkdir my_server
+cd my_server
+
+go mod init my_server_app
+
+go get github.com/dsaldias/server@version_shadcn
+
+go get -tool github.com/99designs/gqlgen
+go tool gqlgen init
+
+go get -tool github.com/dsaldias/server/dataauth/xgenerar@version_shadcn
+go tool xgenerar init
+
+go tool xgenerar db
+
+go run serverx.go
+
+playgrounds:
+http://localhost:8038/auth
+http://localhost:8038/app
+```
+
+---
+
 ## 🧠 Requisitos
 
 * Proyecto Go con `go.mod` inicializado
