@@ -16,6 +16,7 @@ import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/dropdownmenu"
 import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/components/separator"
+import "github.com/dsaldias/server/data_web/xchat"
 import "github.com/dsaldias/server/data_web/xutility"
 
 func InicioRender(data InicioData) templ.Component {
@@ -57,7 +58,7 @@ func InicioRender(data InicioData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = ChatDialog().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = xchat.ChatDialog().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +133,7 @@ func InicioRender(data InicioData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(inicioContextSignal(data.UnidadID, data.RolID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 36, Col: 107}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 37, Col: 107}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -226,7 +227,7 @@ func InicioRender(data InicioData) templ.Component {
 									var templ_7745c5c3_Var10 string
 									templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(role.Unidad.Nombre)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 47, Col: 95}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 48, Col: 95}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 									if templ_7745c5c3_Err != nil {
@@ -239,7 +240,7 @@ func InicioRender(data InicioData) templ.Component {
 									var templ_7745c5c3_Var11 string
 									templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(role.Rol.Nombre)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 47, Col: 165}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 48, Col: 165}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 									if templ_7745c5c3_Err != nil {
@@ -283,7 +284,7 @@ func InicioRender(data InicioData) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserName(data.Me))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 58, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 59, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -296,7 +297,7 @@ func InicioRender(data InicioData) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(inicioSelectedRole(data.Me, data.UnidadID, data.RolID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 58, Col: 247}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 59, Col: 247}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -343,7 +344,7 @@ func InicioRender(data InicioData) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserInitials(data.Me))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 63, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 64, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -378,7 +379,7 @@ func InicioRender(data InicioData) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserName(data.Me))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 72, Col: 353}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 73, Col: 353}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -391,7 +392,7 @@ func InicioRender(data InicioData) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(inicioSelectedRole(data.Me, data.UnidadID, data.RolID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 72, Col: 467}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 73, Col: 467}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -836,7 +837,7 @@ func InicioSidebar(data InicioData) templ.Component {
 						var templ_7745c5c3_Var39 string
 						templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(parent.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 101, Col: 437}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 102, Col: 437}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 						if templ_7745c5c3_Err != nil {
@@ -864,7 +865,7 @@ func InicioSidebar(data InicioData) templ.Component {
 					var templ_7745c5c3_Var41 string
 					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.ResolveAttributeValue("admin-menu-" + parent.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 102, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 103, Col: 42}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var41)
 					if templ_7745c5c3_Err != nil {
@@ -907,7 +908,7 @@ func InicioSidebar(data InicioData) templ.Component {
 							var templ_7745c5c3_Var44 string
 							templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(child.Label)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 104, Col: 424}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 105, Col: 424}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 							if templ_7745c5c3_Err != nil {
@@ -952,7 +953,7 @@ func InicioSidebar(data InicioData) templ.Component {
 						var templ_7745c5c3_Var46 string
 						templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(parent.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 109, Col: 454}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 110, Col: 454}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 						if templ_7745c5c3_Err != nil {
@@ -1044,7 +1045,7 @@ func InicioSidebar(data InicioData) templ.Component {
 						var templ_7745c5c3_Var51 string
 						templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserInitials(data.Me))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 122, Col: 56}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 123, Col: 56}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 						if templ_7745c5c3_Err != nil {
@@ -1069,7 +1070,7 @@ func InicioSidebar(data InicioData) templ.Component {
 				var templ_7745c5c3_Var52 string
 				templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserName(data.Me))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 124, Col: 118}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 125, Col: 118}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 				if templ_7745c5c3_Err != nil {
@@ -1079,7 +1080,7 @@ func InicioSidebar(data InicioData) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var53 = []any{chatUnreadBadgeClass(data.ChatUnread)}
+				var templ_7745c5c3_Var53 = []any{xchat.UnreadBadgeClass(data.ChatUnread)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var53...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -1102,9 +1103,9 @@ func InicioSidebar(data InicioData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var55 string
-				templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(chatUnreadString(data.ChatUnread))
+				templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(xchat.UnreadString(data.ChatUnread))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 125, Col: 142}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 126, Col: 146}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
 				if templ_7745c5c3_Err != nil {
@@ -1151,7 +1152,7 @@ func InicioSidebar(data InicioData) templ.Component {
 					var templ_7745c5c3_Var58 string
 					templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(inicioUserName(data.Me))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 129, Col: 54}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 130, Col: 54}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 					if templ_7745c5c3_Err != nil {
@@ -1187,7 +1188,7 @@ func InicioSidebar(data InicioData) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var60 = []any{chatUnreadBadgeClass(data.ChatUnread)}
+					var templ_7745c5c3_Var60 = []any{xchat.UnreadBadgeClass(data.ChatUnread)}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var60...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -1210,9 +1211,9 @@ func InicioSidebar(data InicioData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var62 string
-					templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.JoinStringErrs(chatUnreadString(data.ChatUnread))
+					templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.JoinStringErrs(xchat.UnreadString(data.ChatUnread))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 131, Col: 303}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 132, Col: 313}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var62))
 					if templ_7745c5c3_Err != nil {
@@ -1224,7 +1225,7 @@ func InicioSidebar(data InicioData) templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: chatTriggerAttributes()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var59), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: xchat.ChatTriggerAttributes()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var59), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1328,7 +1329,7 @@ func InicioContextError(message string) templ.Component {
 		var templ_7745c5c3_Var66 string
 		templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 141, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 142, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var66))
 		if templ_7745c5c3_Err != nil {
@@ -1370,7 +1371,7 @@ func reloginForm() templ.Component {
 		var templ_7745c5c3_Var68 string
 		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.ResolveAttributeValue("const button = evt.submitter; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Cargando datos...'; } @post('/adminx/login?mode=relogin&return_path='+encodeURIComponent(location.pathname)+'&context='+encodeURIComponent($context || ''))")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 145, Col: 358}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `data_web/xlogin/inicio.templ`, Line: 146, Col: 358}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var68)
 		if templ_7745c5c3_Err != nil {

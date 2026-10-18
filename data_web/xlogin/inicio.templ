@@ -8,6 +8,7 @@ import "github.com/dsaldias/server/data_web/components/dialog"
 import "github.com/dsaldias/server/data_web/components/dropdownmenu"
 import "github.com/dsaldias/server/data_web/components/icon"
 import "github.com/dsaldias/server/data_web/components/separator"
+import "github.com/dsaldias/server/data_web/xchat"
 import "github.com/dsaldias/server/data_web/xutility"
 
 templ InicioRender(data InicioData) {
@@ -17,7 +18,7 @@ templ InicioRender(data InicioData) {
 		if data.Me != nil && data.Me.Usuario != nil {
 			@PerfilDialog(data.Me.Usuario)
 		}
-		@ChatDialog()
+		@xchat.ChatDialog()
 		<div class="flex min-w-0 flex-1 flex-col">
 		<header class="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-header px-3 shadow-sm sm:px-5">
 			<div class="flex min-w-0 items-center gap-3">
@@ -122,13 +123,13 @@ templ InicioSidebar(data InicioData) {
 						@avatar.Fallback() { { inicioUserInitials(data.Me) } }
 					}
 					<span class="min-w-0 flex-1 text-left"><span class="block truncate text-sm font-medium">{ inicioUserName(data.Me) }</span><span class="block truncate text-xs text-sidebar-foreground/60">Cuenta actual</span></span>
-					<span id="chat-unread-badge-trigger" data-chat-unread class={ chatUnreadBadgeClass(data.ChatUnread) }>{ chatUnreadString(data.ChatUnread) }</span>
+					<span id="chat-unread-badge-trigger" data-chat-unread class={ xchat.UnreadBadgeClass(data.ChatUnread) }>{ xchat.UnreadString(data.ChatUnread) }</span>
 					@icon.ChevronsUpDown(icon.Props{Class: "size-4 shrink-0"})
 				}
 				@dropdownmenu.Content(dropdownmenu.ContentProps{Class: "w-56"}) {
 					@dropdownmenu.Label() { { inicioUserName(data.Me) } }
 					@dropdownmenu.Separator()
-					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: chatTriggerAttributes()}) { @icon.MessageCircle(icon.Props{Class: "size-4"}) <span class="flex-1">Chat</span> <span id="chat-unread-badge-menu" data-chat-unread class={ chatUnreadBadgeClass(data.ChatUnread) }>{ chatUnreadString(data.ChatUnread) }</span> }
+					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: xchat.ChatTriggerAttributes()}) { @icon.MessageCircle(icon.Props{Class: "size-4"}) <span class="flex-1">Chat</span> <span id="chat-unread-badge-menu" data-chat-unread class={ xchat.UnreadBadgeClass(data.ChatUnread) }>{ xchat.UnreadString(data.ChatUnread) }</span> }
 					@dropdownmenu.Item(dropdownmenu.ItemProps{Attributes: perfilTriggerAttributes(inicioUser(data.Me))}) { @icon.User(icon.Props{Class: "size-4"}) Mi perfil }
 					@dropdownmenu.Item(dropdownmenu.ItemProps{Variant: dropdownmenu.ItemVariantDestructive, Attributes: templ.Attributes{"data-on:click": "window.location.href = '/adminx/logout'"}}) { @icon.LogOut(icon.Props{Class: "size-4"}) Cerrar sesión }
 				}
