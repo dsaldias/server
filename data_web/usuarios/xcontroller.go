@@ -54,14 +54,6 @@ type usuarioFormSignals struct {
 	ID        string `json:"usuarioID"`
 }
 
-func usuarioEditScript(user *model.ResponseUsuario, rolesJSON string) string {
-	js := func(value any) string {
-		data, _ := json.Marshal(value)
-		return string(data)
-	}
-	return "setTimeout(() => { " + "$usuarioMode = 'edit'; $usuarioID = " + js(user.ID) + "; $nombres = " + js(user.Nombres) + "; $apellido1 = " + js(user.Apellido1) + "; $apellido2 = " + js(optionalString(user.Apellido2)) + "; $documento = " + js(optionalString(user.Documento)) + "; $celular = " + js(optionalString(user.Celular)) + "; $correo = " + js(optionalString(user.Correo)) + "; $sexo = " + js(optionalString(user.Sexo)) + "; $direccion = " + js(optionalString(user.Direccion)) + "; $username = " + js(user.Username) + "; $password = ''; $foto64 = " + js("") + "; $rolesJson = " + js(rolesJSON) + "; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Editar usuario'); root?.querySelector('#usuario-password')?.removeAttribute('required'); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('#usuario-form-error')?.replaceChildren(); const list = root?.querySelector('[data-usuario-roles-list]'); if (list) { list.innerHTML = ''; JSON.parse($rolesJson || '[]').forEach((pair) => { const row = document.createElement('div'); row.className = 'flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2 text-sm'; row.dataset.usuarioPair = pair.unidad_id; const text = document.createElement('span'); text.textContent = pair.rol_name + ' · ' + pair.unidad_name; const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'text-xs text-muted-foreground hover:text-destructive'; remove.textContent = 'Quitar'; remove.onclick = () => { $rolesJson = JSON.stringify(JSON.parse($rolesJson || '[]').filter((item) => item.unidad_id !== row.dataset.usuarioPair)); row.remove(); }; row.append(text, remove); list.append(row); }); }" + " }, 0);"
-}
-
 func usuarioModalRequestScript(path string) string {
 	return "const button = evt.currentTarget; if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); } @get('" + path + "')"
 }
@@ -96,6 +88,56 @@ func usuarioRequestID(r *http.Request) string {
 	return id
 }
 
+func usuarioFormMode(user *model.ResponseUsuario) string {
+	if user == nil {
+		return "create"
+	}
+	return "edit"
+}
+
+func usuarioFormID(user *model.ResponseUsuario) string {
+	if user == nil {
+		return ""
+	}
+	return user.ID
+}
+
+func usuarioFormValue(user *model.ResponseUsuario, field string) string {
+	if user == nil {
+		return ""
+	}
+	switch field {
+	case "nombres":
+		return user.Nombres
+	case "apellido1":
+		return user.Apellido1
+	case "apellido2":
+		return optionalStringValue(user.Apellido2)
+	case "documento":
+		return optionalStringValue(user.Documento)
+	case "celular":
+		return optionalStringValue(user.Celular)
+	case "correo":
+		return optionalStringValue(user.Correo)
+	case "sexo":
+		return optionalStringValue(user.Sexo)
+	case "direccion":
+		return optionalStringValue(user.Direccion)
+	case "username":
+		return user.Username
+	default:
+		return ""
+	}
+}
+
+func usuarioFormRolesJSON(user *model.ResponseUsuario) string {
+	if user == nil {
+		return ""
+	}
+	roles, _ := json.Marshal(usuarioRolePairs(user))
+	return string(roles)
+}
+
 func usuarioCreateResetScript() string {
 	return "setTimeout(() => { $usuarioMode = 'create'; $usuarioID = ''; $nombres = ''; $apellido1 = ''; $apellido2 = ''; $documento = ''; $celular = ''; $correo = ''; $sexo = ''; $direccion = ''; $username = ''; $password = ''; $foto64 = ''; $rolesJson = ''; const root = document.getElementById('usuario-dialog'); root?.querySelector('[data-usuario-title]')?.replaceChildren('Nuevo usuario'); root?.querySelectorAll('input, textarea, select').forEach((field) => { field.value = ''; field.dispatchEvent(new Event('input', { bubbles: true })); }); root?.querySelector('#usuario-password')?.setAttribute('required', ''); root?.querySelector('#usuario-submit')?.removeAttribute('disabled'); root?.querySelector('#usuario-submit')?.removeAttribute('aria-busy'); root?.querySelector('#usuario-submit')?.replaceChildren(document.createTextNode('Guardar usuario')); root?.querySelector('[data-usuario-roles-list]')?.replaceChildren(); root?.querySelector('#usuario-form-error')?.replaceChildren(); root?.querySelector('[data-usuario-roles-error]')?.replaceChildren(); }, 0);"
 }
@@ -116,6 +158,10 @@ func usuarioInputType(signal string) string {
 
 func usuarioAddRoleUnitScript() string {
 	return `const root = document.getElementById('usuario-dialog'); const error = root?.querySelector('[data-usuario-roles-error]'); if (!$rolForm || !$unidadForm) { if (error) error.innerHTML = '<p class="text-xs text-destructive">Seleccione un rol y una unidad.</p>'; return; }; const pairs = JSON.parse($rolesJson || '[]'); if (pairs.some((pair) => pair.unidad_id === $unidadForm)) { if (error) error.innerHTML = '<p class="text-xs text-destructive">La unidad ya tiene un rol asignado.</p>'; return; }; pairs.push({rol_id: $rolForm, unidad_id: $unidadForm}); $rolesJson = JSON.stringify(pairs); if (error) error.innerHTML = ''; const roleLabel = root?.querySelector('[data-usuario-role] option:checked')?.textContent || ''; const unitLabel = root?.querySelector('[data-usuario-unit] option:checked')?.textContent || ''; const list = root?.querySelector('[data-usuario-roles-list]'); if (!list) return; const row = document.createElement('div'); row.className = 'flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2 text-sm'; row.dataset.usuarioPair = $unidadForm; const text = document.createElement('span'); text.textContent = roleLabel + ' · ' + unitLabel; const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'text-xs text-muted-foreground hover:text-destructive'; remove.textContent = 'Quitar'; remove.onclick = () => { const current = JSON.parse($rolesJson || '[]').filter((pair) => pair.unidad_id !== row.dataset.usuarioPair); $rolesJson = JSON.stringify(current); row.remove(); }; row.append(text, remove); list.append(row); $rolForm = ''; $unidadForm = '';`
+}
+
+func usuarioRemoveRoleUnitScript() string {
+	return "const row = evt.currentTarget.closest('[data-usuario-pair]'); if (!row) return; $rolesJson = JSON.stringify(JSON.parse($rolesJson || '[]').filter((pair) => pair.unidad_id !== row.dataset.usuarioPair)); row.remove();"
 }
 
 func (c *Controller) UsuariosRender(w http.ResponseWriter, r *http.Request) {
@@ -157,7 +203,7 @@ func (c *Controller) UsuarioFormularioRender(w http.ResponseWriter, r *http.Requ
 	}
 	roles, _ := xrepo.Roles(r.Context(), c.DB)
 	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
-	c.patchUsuarioModal(w, r, Formulario(roles, unidades), usuarioCreateResetScript()+usuarioModalReadyScript())
+	c.patchUsuarioModal(w, r, Formulario(roles, unidades, nil), usuarioCreateResetScript()+usuarioModalReadyScript())
 }
 
 func (c *Controller) UsuarioVisualizarRender(w http.ResponseWriter, r *http.Request) {
@@ -185,8 +231,7 @@ func (c *Controller) UsuarioEditarRender(w http.ResponseWriter, r *http.Request)
 	}
 	roles, _ := xrepo.Roles(r.Context(), c.DB)
 	unidades, _ := xrepo.Unidades(r.Context(), c.DB)
-	rolesJSON, _ := json.Marshal(usuarioRolePairs(detalle))
-	c.patchUsuarioModal(w, r, Formulario(roles, unidades), usuarioEditScript(detalle, string(rolesJSON))+usuarioModalDescriptionScript("Registra la información del usuario y asigna sus roles por unidad.")+usuarioModalReadyScript())
+	c.patchUsuarioModal(w, r, Formulario(roles, unidades, detalle), usuarioModalTitleScript("Editar usuario")+usuarioModalDescriptionScript("Registra la información del usuario y asigna sus roles por unidad.")+usuarioModalReadyScript())
 }
 
 func (c *Controller) patchUsuarioModal(w http.ResponseWriter, r *http.Request, component templ.Component, after string) {
@@ -234,11 +279,11 @@ func (c *Controller) usuarioCreate(w http.ResponseWriter, r *http.Request) {
 		signals.Mode = r.FormValue("usuarioMode")
 		signals.ID = r.FormValue("usuarioID")
 	}
-	if signals.Mode == "" {
-		signals.Mode = r.URL.Query().Get("mode")
+	if mode := strings.TrimSpace(r.URL.Query().Get("mode")); mode != "" {
+		signals.Mode = mode
 	}
-	if signals.ID == "" {
-		signals.ID = r.URL.Query().Get("id")
+	if id := strings.TrimSpace(r.URL.Query().Get("id")); id != "" {
+		signals.ID = id
 	}
 
 	roles := make([]*model.RolUnidad, 0)
@@ -377,6 +422,13 @@ func usuariosRoleItems(roles []*model.ResponseRoles) []combobox.ItemData {
 func optionalString(value *string) string {
 	if value == nil {
 		return "—"
+	}
+	return *value
+}
+
+func optionalStringValue(value *string) string {
+	if value == nil {
+		return ""
 	}
 	return *value
 }

@@ -24,14 +24,16 @@ templ UsuarioModalError(message string) {
 	<div id="usuario-dialog-content" class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">{ message }</div>
 }
 
-templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad) {
+templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad, user *model.ResponseUsuario) {
 	<div id="usuario-dialog-content">
-		<form id="usuario-form" data-usuario-form="shared" class="space-y-5" data-signals:foto64={ usuarioSignalString("") } data-signals:usuarioMode={ usuarioSignalString("create") } data-signals:usuarioID={ usuarioSignalString("") } data-signals:usuarioSaving="false" data-signals:usuarioSaved="false" data-effect="if ($usuarioSaving) { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Guardando...'; } } else { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = 'Guardar usuario'; } } if ($usuarioSaved) { window.templ?.dialog?.close('usuario-dialog'); $usuarioSaved = false; }" data-on:submit__prevent={ "$usuarioSaving = true; @post('/adminx/usuarios?pagina='+$pagina+'&size='+$size+'&rol='+encodeURIComponent($rol || '')+'&mode='+encodeURIComponent($usuarioMode || 'create')+'&id='+encodeURIComponent($usuarioID || ''))" }>
+		<form id="usuario-form" data-usuario-form="shared" class="space-y-5" data-signals:nombres={ usuarioSignalString(usuarioFormValue(user, "nombres")) } data-signals:apellido1={ usuarioSignalString(usuarioFormValue(user, "apellido1")) } data-signals:apellido2={ usuarioSignalString(usuarioFormValue(user, "apellido2")) } data-signals:documento={ usuarioSignalString(usuarioFormValue(user, "documento")) } data-signals:celular={ usuarioSignalString(usuarioFormValue(user, "celular")) } data-signals:correo={ usuarioSignalString(usuarioFormValue(user, "correo")) } data-signals:sexo={ usuarioSignalString(usuarioFormValue(user, "sexo")) } data-signals:direccion={ usuarioSignalString(usuarioFormValue(user, "direccion")) } data-signals:username={ usuarioSignalString(usuarioFormValue(user, "username")) } data-signals:password="''" data-signals:foto64="''" data-signals:usuarioMode={ usuarioSignalString(usuarioFormMode(user)) } data-signals:usuarioID={ usuarioSignalString(usuarioFormID(user)) } data-signals:rolesJson={ usuarioSignalString(usuarioFormRolesJSON(user)) } data-signals:usuarioSaving="false" data-signals:usuarioSaved="false" data-effect="if ($usuarioSaving) { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = true; button.setAttribute('aria-busy','true'); button.textContent = 'Guardando...'; } } else { const button = document.getElementById('usuario-submit'); if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = 'Guardar usuario'; } } if ($usuarioSaved) { window.templ?.dialog?.close('usuario-dialog'); $usuarioSaved = false; }" data-on:submit__prevent={ "$usuarioSaving = true; @post('/adminx/usuarios?pagina='+$pagina+'&size='+$size+'&rol='+encodeURIComponent($rol || '')+'&mode='+encodeURIComponent($usuarioMode || 'create')+'&id='+encodeURIComponent($usuarioID || ''))" }>
+			<input type="hidden" name="usuarioID" data-bind:usuarioID />
+			<input type="hidden" name="usuarioMode" data-bind:usuarioMode />
 			<div class="grid gap-4 sm:grid-cols-2">
 				@usuarioTextField("usuario-nombres", "Nombres", "nombres", "Ingrese los nombres", true)
 				@usuarioTextField("usuario-apellido1", "Primer apellido", "apellido1", "Ingrese el primer apellido", true)
 				@usuarioTextField("usuario-username", "Usuario", "username", "Nombre de usuario", true)
-				@usuarioTextField("usuario-password", "Contraseña", "password", "Contraseña inicial", true)
+				@usuarioTextField("usuario-password", "Contraseña", "password", "Contraseña inicial", user == nil)
 			</div>
 
 			<div class="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
@@ -64,8 +66,19 @@ templ Formulario(roles []*model.ResponseRoles, unidades []*model.Unidad) {
 					@button.Button(button.Props{Type: button.TypeButton, Class: "h-9", Attributes: templ.Attributes{"data-on:click": usuarioAddRoleUnitScript()}}) { Agregar }
 				</div>
 				<div data-usuario-roles-error></div>
-				<div data-usuario-roles-list class="space-y-2"></div>
-				<input type="hidden" data-bind:roles-json required />
+				<div data-usuario-roles-list class="space-y-2">
+					if user != nil {
+						for _, pair := range user.Roles {
+							if pair != nil {
+								<div data-usuario-pair={ pair.UnidadID } class="flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2 text-sm">
+									<span>{ pair.RolName + " · " + pair.UnidadName }</span>
+									<button type="button" class="text-xs text-muted-foreground hover:text-destructive" data-on:click={ usuarioRemoveRoleUnitScript() }>Quitar</button>
+								</div>
+							}
+						}
+					}
+				</div>
+				<input type="hidden" name="rolesJson" data-bind:roles-json required />
 			</div>
 
 			<div id="usuario-form-error"></div>
