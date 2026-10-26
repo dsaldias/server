@@ -111,9 +111,15 @@ func NormalizarFechas(data any) error {
 					continue
 				}
 
+				if fecha, err := time.Parse("2006-01-02", valor); err == nil {
+					// Es una fecha sin hora: conservar el formato original.
+					v[key] = fecha.Format("2006-01-02")
+					continue
+				}
+
 				fecha, err := time.Parse("2006-01-02T15:04", valor)
 				if err != nil {
-					return fmt.Errorf("campo %s: %w", key, err)
+					return fmt.Errorf("campo %s: formato de fecha no válido: %w", key, err)
 				}
 
 				v[key] = fecha.Format(time.RFC3339)
