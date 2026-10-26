@@ -4,7 +4,7 @@ module github.com/dsaldias/server
 go 1.27.0
 
 require (
-	github.com/99designs/gqlgen v0.17.95
+	github.com/99designs/gqlgen v0.17.98
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/a-h/templ v0.3.1070
 	github.com/coder/websocket v1.8.15
@@ -15,7 +15,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/rs/cors v1.11.1
 	github.com/starfederation/datastar-go v1.2.2
-	github.com/vektah/gqlparser/v2 v2.5.63
+	github.com/vektah/gqlparser/v2 v2.5.64
 	github.com/vincent-petithory/dataurl v1.0.0
 )
 
@@ -24,8 +24,8 @@ require (
 	github.com/CAFxX/httpcompression v0.0.9 // indirect
 	github.com/Oudwins/tailwind-merge-go v0.2.2 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
-	github.com/agnivade/levenshtein v1.2.1 // indirect
-	github.com/andybalholm/brotli v1.2.6 // indirect
+	github.com/agnivade/levenshtein v1.2.2 // indirect
+	github.com/andybalholm/brotli v1.2.7 // indirect
 	github.com/axadrn/shadcn-templ/v2 v2.0.0-beta.15 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cli/browser v1.3.0 // indirect
@@ -36,8 +36,8 @@ require (
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
-	github.com/mattn/go-colorable v0.1.15 // indirect
+	github.com/klauspost/compress v1.20.3 // indirect
+	github.com/mattn/go-colorable v0.1.16 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
