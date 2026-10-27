@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auth consumer frontend module"
+  short_description: "Create auth_v2 consumer admin UI modules"
+  default_prompt: "Use $auth-consumer-frontend-module to create or extend a consumer-project admin frontend module from its existing data contract."
