@@ -9,3 +9,10 @@ export function formField(label, name, value = "", type = "text", extra = "") { 
 export function formData(form) { return Object.fromEntries(new FormData(form).entries()); }
 export function toast(message, isError = false) { const node = document.createElement("div"); node.className = `toast ${isError ? "error" : ""}`; node.textContent = message; document.querySelector("#toast-region").append(node); setTimeout(() => node.remove(), 4200); }
 export function table(headers, rows, empty = "No hay registros") { return `<div class="table-wrap"><table><thead><tr>${headers.map((header) => `<th>${esc(header)}</th>`).join("")}</tr></thead><tbody>${rows || `<tr><td colspan="${headers.length}" class="empty">${esc(empty)}</td></tr>`}</tbody></table></div>`; }
+export function pagination(meta) {
+  if (!meta || Number(meta.paginas || 0) <= 1) return "";
+  const page = Number(meta.pagina || 1);
+  const pages = Number(meta.paginas || 1);
+  const size = Number(meta.size || 10);
+  return `<div class="pagination"><span class="muted small">Página ${page} de ${pages} · ${meta.registros || 0} registros</span><div class="pagination-actions"><label class="small muted" for="pagination-size">Mostrar</label><select id="pagination-size" data-page-size><option ${size === 10 ? "selected" : ""}>10</option><option ${size === 25 ? "selected" : ""}>25</option><option ${size === 50 ? "selected" : ""}>50</option></select><button class="btn btn-secondary small" data-page-nav="${Math.max(1, page - 1)}" ${page <= 1 ? "disabled" : ""}>Anterior</button><button class="btn btn-secondary small" data-page-nav="${Math.min(pages, page + 1)}" ${page >= pages ? "disabled" : ""}>Siguiente</button></div></div>`;
+}

@@ -1,9 +1,35 @@
 import { graphql, queries, mutations } from "./api.js";
 import { getState, setState } from "./store.js";
 import { navigate, resolve, route, startRouter } from "./router.js";
-import { date, errorBox, esc, formData, formField, loading, modal, pageHead, status, table, toast } from "./components.js";
+import { date, errorBox, esc, formData, formField, loading, modal, pageHead, pagination, status, table, toast } from "./components.js";
 
 const app = document.querySelector("#app");
+const AUTH_CONTEXT_KEY = "auth_context";
+
+function readAuthContext() {
+  try { return JSON.parse(localStorage.getItem(AUTH_CONTEXT_KEY) || "null"); } catch { return null; }
+}
+
+function saveAuthContext(me) {
+  const activeRole = me.roles?.[0];
+  const unitId = activeRole?.unidad?.id || "";
+  const roleId = activeRole?.rol?.id || "";
+  if (unitId) localStorage.setItem(AUTH_CONTEXT_KEY, JSON.stringify({ unitId, roleId }));
+}
+
+async function restoreSession() {
+  const context = readAuthContext();
+  if (!context?.unitId) return false;
+  try {
+    const data = await graphql(queries.me, { input: { unidad_id: context.unitId } });
+    if (!data.me?.usuario) return false;
+    setState({ user: data.me, menus: data.me.menus || [], roles: data.me.roles || [], unitId: context.unitId, roleId: context.roleId || "" });
+    return true;
+  } catch {
+    localStorage.removeItem(AUTH_CONTEXT_KEY);
+    return false;
+  }
+}
 
 function loginView(message = "") {
   app.innerHTML = `<main class="login-screen"><section class="card login-card"><div class="brand"><span class="brand-mark">A</span><span>Administración</span></div><h1>Bienvenido</h1><p class="muted">Ingresa para continuar al panel administrativo.</p>${message ? `<p class="error">${esc(message)}</p>` : ""}<form class="login-form" data-action="login"><div class="field"><label for="username">Usuario</label><input id="username" name="username" autocomplete="username" required></div><div class="field"><label for="password">Contraseña</label><input id="password" name="password" type="password" autocomplete="current-password" required></div><button class="btn btn-primary" type="submit">Ingresar</button></form></section></main>`;
@@ -83,19 +109,21 @@ async function dashboardPage() {
 }
 
 async function usersPage() {
-  const query = { pagina: Number(new URLSearchParams(location.search).get("pagina") || 1), size: 10, nombre: new URLSearchParams(location.search).get("nombre") || null, rol: null };
+  const params = new URLSearchParams(location.search); const query = { pagina: Number(params.get("pagina") || 1), size: Number(params.get("size") || 10), nombre: params.get("nombre") || null, rol: null };
   const data = await graphql(queries.users, { query }); const result = data.usuarios2; const users = result?.datos || [];
-  return `${pageHead("Usuarios", `${result?.paginacion?.registros || users.length} registros`, `<button class="btn btn-primary" data-modal-form="user">Nuevo usuario</button>`)}<section class="card"><form class="toolbar" data-action="user-filter"><div class="field"><label for="user-search">Buscar</label><input id="user-search" name="nombre" value="${esc(query.nombre || "")}" placeholder="Nombre o usuario"></div><button class="btn btn-secondary" type="submit">Buscar</button></form>${table(["Nombre", "Usuario", "Correo", "Estado", "Último acceso", "Acciones"], users.map((item) => `<tr><td>${esc(`${item.nombres} ${item.apellido1} ${item.apellido2 || ""}`)}</td><td>${esc(item.username)}</td><td>${esc(item.correo || "—")}</td><td>${status(item.estado)}</td><td>${date(item.last_login)}</td><td><div class="actions"><button class="btn btn-secondary small" data-view-user="${esc(item.id)}">Ver</button><button class="btn btn-secondary small" data-edit-user="${esc(item.id)}">Editar</button></div></td></tr>`).join(""))}</section>`;
+  return `${pageHead("Usuarios", `${result?.paginacion?.registros || users.length} registros`, `<button class="btn btn-primary" data-modal-form="user">Nuevo usuario</button>`)}<section class="card"><form class="toolbar" data-action="user-filter"><div class="field"><label for="user-search">Buscar</label><input id="user-search" name="nombre" value="${esc(query.nombre || "")}" placeholder="Nombre o usuario"></div><button class="btn btn-secondary" type="submit">Buscar</button></form>${table(["Nombre", "Usuario", "Correo", "Estado", "Último acceso", "Acciones"], users.map((item) => `<tr><td>${esc(`${item.nombres} ${item.apellido1} ${item.apellido2 || ""}`)}</td><td>${esc(item.username)}</td><td>${esc(item.correo || "—")}</td><td>${status(item.estado)}</td><td>${date(item.last_login)}</td><td><div class="actions"><button class="btn btn-secondary small" data-view-user="${esc(item.id)}">Ver</button><button class="btn btn-secondary small" data-edit-user="${esc(item.id)}">Editar</button></div></td></tr>`).join(""))}${pagination(result?.paginacion)}</section>`;
 }
 
 async function rolesPage() {
-  const data = await graphql(queries.roles, { q: { pagina: 1, size: 50 } }); const roles = data.roles2?.datos || [];
-  return `${pageHead("Roles", "Perfiles de acceso y permisos", `<button class="btn btn-primary" data-modal-form="role">Nuevo rol</button>`)}<section class="card">${table(["Nombre", "Descripción", "Jerarquía", "Menús", "Permisos", "Usuarios", "Acciones"], roles.map((item) => `<tr><td>${esc(item.nombre)}</td><td>${esc(item.descripcion || "—")}</td><td>${item.jerarquia}</td><td>${item.menus}</td><td>${item.permisos}</td><td>${item.usuarios}</td><td><button class="btn btn-secondary small" data-edit-role="${esc(item.id)}">Editar</button></td></tr>`).join(""))}</section>`;
+  const params = new URLSearchParams(location.search); const query = { pagina: Number(params.get("pagina") || 1), size: Number(params.get("size") || 10) };
+  const data = await graphql(queries.roles, { q: query }); const result = data.roles2; const roles = result?.datos || [];
+  return `${pageHead("Roles", "Perfiles de acceso y permisos", `<button class="btn btn-primary" data-modal-form="role">Nuevo rol</button>`)}<section class="card">${table(["Nombre", "Descripción", "Jerarquía", "Menús", "Permisos", "Usuarios", "Acciones"], roles.map((item) => `<tr><td>${esc(item.nombre)}</td><td>${esc(item.descripcion || "—")}</td><td>${item.jerarquia}</td><td>${item.menus}</td><td>${item.permisos}</td><td>${item.usuarios}</td><td><button class="btn btn-secondary small" data-edit-role="${esc(item.id)}" data-role-name="${esc(item.nombre)}" data-role-description="${esc(item.descripcion || "")}" data-role-hierarchy="${esc(item.jerarquia)}">Editar</button></td></tr>`).join(""))}${pagination(result?.paginacion)}</section>`;
 }
 
 async function unitsPage() {
-  const data = await graphql(queries.units, { q: { pagina: 1, size: 50, nombre: null } }); const units = data.unidades2?.datos || [];
-  return `${pageHead("Unidades", "Sedes o contextos operativos", `<button class="btn btn-primary" data-modal-form="unit">Nueva unidad</button>`)}<section class="card">${table(["Nombre", "Descripción", "Orden", "Ubicación", "Acciones"], units.map((item) => `<tr><td>${esc(item.nombre)}</td><td>${esc(item.descripcion || "—")}</td><td>${item.orden}</td><td>${item.latitud ?? "—"}, ${item.longitud ?? "—"}</td><td><button class="btn btn-secondary small" data-edit-unit="${esc(item.id)}">Editar</button></td></tr>`).join(""))}</section>`;
+  const params = new URLSearchParams(location.search); const query = { pagina: Number(params.get("pagina") || 1), size: Number(params.get("size") || 10), nombre: params.get("nombre") || null };
+  const data = await graphql(queries.units, { q: query }); const result = data.unidades2; const units = result?.datos || [];
+  return `${pageHead("Unidades", "Sedes o contextos operativos", `<button class="btn btn-primary" data-modal-form="unit">Nueva unidad</button>`)}<section class="card">${table(["Nombre", "Descripción", "Orden", "Ubicación", "Acciones"], units.map((item) => `<tr><td>${esc(item.nombre)}</td><td>${esc(item.descripcion || "—")}</td><td>${item.orden}</td><td>${item.latitud ?? "—"}, ${item.longitud ?? "—"}</td><td><button class="btn btn-secondary small" data-edit-unit="${esc(item.id)}" data-unit-name="${esc(item.nombre)}" data-unit-description="${esc(item.descripcion || "")}" data-unit-order="${esc(item.orden)}" data-unit-latitude="${esc(item.latitud ?? "")}" data-unit-longitude="${esc(item.longitud ?? "")}">Editar</button></td></tr>`).join(""))}${pagination(result?.paginacion)}</section>`;
 }
 
 async function noticesPage() {
@@ -145,6 +173,13 @@ route("/", dashboardPage); route("/usuarios", usersPage); route("/roles", rolesP
 document.addEventListener("click", async (event) => {
   const target = event.target;
   if (target.closest("[data-toggle-sidebar]")) document.querySelector("#sidebar")?.classList.toggle("open");
+  const pageButton = target.closest("[data-page-nav]");
+  if (pageButton && !pageButton.disabled) {
+    const params = new URLSearchParams(location.search);
+    params.set("pagina", pageButton.dataset.pageNav);
+    navigate(`${location.pathname}?${params}`);
+    return;
+  }
   const menuToggle = target.closest("[data-menu-toggle]");
   if (menuToggle) {
     const group = document.getElementById(menuToggle.dataset.menuToggle);
@@ -154,6 +189,10 @@ document.addEventListener("click", async (event) => {
   }
   if (target.closest("[data-close-modal]")) document.querySelector("[data-modal]")?.remove();
   const formButton = target.closest("[data-modal-form]"); if (formButton) document.body.insertAdjacentHTML("beforeend", formShell(formButton.dataset.modalForm));
+  const editRole = target.closest("[data-edit-role]");
+  if (editRole) document.body.insertAdjacentHTML("beforeend", formShell("role", { id: editRole.dataset.editRole, nombre: editRole.dataset.roleName, descripcion: editRole.dataset.roleDescription, jerarquia: editRole.dataset.roleHierarchy }));
+  const editUnit = target.closest("[data-edit-unit]");
+  if (editUnit) document.body.insertAdjacentHTML("beforeend", formShell("unit", { id: editUnit.dataset.editUnit, nombre: editUnit.dataset.unitName, descripcion: editUnit.dataset.unitDescription, orden: editUnit.dataset.unitOrder, latitud: editUnit.dataset.unitLatitude, longitud: editUnit.dataset.unitLongitude }));
   for (const [selector, query, title] of [["data-view-user", queries.user, "Detalle de usuario"], ["data-edit-user", queries.user, "Editar usuario"]]) { const button = target.closest(`[${selector}]`); if (button) { try { const data = await graphql(query, { id: button.getAttribute(selector) }); document.body.insertAdjacentHTML("beforeend", formShell("user", data.usuario_by_id)); } catch (error) { toast(error.message, true); } } }
   const closeTicket = target.closest("[data-close-ticket]"); if (closeTicket && confirm("¿Cerrar este ticket?")) { try { await graphql(mutations.closeTicket, { id: closeTicket.dataset.closeTicket }); toast("Ticket cerrado"); await renderPage(); } catch (error) { toast(error.message, true); } }
   const answer = target.closest("[data-answer-ticket]"); if (answer) document.body.insertAdjacentHTML("beforeend", modal("Responder ticket", `<form class="grid" data-action="answer-ticket"><input type="hidden" name="tickets_id" value="${esc(answer.dataset.answerTicket)}"><div class="field"><label>Respuesta</label><textarea name="respuesta" required></textarea></div><div class="form-actions"><button class="btn btn-primary">Enviar respuesta</button></div></form>`));
@@ -164,14 +203,23 @@ document.addEventListener("submit", async (event) => {
   const form = event.target; const action = form.dataset.action; if (!action) return; event.preventDefault(); const button = form.querySelector("button[type=submit],button:not([type])"); if (button) button.disabled = true;
   try {
     const values = formData(form);
-    if (action === "login") { const data = await graphql(queries.login, { input: { username: values.username, password: values.password } }); const login = data.login_v2; if (!login?.me) throw new Error("No se recibió la sesión del usuario."); setState({ user: login.me, menus: login.me.menus || [], roles: login.me.roles || [] }); toast("Sesión iniciada"); navigate("/"); }
-    else if (action === "user-filter") { const params = new URLSearchParams(); if (values.nombre) params.set("nombre", values.nombre); navigate(`/usuarios${params.toString() ? `?${params}` : ""}`); }
+    if (action === "login") { const data = await graphql(queries.login, { input: { username: values.username, password: values.password } }); const login = data.login_v2; if (!login?.me) throw new Error("No se recibió la sesión del usuario."); saveAuthContext(login.me); setState({ user: login.me, menus: login.me.menus || [], roles: login.me.roles || [] }); toast("Sesión iniciada"); navigate("/"); }
+    else if (action === "user-filter") { const params = new URLSearchParams(location.search); params.set("pagina", "1"); if (values.nombre) params.set("nombre", values.nombre); else params.delete("nombre"); navigate(`/usuarios?${params}`); }
     else if (action === "answer-ticket") { await graphql(mutations.answerTicket, { input: { tickets_id: values.tickets_id, respuesta: values.respuesta } }); document.querySelector("[data-modal]")?.remove(); toast("Respuesta enviada"); await renderPage(); }
     else { await submitMutation(action, values); document.querySelector("[data-modal]")?.remove(); toast("Cambios guardados"); await renderPage(); }
   } catch (error) { toast(error.message, true); if (button) button.disabled = false; }
 });
 
-document.addEventListener("click", (event) => { if (event.target.closest("[data-action=logout]")) { setState({ user: null }); navigate("/"); } });
+document.addEventListener("change", (event) => {
+  const size = event.target.closest("[data-page-size]");
+  if (!size) return;
+  const params = new URLSearchParams(location.search);
+  params.set("pagina", "1");
+  params.set("size", size.value);
+  navigate(`${location.pathname}?${params}`);
+});
+
+document.addEventListener("click", (event) => { if (event.target.closest("[data-action=logout]")) { localStorage.removeItem(AUTH_CONTEXT_KEY); setState({ user: null, menus: [], roles: [], unitId: "", roleId: "" }); navigate("/"); } });
 window.addEventListener("routechange", renderPage);
 startRouter();
-renderPage();
+restoreSession().finally(renderPage);
