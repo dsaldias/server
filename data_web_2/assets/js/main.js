@@ -2,9 +2,11 @@ import { graphql, queries, mutations } from "./api.js";
 import { getState, setState } from "./store.js";
 import { navigate, resolve, route, startRouter } from "./router.js";
 import { date, errorBox, esc, formData, formField, loading, modal, pageHead, pagination, status, table, toast } from "./components.js";
+import { refreshChatMessages, startRealtime, stopRealtime } from "./realtime.js";
 
 const app = document.querySelector("#app");
 const AUTH_CONTEXT_KEY = "auth_context";
+let activeConversationID = null;
 
 function readAuthContext() {
   try { return JSON.parse(localStorage.getItem(AUTH_CONTEXT_KEY) || "null"); } catch { return null; }
@@ -29,6 +31,19 @@ async function restoreSession() {
     localStorage.removeItem(AUTH_CONTEXT_KEY);
     return false;
   }
+}
+
+async function refreshChatUnread() {
+  const userID = getState().user?.usuario?.id;
+  if (!userID) return;
+  try {
+    const data = await graphql(queries.chatUnread, { id: userID });
+    const unread = Number(data.chats_no_leidos || 0);
+    document.querySelectorAll("[data-chat-unread]").forEach((node) => {
+      node.textContent = unread > 99 ? "99+" : String(unread);
+      node.classList.toggle("hidden", unread <= 0);
+    });
+  } catch { /* El chat puede no estar habilitado para todos los consumidores. */ }
 }
 
 function loginView(message = "") {
@@ -90,7 +105,7 @@ function sidebarMenu() {
 
 function shell(content, title = "Panel") {
   const state = getState(); const user = state.user?.usuario;
-  app.innerHTML = `<div class="shell"><aside class="sidebar" id="sidebar"><div class="brand"><span class="brand-mark">A</span><span>Administración</span></div><nav class="nav">${sidebarMenu()}</nav></aside><section class="main"><header class="topbar"><div class="topbar-actions"><button class="btn btn-secondary icon-btn mobile-menu" data-toggle-sidebar>☰</button><strong>${esc(title)}</strong></div><div class="topbar-actions"><span class="small muted">${esc(user ? `${user.nombres} ${user.apellido1}` : "")}</span><button class="btn btn-secondary" data-action="logout">Salir</button></div></header><main class="page" id="page-content">${content}</main></section></div>`;
+  app.innerHTML = `<div class="shell"><aside class="sidebar" id="sidebar"><div class="brand"><span class="brand-mark">A</span><span>Administración</span></div><nav class="nav">${sidebarMenu()}</nav></aside><section class="main"><header class="topbar"><div class="topbar-actions"><button class="btn btn-secondary icon-btn mobile-menu" data-toggle-sidebar>☰</button><strong>${esc(title)}</strong></div><div class="topbar-actions"><span class="realtime-status"><span class="realtime-dot" data-realtime-dot title="Conectando"></span><span class="small" data-realtime-label>Conectando</span><span class="small muted">· <span data-realtime-users>0</span> conectados</span></span><a class="btn btn-secondary chat-trigger" data-link href="/chat" aria-label="Chat">Chat <span class="chat-badge hidden" data-chat-unread>0</span></a><button class="btn btn-secondary profile-link" data-profile-modal>${esc(user ? `${user.nombres} ${user.apellido1}` : "Mi perfil")}</button><button class="btn btn-secondary" data-action="logout">Salir</button></div></header><main class="page" id="page-content">${content}</main></section></div>`;
 }
 
 async function renderPage() {
@@ -98,6 +113,7 @@ async function renderPage() {
   const match = resolve();
   if (!match) return navigate("/");
   shell(loading(), pageTitle(match.pattern));
+  refreshChatUnread();
   try { document.querySelector("#page-content").innerHTML = await match.render(match.params); } catch (error) { document.querySelector("#page-content").innerHTML = errorBox(error); }
 }
 function pageTitle(pattern) { return ({ "/": "Inicio", "/usuarios": "Usuarios", "/roles": "Roles", "/unidades": "Unidades", "/avisos": "Avisos", "/tickets": "Tickets", "/chat": "Chat", "/perfil": "Mi perfil" })[pattern] || "Panel"; }
@@ -142,13 +158,44 @@ async function chatPage() {
 }
 
 async function profilePage() {
-  const user = getState().user.usuario;
+  const currentUser = getState().user.usuario;
+  const context = readAuthContext();
+  const data = context?.unitId ? await graphql(queries.me, { input: { unidad_id: context.unitId } }) : null;
+  const user = data?.me?.usuario || currentUser;
   return `${pageHead("Mi perfil", "Actualiza tus datos personales")}<section class="card card-pad"><form class="grid grid-2" data-action="profile"><input type="hidden" name="id" value="${esc(user.id)}">${formField("Nombres", "nombres", user.nombres, "text", "required")}${formField("Primer apellido", "apellido1", user.apellido1, "text", "required")}${formField("Segundo apellido", "apellido2", user.apellido2)}${formField("Documento", "documento", user.documento)}${formField("Celular", "celular", user.celular)}${formField("Correo", "correo", user.correo, "email")}${formField("Usuario", "username", user.username)}${formField("Nueva contraseña", "password", "", "password", "autocomplete=\"new-password\"")}<div class="field" style="grid-column:1/-1"><label for="field-direccion">Dirección</label><textarea id="field-direccion" name="direccion">${esc(user.direccion || "")}</textarea></div><div class="form-actions" style="grid-column:1/-1"><button class="btn btn-primary" type="submit">Guardar cambios</button></div></form></section>`;
 }
 
-function formShell(type, value = {}) {
+function profileModal(user) {
+  return modal("Editar mi perfil", `<form class="grid grid-2" data-action="profile"><input type="hidden" name="id" value="${esc(user.id)}">${formField("Nombres", "nombres", user.nombres, "text", "required")}${formField("Primer apellido", "apellido1", user.apellido1, "text", "required")}${formField("Segundo apellido", "apellido2", user.apellido2)}${formField("Documento", "documento", user.documento)}${formField("Celular", "celular", user.celular)}${formField("Correo", "correo", user.correo, "email")}${formField("Usuario", "username", user.username)}${formField("Nueva contraseña", "password", "", "password", "autocomplete=\"new-password\"")}<div class="field" style="grid-column:1/-1"><label for="profile-modal-address">Dirección</label><textarea id="profile-modal-address" name="direccion">${esc(user.direccion || "")}</textarea></div><div class="form-actions" style="grid-column:1/-1"><button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button><button class="btn btn-primary" type="submit">Guardar cambios</button></div></form>`);
+}
+
+async function userResources() {
+  const [rolesData, unitsData, permissionsData, menusData] = await Promise.all([
+    graphql(queries.roles, { q: { pagina: 1, size: 100 } }),
+    graphql(queries.units, { q: { pagina: 1, size: 100, nombre: null } }),
+    graphql(queries.permissions),
+    graphql(queries.menus),
+  ]);
+  return { roles: rolesData.roles2?.datos || [], units: unitsData.unidades2?.datos || [], permissions: permissionsData.permisos || [], menus: menusData.menus || [] };
+}
+
+function optionList(items, valueKey, label) { return items.map((item) => `<option value="${esc(item[valueKey])}">${esc(label(item))}</option>`).join(""); }
+
+function userFields(value = {}, resources = {}) {
+  const roles = resources.roles || []; const units = resources.units || []; const permissionItems = resources.permissions || []; const menus = resources.menus || [];
+  const selectedRole = value.roles?.[0]?.rol_id || ""; const selectedUnit = value.roles?.[0]?.unidad_id || "";
+  const selectedPermissions = new Set((value.permisos_sueltos || []).map((item) => item.metodo));
+  const selectedMenus = new Set((value.menus_sueltos || []).map((item) => String(item.id)));
+  const roleOptions = optionList(roles, "id", (item) => item.nombre).replace(`value="${esc(selectedRole)}"`, `value="${esc(selectedRole)}" selected`);
+  const unitOptions = optionList(units, "id", (item) => item.nombre).replace(`value="${esc(selectedUnit)}"`, `value="${esc(selectedUnit)}" selected`);
+  const optional = `<details class="optional-fields"><summary>Datos complementarios</summary><div class="grid grid-2">${formField("Segundo apellido", "apellido2", value.apellido2)}${formField("Documento", "documento", value.documento)}${formField("Celular", "celular", value.celular)}${formField("Correo", "correo", value.correo, "email")}<div class="field"><label for="field-sexo">Sexo</label><select id="field-sexo" name="sexo"><option value="">Sin especificar</option><option value="M" ${value.sexo === "M" ? "selected" : ""}>Masculino</option><option value="F" ${value.sexo === "F" ? "selected" : ""}>Femenino</option></select></div><div class="field"><label for="field-direccion">Dirección</label><textarea id="field-direccion" name="direccion">${esc(value.direccion || "")}</textarea></div>${formField("Latitud", "latitud", value.latitud, "number", "step=\"any\"")}${formField("Longitud", "longitud", value.longitud, "number", "step=\"any\"")}<div class="field"><label for="field-foto">Foto</label><input id="field-foto" type="file" accept="image/jpeg,image/png" data-photo-input><input type="hidden" name="foto64" value=""></div></div></details>`;
+  const permissionsSection = `<details class="optional-fields"><summary>Permisos y menús adicionales</summary><div class="grid grid-2"><div class="field"><label for="field-permisos">Permisos sueltos</label><select id="field-permisos" name="permisos_sueltos" multiple size="5">${permissionItems.map((item) => `<option value="${esc(item.metodo)}" ${selectedPermissions.has(item.metodo) ? "selected" : ""}>${esc(item.nombre)} · ${esc(item.grupo)}</option>`).join("")}</select></div><div class="field"><label for="field-menus">Menús sueltos</label><select id="field-menus" name="menus_sueltos" multiple size="5">${menus.map((item) => `<option value="${esc(item.id)}" ${selectedMenus.has(String(item.id)) ? "selected" : ""}>${esc(item.label)}</option>`).join("")}</select></div></div></details>`;
+  return `<div class="grid grid-2">${formField("Nombres", "nombres", value.nombres, "text", "required")}${formField("Primer apellido", "apellido1", value.apellido1, "text", "required")}${formField("Usuario", "username", value.username, "text", "required")}${formField("Contraseña", "password", "", "password", value.id ? "autocomplete=\"new-password\"" : "required")}</div><div class="grid grid-2"><div class="field"><label for="field-role-id">Rol</label><select id="field-role-id" name="role_id" required><option value="">Seleccione un rol</option>${roleOptions}</select></div><div class="field"><label for="field-unit-id">Unidad</label><select id="field-unit-id" name="unit_id" required><option value="">Seleccione una unidad</option>${unitOptions}</select></div></div>${optional}${permissionsSection}<input type="hidden" name="id" value="${esc(value.id || "")}">`;
+}
+
+function formShell(type, value = {}, resources = {}) {
   const forms = {
-    user: `${formField("Nombres", "nombres", value.nombres, "text", "required")}${formField("Primer apellido", "apellido1", value.apellido1, "text", "required")}${formField("Usuario", "username", value.username, "text", "required")}${formField("Correo", "correo", value.correo, "email")}${formField("Contraseña", "password", "", "password", value.id ? "" : "required")}<input type="hidden" name="id" value="${esc(value.id || "")}">`,
+    user: userFields(value, resources),
     role: `${formField("Nombre", "nombre", value.nombre, "text", "required")}${formField("Descripción", "descripcion", value.descripcion)}${formField("Jerarquía", "jerarquia", value.jerarquia || 1, "number", "min=\"1\"")}<input type="hidden" name="id" value="${esc(value.id || "")}">`,
     unit: `${formField("Nombre", "nombre", value.nombre, "text", "required")}${formField("Descripción", "descripcion", value.descripcion)}${formField("Orden", "orden", value.orden || 1, "number", "required")}${formField("Latitud", "latitud", value.latitud, "number", "step=\"any\"")}${formField("Longitud", "longitud", value.longitud, "number", "step=\"any\"")}<input type="hidden" name="id" value="${esc(value.id || "")}">`,
     notice: `${formField("Mensaje", "mensaje", value.mensaje, "text", "required")}${formField("Desde", "desde", value.desde ? value.desde.slice(0, 16) : "", "datetime-local", "required")}${formField("Hasta", "hasta", value.hasta ? value.hasta.slice(0, 16) : "", "datetime-local", "required")}<input type="hidden" name="id" value="${esc(value.id || "")}">`,
@@ -158,9 +205,14 @@ function formShell(type, value = {}) {
   return modal(`${value.id ? "Editar" : "Nuevo"} ${names[type]}`, `<form class="grid grid-2" data-action="${type}">${forms[type]}<div class="form-actions" style="grid-column:1/-1"><button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div></form>`);
 }
 
+function userViewShell(value, resources) {
+  const fields = userFields(value, resources).replace(/<(input|select|textarea)(?=[\s>])/g, "<$1 disabled");
+  return modal("Ver usuario", `<div class="view-form">${fields}</div><div class="form-actions"><button type="button" class="btn btn-secondary" data-close-modal>Cerrar</button></div>`);
+}
+
 function inputNumber(value) { const number = Number(value); return Number.isFinite(number) && value !== "" ? number : null; }
 async function submitMutation(type, values) {
-  if (type === "user") { const input = { nombres: values.nombres, apellido1: values.apellido1, username: values.username, correo: values.correo || null, password: values.password || null, roles: [], permisos_sueltos: [], menus_sueltos: [] }; return graphql(values.id ? mutations.updateUser : mutations.createUser, { input: values.id ? { ...input, id: values.id } : input }); }
+  if (type === "user") { const roles = values.role_id && values.unit_id ? [{ rol_id: values.role_id, unidad_id: values.unit_id }] : []; const input = { nombres: values.nombres, apellido1: values.apellido1, apellido2: values.apellido2 || null, documento: values.documento || null, celular: values.celular || null, correo: values.correo || null, sexo: values.sexo || null, direccion: values.direccion || null, username: values.username, password: values.password || null, foto64: values.foto64 || null, latitud: inputNumber(values.latitud), longitud: inputNumber(values.longitud), roles, permisos_sueltos: values.permisos_sueltos || [], menus_sueltos: values.menus_sueltos || [] }; return graphql(values.id ? mutations.updateUser : mutations.createUser, { input: values.id ? { ...input, id: values.id } : input }); }
   if (type === "role") { const input = { nombre: values.nombre, descripcion: values.descripcion || null, jerarquia: Number(values.jerarquia || 1), permisos: [], menus: [] }; return graphql(values.id ? mutations.updateRole : mutations.createRole, { input: values.id ? { ...input, id: values.id } : input }); }
   if (type === "unit") { const input = { nombre: values.nombre, descripcion: values.descripcion || null, orden: Number(values.orden || 1), latitud: inputNumber(values.latitud), longitud: inputNumber(values.longitud) }; return graphql(values.id ? mutations.updateUnit : mutations.createUnit, { input: values.id ? { ...input, id: values.id } : input }); }
   if (type === "notice") { const input = { mensaje: values.mensaje, desde: new Date(values.desde).toISOString(), hasta: new Date(values.hasta).toISOString() }; return graphql(values.id ? mutations.updateNotice : mutations.createNotice, { input: values.id ? { ...input, id: values.id } : input }); }
@@ -173,6 +225,14 @@ route("/", dashboardPage); route("/usuarios", usersPage); route("/roles", rolesP
 document.addEventListener("click", async (event) => {
   const target = event.target;
   if (target.closest("[data-toggle-sidebar]")) document.querySelector("#sidebar")?.classList.toggle("open");
+  const profileButton = target.closest("[data-profile-modal]");
+  if (profileButton) {
+    try {
+      const context = readAuthContext();
+      const data = context?.unitId ? await graphql(queries.me, { input: { unidad_id: context.unitId } }) : null;
+      document.body.insertAdjacentHTML("beforeend", profileModal(data?.me?.usuario || getState().user.usuario));
+    } catch (error) { toast(error.message, true); }
+  }
   const pageButton = target.closest("[data-page-nav]");
   if (pageButton && !pageButton.disabled) {
     const params = new URLSearchParams(location.search);
@@ -188,22 +248,29 @@ document.addEventListener("click", async (event) => {
     group?.classList.toggle("hidden", expanded);
   }
   if (target.closest("[data-close-modal]")) document.querySelector("[data-modal]")?.remove();
-  const formButton = target.closest("[data-modal-form]"); if (formButton) document.body.insertAdjacentHTML("beforeend", formShell(formButton.dataset.modalForm));
+  const formButton = target.closest("[data-modal-form]"); if (formButton) { if (formButton.dataset.modalForm === "user") { try { document.body.insertAdjacentHTML("beforeend", formShell("user", {}, await userResources())); } catch (error) { toast(error.message, true); } } else document.body.insertAdjacentHTML("beforeend", formShell(formButton.dataset.modalForm)); }
   const editRole = target.closest("[data-edit-role]");
   if (editRole) document.body.insertAdjacentHTML("beforeend", formShell("role", { id: editRole.dataset.editRole, nombre: editRole.dataset.roleName, descripcion: editRole.dataset.roleDescription, jerarquia: editRole.dataset.roleHierarchy }));
   const editUnit = target.closest("[data-edit-unit]");
   if (editUnit) document.body.insertAdjacentHTML("beforeend", formShell("unit", { id: editUnit.dataset.editUnit, nombre: editUnit.dataset.unitName, descripcion: editUnit.dataset.unitDescription, orden: editUnit.dataset.unitOrder, latitud: editUnit.dataset.unitLatitude, longitud: editUnit.dataset.unitLongitude }));
-  for (const [selector, query, title] of [["data-view-user", queries.user, "Detalle de usuario"], ["data-edit-user", queries.user, "Editar usuario"]]) { const button = target.closest(`[${selector}]`); if (button) { try { const data = await graphql(query, { id: button.getAttribute(selector) }); document.body.insertAdjacentHTML("beforeend", formShell("user", data.usuario_by_id)); } catch (error) { toast(error.message, true); } } }
+  for (const [selector, query] of [["data-view-user", queries.user], ["data-edit-user", queries.user]]) { const button = target.closest(`[${selector}]`); if (button) { try { const [data, resources] = await Promise.all([graphql(query, { id: button.getAttribute(selector) }), userResources()]); const content = selector === "data-view-user" ? userViewShell(data.usuario_by_id, resources) : formShell("user", data.usuario_by_id, resources); document.body.insertAdjacentHTML("beforeend", content); } catch (error) { toast(error.message, true); } } }
   const closeTicket = target.closest("[data-close-ticket]"); if (closeTicket && confirm("¿Cerrar este ticket?")) { try { await graphql(mutations.closeTicket, { id: closeTicket.dataset.closeTicket }); toast("Ticket cerrado"); await renderPage(); } catch (error) { toast(error.message, true); } }
   const answer = target.closest("[data-answer-ticket]"); if (answer) document.body.insertAdjacentHTML("beforeend", modal("Responder ticket", `<form class="grid" data-action="answer-ticket"><input type="hidden" name="tickets_id" value="${esc(answer.dataset.answerTicket)}"><div class="field"><label>Respuesta</label><textarea name="respuesta" required></textarea></div><div class="form-actions"><button class="btn btn-primary">Enviar respuesta</button></div></form>`));
-  const openChat = target.closest("[data-open-chat]"); if (openChat) { try { const data = await graphql(queries.messages, { id: openChat.dataset.openChat }); document.querySelector("#chat-messages").innerHTML = `<div class="card-pad"><h2>Mensajes</h2>${(data.chat_mensajes || []).map((item) => `<p><strong>${esc(item.sender_id)}</strong><br>${esc(item.texto)} <span class="small muted">${date(item.created_at)}</span></p>`).join("") || `<p class="muted">Sin mensajes.</p>`}</div>`; } catch (error) { toast(error.message, true); } }
+  const openChat = target.closest("[data-open-chat]"); if (openChat) { try { activeConversationID = openChat.dataset.openChat; await refreshChatMessages(activeConversationID, document.querySelector("#chat-messages")); } catch (error) { toast(error.message, true); } }
+});
+
+window.addEventListener("auth-v2-notification", async (event) => {
+  if (event.detail?.data?.tipo === "chat") await refreshChatUnread();
+  if (event.detail?.data?.tipo !== "chat" || !activeConversationID) return;
+  const target = document.querySelector("#chat-messages");
+  if (target) { try { await refreshChatMessages(activeConversationID, target); } catch { /* the next refresh can retry */ } }
 });
 
 document.addEventListener("submit", async (event) => {
   const form = event.target; const action = form.dataset.action; if (!action) return; event.preventDefault(); const button = form.querySelector("button[type=submit],button:not([type])"); if (button) button.disabled = true;
   try {
     const values = formData(form);
-    if (action === "login") { const data = await graphql(queries.login, { input: { username: values.username, password: values.password } }); const login = data.login_v2; if (!login?.me) throw new Error("No se recibió la sesión del usuario."); saveAuthContext(login.me); setState({ user: login.me, menus: login.me.menus || [], roles: login.me.roles || [] }); toast("Sesión iniciada"); navigate("/"); }
+    if (action === "login") { const data = await graphql(queries.login, { input: { username: values.username, password: values.password } }); const login = data.login_v2; if (!login?.me) throw new Error("No se recibió la sesión del usuario."); saveAuthContext(login.me); setState({ user: login.me, menus: login.me.menus || [], roles: login.me.roles || [] }); startRealtime(); await refreshChatUnread(); toast("Sesión iniciada"); navigate("/"); }
     else if (action === "user-filter") { const params = new URLSearchParams(location.search); params.set("pagina", "1"); if (values.nombre) params.set("nombre", values.nombre); else params.delete("nombre"); navigate(`/usuarios?${params}`); }
     else if (action === "answer-ticket") { await graphql(mutations.answerTicket, { input: { tickets_id: values.tickets_id, respuesta: values.respuesta } }); document.querySelector("[data-modal]")?.remove(); toast("Respuesta enviada"); await renderPage(); }
     else { await submitMutation(action, values); document.querySelector("[data-modal]")?.remove(); toast("Cambios guardados"); await renderPage(); }
@@ -211,6 +278,17 @@ document.addEventListener("submit", async (event) => {
 });
 
 document.addEventListener("change", (event) => {
+  const photo = event.target.closest("[data-photo-input]");
+  if (photo) {
+    const file = photo.files?.[0];
+    const target = photo.form?.querySelector("[name=foto64]");
+    if (!file || !target) return;
+    if (!["image/jpeg", "image/png"].includes(file.type)) { photo.value = ""; target.value = ""; toast("La foto debe ser JPG o PNG.", true); return; }
+    const reader = new FileReader();
+    reader.onload = () => { target.value = reader.result; };
+    reader.readAsDataURL(file);
+    return;
+  }
   const size = event.target.closest("[data-page-size]");
   if (!size) return;
   const params = new URLSearchParams(location.search);
@@ -219,7 +297,7 @@ document.addEventListener("change", (event) => {
   navigate(`${location.pathname}?${params}`);
 });
 
-document.addEventListener("click", (event) => { if (event.target.closest("[data-action=logout]")) { localStorage.removeItem(AUTH_CONTEXT_KEY); setState({ user: null, menus: [], roles: [], unitId: "", roleId: "" }); navigate("/"); } });
+document.addEventListener("click", (event) => { if (event.target.closest("[data-action=logout]")) { stopRealtime(); localStorage.removeItem(AUTH_CONTEXT_KEY); setState({ user: null, menus: [], roles: [], unitId: "", roleId: "" }); navigate("/"); } });
 window.addEventListener("routechange", renderPage);
 startRouter();
-restoreSession().finally(renderPage);
+restoreSession().then(async (restored) => { if (restored) { startRealtime(); await refreshChatUnread(); } }).finally(renderPage);

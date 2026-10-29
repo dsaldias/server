@@ -21,6 +21,7 @@ export const queries = {
   tickets: `query Tickets($q: QueryTickets!) { all_tickets(q: $q) { id usuario_id usuario problema estado fecha_registro respuesta soporte soporte_id respondido } }`,
   myTickets: `query MyTickets { mis_tickets { id usuario_id usuario problema estado fecha_registro respuesta soporte soporte_id respondido } }`,
   chats: `query Chats($id: ID!) { chats_by_user(user_id: $id) { id tipo nombre foto_url no_leidos ultimo_mensaje created_by fecha_registro fecha_update miembros { usuario_id is_admin } } }`,
+  chatUnread: `query ChatUnread($id: ID!) { chats_no_leidos(user_id: $id) }`,
   messages: `query Messages($id: ID!) { chat_mensajes(conversacion_id: $id) { id conversacion_id sender_id tipo texto created_at edited_at deleted_at } }`,
 };
 export const mutations = {

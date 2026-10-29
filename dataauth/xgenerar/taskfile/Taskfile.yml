@@ -1,5 +1,7 @@
 version: "3"
 
+dotenv: [".env"]
+
 vars:
   # The app port: an explicit 'task dev PORT=8091' wins, otherwise the next
   # free port from 8090 up. The templ proxy and the app share the result,
