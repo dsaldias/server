@@ -9,7 +9,7 @@ require (
 	github.com/a-h/templ v0.3.1100
 	github.com/coder/websocket v1.8.15
 	github.com/go-chi/chi/v5 v5.5.0
-	github.com/go-sql-driver/mysql v1.10.1
+	github.com/go-sql-driver/mysql v1.10.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
@@ -25,7 +25,7 @@ require (
 	github.com/Oudwins/tailwind-merge-go v0.2.3 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/agnivade/levenshtein v1.2.2 // indirect
-	github.com/andybalholm/brotli v1.2.7 // indirect
+	github.com/andybalholm/brotli v1.3.0 // indirect
 	github.com/axadrn/shadcn-templ/v2 v2.0.0-beta.15 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cli/browser v1.3.0 // indirect
@@ -36,20 +36,20 @@ require (
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
-	github.com/klauspost/compress v1.20.3 // indirect
+	github.com/klauspost/compress v1.20.4 // indirect
 	github.com/mattn/go-colorable v0.1.16 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
 	github.com/urfave/cli/v3 v3.14.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/image v0.47.0 // indirect
-	golang.org/x/mod v0.42.0 // indirect
-	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.52.0 // indirect
+	golang.org/x/image v0.48.0 // indirect
+	golang.org/x/mod v0.43.0 // indirect
+	golang.org/x/net v0.63.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
+	golang.org/x/tools v0.53.0 // indirect
 )
 
 tool (
